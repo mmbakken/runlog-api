@@ -6,8 +6,12 @@ const port = 4000
 
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('Hello Hilary :)')
+app.get('/api/v1', (req, res) => {
+  res.send('Runlog API v1 ✌️')
+})
+
+app.get('/api/v1/hello', (req, res) => {
+  res.send('Runlog API says: "hello, stranger 👁️👄👁️"')
 })
 
 app.listen(port, () => {
