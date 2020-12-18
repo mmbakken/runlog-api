@@ -7,7 +7,7 @@ const port = 4000
 app.use(cors())
 
 app.get('/', (req, res) => {
-  res.send('Runlog API :)')
+  res.send('Hello Hilary :)')
 })
 
 app.listen(port, () => {
