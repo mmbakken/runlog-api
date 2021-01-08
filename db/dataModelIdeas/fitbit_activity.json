@@ -1,0 +1,73 @@
+{
+  "activeDuration": 1734000,
+  "activityLevel": [
+    {
+      "minutes": 4,
+      "name": "sedentary"
+    },
+    {
+      "minutes": 14,
+      "name": "lightly"
+    },
+    {
+      "minutes": 4,
+      "name": "fairly"
+    },
+    {
+      "minutes": 6,
+      "name": "very"
+    }
+  ],
+  "activityName": "FitStar: Personal Trainer",
+  "activityTypeId": 17589491,
+  "averageHeartRate": 94,
+  "calories": 136,
+  "caloriesLink": "https://api.fitbit.com/1/user/-/activities/calories/date/2016-03-29/2016-03-29/1min/time/8:45/9:13.json",
+  "distance": 1.071811,
+  "distanceUnit": "Kilometer",
+  "duration": 1734000,
+  "heartRateLink": "https://api.fitbit.com/1/user/-/activities/heart/date/2016-03-29/2016-03-29/1sec/time/08:45:00/09:13:54.json",
+  "heartRateZones": [
+    {
+      "max": 94,
+      "min": 30,
+      "minutes": 16,
+      "name": "Out of Range"
+    },
+    {
+      "max": 131,
+      "min": 94,
+      "minutes": 9,
+      "name": "Fat Burn"
+    },
+    {
+      "max": 159,
+      "min": 131,
+      "minutes": 1,
+      "name": "Cardio"
+    },
+    {
+      "max": 220,
+      "min": 159,
+      "minutes": 0,
+      "name": "Peak"
+    }
+  ],
+  "lastModified": "2016-03-29T17:41:53.000Z",
+  "logId": 2067350363,
+  "logType": "fitstar",
+  "manualValuesSpecified": {
+    "calories": false,
+    "distance": false,
+    "steps": false
+  },
+  "source": {
+    "id": "228T4Z",
+    "name": "FitStar",
+    "type": "app",
+    "url": "http://www.fitstar.com"
+  },
+  "speed": 2.2252131487889275,
+  "startTime": "2016-03-29T08:45:00.000-07:00",
+  "steps": 1354
+},

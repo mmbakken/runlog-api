@@ -1,0 +1,74 @@
+// Calendar document. Tracks relevant data for the Calendar view
+// Tracks the planned plannedMileage
+{
+  "startDate": "2020-11-16",
+  "endDate": "2021-03-14",
+  "title": "Winter 2020",
+  "weekStartDay": "Monday",
+  "weeks": {
+    "2020-11-16": {
+      "total": 27.57,
+      "previousWeekMileage": 20.05,
+      "percentChange": 0.3751, // (27.57 - 20.05) / 20.05
+      "comments": "Driving days on Thu and Fri. Adjusting to running at elevation again.",
+    },
+  },
+  "days": {
+    // ID of each is the date in ISO
+    "2020-11-16": {
+      "date": "2020-11-16", // Same as id
+      "workout": "Rest", // User-entered
+      "mileage": 0, // Total of all runs today
+      "runIds": [], // Empty if there were no runs logged today, OR none yet
+      "plannedMileage": 0,
+    },
+
+    "2020-11-17": {
+      "date": "2020-11-17",
+      "workout": "Lift & Run",
+      "mileage": 5.01,
+      "runIds": [2067350363], // Integers, if not empty. See Fitbit activity API.
+      "plannedMileage": 5,
+    },
+
+    "2020-11-18": {
+      "date": "2020-11-18",
+      "workout": "Easy",
+      "mileage": 4.68,
+      "runIds": [2067350366],
+      "plannedMileage": 4,
+    },
+
+    "2020-11-19": {
+      "date": "2020-11-19",
+      "workout": "Easy",
+      "mileage": 6.1,
+      "runIds": [2067350369],
+      "plannedMileage": 6,
+    },
+
+    "2020-11-19": {
+      "date": "2020-11-20",
+      "workout": "Driving",
+      "mileage": 0,
+      "runIds": [],
+      "plannedMileage": 0,
+    },
+
+    "2020-11-19": {
+      "date": "2020-11-19",
+      "workout": "Easy",
+      "mileage": 7.28,
+      "runIds": [2067350373],
+      "plannedMileage": 7,
+    },
+
+    "2020-11-19": {
+      "date": "2020-11-19",
+      "workout": "Hills",
+      "mileage": 4.5,
+      "runIds": [2067350379],
+      "plannedMileage": 4,
+    },
+  },
+},

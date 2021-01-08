@@ -1,0 +1,24 @@
+// A Fitbit activity JSON object with all of the extraneous bits cut off
+{
+  "activeDuration": 1734000, // TODO: Might not need this; favor duration?
+  "activityName": "FitStar: Personal Trainer",
+  "activityTypeId": 17589491, // TODO: Where is this enum?
+  "averageHeartRate": 94,
+  "calories": 136,
+  "distance": 1.071811,
+  "distanceUnit": "Kilometer",
+  "duration": 1734000, // Use this or activeDuration?
+  "logId": 2067350363, // External key
+  "logType": "fitstar",
+  "speed": 2.2252131487889275, // pace in what units? kph?
+  "startTime": "2016-03-29  T 08:45:00.000  -07:00",
+
+  // TODO: Need more fields to be useful
+  // From Fitbit:
+  "maxHeartRate": 169, // Could calculate through HR link
+
+  // From Runlog, to save here
+  "comments": "Felt OK, might delete later idk",
+  "didStretch": true,
+  "didIce": false,
+},

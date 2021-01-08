@@ -137,6 +137,7 @@ app.post('/api/v1/users/login', (req, res) => {
 
               db.close()
               res.json({
+                user: payload,
                 accessToken: `Bearer ${token}`
               })
             })
