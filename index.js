@@ -87,6 +87,13 @@ function authenticateToken(req, res, next) {
   })
 }
 
+// This route is for providing user information to the client if they already have a JWT.
+app.get('/api/v1/user', authenticateToken, (req, res) => {
+  res.json({
+    user: req.user
+  })
+})
+
 // When a user logs in, we check their 
 app.post('/api/v1/users/login', (req, res) => {
   
