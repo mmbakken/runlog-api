@@ -13,6 +13,7 @@ const port = 4000
 
 // Only use CORS for dev environment
 if (process.env.USE_CORS) {
+  console.log(`process.env.USE_CORS: ${process.env.USE_CORS}`)
   app.use(cors())
 }
 
