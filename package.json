@@ -8,6 +8,7 @@
     "start-dev": "nodemon index.js"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -16,6 +17,26 @@
     "mongoose": "^5.11.8"
   },
   "devDependencies": {
+    "eslint": "^7.17.0",
     "nodemon": "^2.0.6"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2021": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      "quotes": [
+        "error",
+        "single"
+      ]
+    }
   }
 }

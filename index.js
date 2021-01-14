@@ -8,6 +8,9 @@ import mongoose from 'mongoose'
 // Databse Schema
 import userSchema from './db/userSchema.js'
 
+// Route handlers
+import authenticateToken from './auth/authenticateToken.js'
+
 const app = express()
 const port = 4000
 
@@ -61,27 +64,6 @@ app.get('/api/v1/runs', authenticateToken, (req, res) => {
 
 // For now, there is no way to create a user account except via the database.
 // See scripts/createUser.js
-
-function authenticateToken(req, res, next) {
-  // Format of header: 'Bearer <token>'
-  const authHeader = req.headers['authorization']
-
-  const token = authHeader && authHeader.split(' ')[1]
-
-  if (token == null) {
-    return res.sendStatus(401)
-  }
-
-  // Verify token
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403)
-    }
-
-    req.user = user
-    next()
-  })
-}
 
 // This route is for providing user information to the client if they already have a JWT.
 app.get('/api/v1/user', authenticateToken, (req, res) => {
