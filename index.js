@@ -12,13 +12,9 @@ const app = express()
 const port = 4000
 
 // Only use CORS for dev environment
-console.log(`process.env.USE_CORS: ${process.env.USE_CORS}`)
-console.log(`typeof process.env.USE_CORS: ${typeof process.env.USE_CORS}`)
 if (process.env.USE_CORS === 'true') {
   console.log('Using CORS')
   app.use(cors())
-} else {
-  console.log('Not using CORS')
 }
 
 // Able to receive JSON payloads
@@ -70,16 +66,11 @@ function authenticateToken(req, res, next) {
   // Format of header: 'Bearer <token>'
   const authHeader = req.headers['authorization']
 
-  console.log(authHeader)
-
   const token = authHeader && authHeader.split(' ')[1]
 
   if (token == null) {
     return res.sendStatus(401)
   }
-
-  console.log('Token:')
-  console.log(JSON.stringify(token, null, 2))
 
   // Verify token
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
