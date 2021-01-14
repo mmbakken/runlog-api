@@ -14,11 +14,11 @@ const port = 4000
 // Only use CORS for dev environment
 console.log(`process.env.USE_CORS: ${process.env.USE_CORS}`)
 console.log(`typeof process.env.USE_CORS: ${typeof process.env.USE_CORS}`)
-if (process.env.USE_CORS) {
-  console.log('Useing CORS')
+if (process.env.USE_CORS === 'true') {
+  console.log('Using CORS')
   app.use(cors())
 } else {
-  console.log('Disabling CORS')
+  console.log('Not using CORS')
 }
 
 // Able to receive JSON payloads
