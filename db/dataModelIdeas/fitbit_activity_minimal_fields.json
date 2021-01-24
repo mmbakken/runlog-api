@@ -8,10 +8,16 @@
   "distance": 1.071811,
   "distanceUnit": "Kilometer",
   "duration": 1734000, // Use this or activeDuration?
+  "elevationGain": 90.221, // feet?
+  "heartRateLink": "https://api.fitbit.com/1/user/-/activities/heart/date/2021-01-16/2021-01-16/1sec/time/12:26:22/13:39:44.json",
   "logId": 2067350363, // External key
   "logType": "fitstar",
   "speed": 2.2252131487889275, // pace in what units? kph?
   "startTime": "2016-03-29  T 08:45:00.000  -07:00",
+  "steps": 11376,
+  "tcxLink": "https://api.fitbit.com/1/user/-/activities/36939605745.tcx",
+
+
 
   // TODO: Need more fields to be useful
   // From Fitbit:

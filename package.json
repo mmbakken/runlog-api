@@ -14,7 +14,9 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.8"
+    "luxon": "^1.25.0",
+    "mongoose": "^5.11.8",
+    "qs": "^6.9.6"
   },
   "devDependencies": {
     "eslint": "^7.17.0",

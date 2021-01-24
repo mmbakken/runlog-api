@@ -7,8 +7,9 @@ import userSchema from '../db/userSchema.js'
   COPY USER AND AUTHENTICATION INFO HERE
 */
 const userEmail = 'mmbakken@gmail.com'
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkM2UVEiLCJzdWIiOiI2OE5XVjgiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc2V0IHJhY3QgcmxvYyByd2VpIHJociBycHJvIiwiZXhwIjoxNjEwNjg2OTc1LCJpYXQiOjE2MTA2NTgxNzV9.t4w2U_4pFDFgNoKKgHbYTCCNgj9yc-Vw61YG7QkMOyg'
-const refreshToken = 'c22d90d202d7a8a1448dc014d30859303a543f634b95aee29e7650cacf453aed'
+const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkM2UVEiLCJzdWIiOiI2OE5XVjgiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJzZXQgcmxvYyByd2VpIHJociBycHJvIiwiZXhwIjoxNjEwNzcyNjEwLCJpYXQiOjE2MTA3NDM4MTB9.8TAqztRuzbup5HLQYFboEvnXk0p2ofYGX8hh5S9v5OM'
+const refreshToken = '1ce4bc80b5a1b848ef4b8531f00ce40ce5c50c7e3e3455b87b2221a149ce1444'
+const userId = '68NWV8'
 
  // Connect mongoose to the database
  mongoose.connect('mongodb://localhost/runlog', {useNewUrlParser: true, useUnifiedTopology: true})
@@ -30,6 +31,7 @@ const refreshToken = 'c22d90d202d7a8a1448dc014d30859303a543f634b95aee29e7650cacf
      console.log('Adding tokens to user record')
      user.fitbitAccessToken = accessToken
      user.fitbitRefreshToken = refreshToken
+     user.fitbitUserId = userId
  
      await user.save()
  
