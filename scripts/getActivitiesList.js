@@ -1,7 +1,6 @@
 import {} from 'dotenv/config.js'
 import mongoose from 'mongoose'
 import axios from 'axios'
-import qs from 'qs'
 import { DateTime } from 'luxon'
 import userSchema from '../db/userSchema.js'
 

@@ -38,7 +38,7 @@ const stravaCodeToTokens = (req, res) => {
         // Set up auth params
         // Runlog.dev Strava API settings: https://www.strava.com/settings/api
         // Log in with your personal Strava account to view.
-        const clientId = '60410'
+        const clientId = process.env.STRAVA_CLIENT_ID
         const clientSecret = process.env.STRAVA_CLIENT_SECRET
 
         axios({
@@ -57,10 +57,11 @@ const stravaCodeToTokens = (req, res) => {
           user.stravaAccessToken = response.data.access_token
           user.stravaRefreshToken = response.data.refresh_token 
           user.stravaUserId = response.data.athlete.id
+          user.hasStravaAuth = true
 
           // Response is a Unix epoch timestamp, in seconds. Convert to ms for Javascript's
           // Date timestamp to represent the same moment.
-          user.stravaTokenExpiresAt = Number(response.data.expires_at) * 1000
+          user.stravaTokenExpiresAt = parseInt(response.data.expires_at) * 1000
 
           await user.save()
           db.close()
@@ -75,6 +76,7 @@ const stravaCodeToTokens = (req, res) => {
   } catch (err) {
     console.error(err)
     db.close()
+    return res.sendStatus(500)
   }
 }
 

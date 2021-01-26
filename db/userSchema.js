@@ -7,10 +7,12 @@ const userSchema = new mongoose.Schema({
   fitbitAccessToken: String,
   fitbitRefreshToken: String,
   fitbitUserId: String,
+  hasFitbitAuth: Boolean,
   stravaAccessToken: String,
   stravaRefreshToken: String,
   stravaTokenExpiresAt: Date,
   stravaUserId: String, // AKA Athlete ID
+  hasStravaAuth: Boolean,
 })
 
 export default userSchema

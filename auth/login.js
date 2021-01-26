@@ -41,6 +41,8 @@ const login = (req, res) => {
               id: user._id,
               email: user.email,
               name: user.name,
+              hasFitbitAuth: user.hasFitbitAuth || false,
+              hasStravaAuth: user.hasStravaAuth || false,
             }
 
             // TODO: Generate JWT for public user data and send back as bearer token

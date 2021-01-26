@@ -6,6 +6,10 @@ import cors from 'cors'
 import authenticateToken from './auth/authenticateToken.js'
 import login from './auth/login.js'
 import stravaCodeToTokens from './auth/stravaCodeToTokens.js'
+import getUserDetails from './auth/getUserDetails.js'
+
+// Runs
+import getStravaRuns from './runs/getStravaRuns.js'
 
 const app = express()
 const port = 4000
@@ -26,6 +30,13 @@ app.get('/api/v1', (req, res) => {
 app.get('/api/v1/hello', (req, res) => {
   res.send('hello, stranger 👁️👄👁️')
 })
+
+/*
+ *  RUN ROUTES
+ */
+
+// Retrieve the latest run activities from Strava for the logged in user.
+app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
 
 // Get the routes for this user. Requires a JWT with the user's id in it.
 app.get('/api/v1/runs', authenticateToken, (req, res) => {
@@ -62,11 +73,7 @@ app.get('/api/v1/runs', authenticateToken, (req, res) => {
 // See scripts/createUser.js
 
 // This route is for providing user information to the client if they already have a JWT.
-app.get('/api/v1/user', authenticateToken, (req, res) => {
-  res.json({
-    user: req.user
-  })
-})
+app.get('/api/v1/users/:userId', authenticateToken, getUserDetails)
 
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
