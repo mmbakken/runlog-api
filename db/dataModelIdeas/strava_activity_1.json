@@ -1,0 +1,67 @@
+// Basic activity data model
+// https://developers.strava.com/docs/reference/#api-models-SummaryActivity
+{
+  "resource_state": 2,
+  "athlete": {
+    "id": 8843745,
+    "resource_state": 1
+  },
+  "name": "Afternoon Run",
+  "distance": 7235.5,
+  "moving_time": 2205,
+  "elapsed_time": 2250,
+  "total_elevation_gain": 31.6,
+  "type": "Run",
+  "workout_type": null,
+  "id": 4643853590,
+  "external_id": "37004032087.tcx",
+  "upload_id": 4959491030,
+  "start_date": "2021-01-18T21:37:05Z",
+  "start_date_local": "2021-01-18T14:37:05Z",
+  "timezone": "(GMT-07:00) America/Denver",
+  "utc_offset": -25200,
+  "start_latlng": [
+    39.758265,
+    -104.988838
+  ],
+  "end_latlng": [
+    39.755293,
+    -104.993392
+  ],
+  "location_city": null,
+  "location_state": null,
+  "location_country": "United States",
+  "start_latitude": 39.758265,
+  "start_longitude": -104.988838,
+  "achievement_count": 1,
+  "kudos_count": 1,
+  "comment_count": 0,
+  "athlete_count": 1,
+  "photo_count": 0,
+  "map": {
+    "id": "a4643853590",
+    "summary_polyline": "chtqFfsx_SMMy@e@c@a@OEMMKUk@y@]Ue@Bi@?k@He@BWF]B]Ae@D]EQ@S@WDUAAEGDM@u@v@s@Lg@BOF[Ei@]g@Ik@]WYi@Ue@y@W]IGOWY_@[UWa@i@a@Qe@c@k@UUk@{@y@gA{@mAU_AEAo@{@IFGSUW]k@IGUEUUGMGUOYIYWc@GUEICAEBMIMMG@EAQ@OKy@iAMYF]OMOGOWg@e@_@u@Sk@IGo@_Au@w@gAyAIQc@e@[q@ESGKACk@USKMo@]{@MS]}@GAKOG?S_@MEGMUSg@_AQSWg@[[QMy@gAYYUYKGi@u@s@w@W]GAIDSXc@NSRq@`AGNa@b@MZaAlAw@pAo@r@KPET?RDJ^b@NL`@h@b@b@TZl@^^d@r@h@r@v@d@TPNJJ`@Pn@^h@b@tAn@nAfA`Ar@f@b@t@`@TTj@`@TXb@ZVV^P`@Zr@Vh@j@`@VNFtAjAZPh@b@z@d@~@RRJFNFh@RjAZpAVn@j@`DJVNxAf@jDV~@Ft@Lp@NlAVjAJz@l@dD`@nDZ|@z@~CP\\Z|@LFLLDBNTVX\\f@^r@NL\\j@Pd@t@`ATPT\\VLZr@NPVd@Pf@BXLXFZLVJHH`@Tp@X`BTvBVfBThATlBf@l@NV`@lAx@hBT~AFHz@fFBd@AlABTZh@DLNPJ?JLLZB`@FTFLTZ\\NjANp@b@VRh@ZT@x@EPBJFNLPj@FLHTZ\\FRFJZPl@BTD^`@JVTVfAj@^FNCRST]NKTGROT]Tk@H?NBHELSb@aAd@_@Ha@HUF@JAPSf@[HMHYXSJYNO?YPc@Jg@Na@VO\\AvAq@z@sBDEN?DK\\_@Bc@DOHITm@VKLEDEX?PODBRURw@RcABIJIHMEe@Qy@i@i@i@{@Qc@?KOOGIGY?KEO[c@KWe@g@Ye@AIBO^m@^qA?]GQKSUQG?QWa@YCKGE?IW_@_@u@GYO]YUS[UGQc@a@m@o@o@EIIGc@{@QMi@q@g@IWOGOI]IK",
+    "resource_state": 2
+  },
+  "trainer": false,
+  "commute": false,
+  "manual": false,
+  "private": false,
+  "visibility": "everyone",
+  "flagged": false,
+  "gear_id": null,
+  "from_accepted_tag": false,
+  "upload_id_str": "4959491030",
+  "average_speed": 3.281,
+  "max_speed": 5.2,
+  "has_heartrate": true,
+  "average_heartrate": 142.7,
+  "max_heartrate": 163,
+  "heartrate_opt_out": false,
+  "display_hide_heartrate_option": true,
+  "elev_high": 1588.2,
+  "elev_low": 1570.3,
+  "pr_count": 0,
+  "total_photo_count": 0,
+  "has_kudoed": false
+},
