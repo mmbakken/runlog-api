@@ -2,11 +2,9 @@ import {} from 'dotenv/config.js'
 import axios from 'axios'
 import qs from 'qs'
 
-// TODO: Remove this package?
-// import FormData from 'form-data'
-
 // Script to create the webhook callback from the Strava Webhook API.
-// Should only run in production environments!
+// Runlog API must be up and running on production for this to work! Must be able to hit
+// the callbackURL specified. See stravaWebhookVerification.js for details.
 // See: https://developers.strava.com/docs/webhooks/
 
 const runlogStravaToken = 'RunlogStravaToken' // arbitrary string
