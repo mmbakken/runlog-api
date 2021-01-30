@@ -6,6 +6,8 @@ import cors from 'cors'
 import authenticateToken from './auth/authenticateToken.js'
 import login from './auth/login.js'
 import stravaCodeToTokens from './auth/stravaCodeToTokens.js'
+import stravaWebhookVerification from './auth/stravaWebhookVerification.js'
+import stravaWebhookHandler from './auth/stravaWebhookHandler.js'
 import getUserDetails from './auth/getUserDetails.js'
 
 // Runs
@@ -81,6 +83,10 @@ app.post('/api/v1/users/login', login)
 // After user authorizes Runlog to access their Strava data, this endpoint takes the access
 // token and exchanges it for the user's access and refresh tokens for Strava API calls.
 app.post('/api/v1/users/:userId/stravaCode/:stravaCode', authenticateToken, stravaCodeToTokens)
+
+// Callback URL specified in scripts/createStravaWebhook.js
+app.get('/api/v1/strava/webhook', stravaWebhookVerification)
+app.post('/api/v1/strava/webhook', stravaWebhookHandler)
 
 // TODO: We also need to start issuing JWTs when login is successful
 
