@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
-import userSchema from '../db/userSchema.js'
+import UserModel from '../db/UserModel.js'
 
 // This script will add a user to the database with an encrypted password
 
@@ -18,20 +18,18 @@ db.on('error', console.error.bind(console, 'connection error:'))
 
 try {
   db.once('open', async () => {
-    const User = mongoose.model('User', userSchema)
-
     // Log all existing user records
     console.log('Existing users:')
-    console.log(await User.find())
+    console.log(await UserModel.find())
 
-    if (await User.exists({ email: userData.email })) {
+    if (await UserModel.exists({ email: userData.email })) {
       console.error(`Cannot add new user with email "${userData.email}": user already exists.`)
       db.close()
       return
     }
 
     const hashedPassword = await bcrypt.hash(userData.password, 10)
-    const user = new User({ ...userData, password: hashedPassword })
+    const user = new UserModel({ ...userData, password: hashedPassword })
 
     console.log('New user:')
     console.log(user.inspect())

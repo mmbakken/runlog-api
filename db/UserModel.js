@@ -19,4 +19,4 @@ const userSchema = new mongoose.Schema({
   hasStravaAuth: Boolean,
 })
 
-export default userSchema
+export default mongoose.model('Users', userSchema)

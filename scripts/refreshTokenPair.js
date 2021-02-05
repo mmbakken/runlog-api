@@ -2,7 +2,7 @@ import {} from 'dotenv/config.js'
 import mongoose from 'mongoose'
 import axios from 'axios'
 import qs from 'qs'
-import userSchema from '../db/userSchema.js'
+import UserModel from '../db/UserModel.js'
 
 // This script will exchange the refresh token for a new access token and refresh token
 // pair from the Fitbit OAuth2 API
@@ -19,9 +19,7 @@ db.on('error', console.error.bind(console, 'connection error:'))
 
 try {
   db.once('open', async () => {
-    const Users = mongoose.model('User', userSchema)
-
-    const user = await Users.findOne({ email: userEmail })
+    const user = await UserModel.findOne({ email: userEmail })
 
     if (user == null) {
       console.error(`No existing user with email "${userEmail}"`)

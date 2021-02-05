@@ -5,7 +5,9 @@ import mongoose from 'mongoose'
 const runSchema = new mongoose.Schema({
   userId: mongoose.ObjectId, // Runlog: 'user._id'
   name: String, // User can edit this field in Strava
-  startDate: Date,
+  startDate: Date, // ISO 8601 w/ UTC tz
+  startDateLocal: Date, // ISO 8601 w/ UTC tz but it's actually the local time. idk man.
+  timezone: String, // This is not just an offset
   time: Number, // Strava: 'moving_time'
   distance: Number, // In meters
   averageSpeed: Number, // In meters per second
@@ -13,9 +15,15 @@ const runSchema = new mongoose.Schema({
   hasHeartRate: Boolean,
   averageHeartRate: Number,
   maxHeartRate: Number,
+  deviceName: String,
   stravaActivityId: String, // Strava: 'id'
   stravaExternalId: String, // Strava: 'external_id', from Garmin or Fitbit, e.g.
 
+  // TODO: Mongoose supports a point Schema that might work better here:
+  // https://mongoosejs.com/docs/geojson.html
+  startLatitude: Number,
+  startLongitude: Number,
+ 
   // TODO: Retrieve these fields in a separate call, not part of the bulk import
   // Fields that have to be retrieved from Strava's get activity details endpoint
   // GET /activity/:id
@@ -30,4 +38,4 @@ const runSchema = new mongoose.Schema({
 //   didIce: Boolean,
 })
 
-export default runSchema
+export default mongoose.model('Runs', runSchema)

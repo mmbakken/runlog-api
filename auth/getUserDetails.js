@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import userSchema from '../db/userSchema.js'
+import UserModel from '../db/UserModel.js'
 
 // Returns more user fields to the client if they're already authenticated.
 // This is useful for refreshing the user data on the client if it has recently changed.
@@ -25,10 +25,8 @@ const getUserDetails = (req, res) => {
 
   try {
     db.once('open', async () => {
-      const User = mongoose.model('User', userSchema)
-
       // Look up user by email in mongo
-      User.findById(req.user.id, (err, user) => {
+      UserModel.findById(req.user.id, (err, user) => {
         if (err) {
           console.error(err)
           db.close()

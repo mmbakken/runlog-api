@@ -2,7 +2,7 @@ import {} from 'dotenv/config.js'
 import mongoose from 'mongoose'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import userSchema from '../db/userSchema.js'
+import UserModel from '../db/UserModel.js'
 
 // This script will retrieve a list of activity JSON objects from the Fitbit API.
 // See: https://dev.fitbit.com/build/reference/web-api/activity/#get-activity-logs-list
@@ -26,9 +26,7 @@ db.on('error', console.error.bind(console, 'connection error:'))
 
 try {
   db.once('open', async () => {
-    const Users = mongoose.model('User', userSchema)
-
-    const user = await Users.findOne({ email: userEmail })
+    const user = await UserModel.findOne({ email: userEmail })
 
     if (user == null) {
       console.error(`No existing user with email "${userEmail}"`)

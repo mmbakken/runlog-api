@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import userSchema from '../db/userSchema.js'
+import UserModel from '../db/UserModel.js'
 
 // Adds a Fitbit Access Token and Refresh Token pair to an existing user record
 
@@ -18,9 +18,7 @@ const userId = '68NWV8'
  
  try {
    db.once('open', async () => {
-     const Users = mongoose.model('User', userSchema)
- 
-     const user = await Users.findOne({ email: userEmail })
+     const user = await UserModel.findOne({ email: userEmail })
  
      if (user == null) {
        console.error(`No existing user with email "${userEmail}"`)

@@ -11,6 +11,7 @@ import stravaWebhookHandler from './auth/stravaWebhookHandler.js'
 import getUserDetails from './auth/getUserDetails.js'
 
 // Runs
+import getRuns from './runs/getRuns.js'
 import getStravaRuns from './runs/getStravaRuns.js'
 
 const app = express()
@@ -24,6 +25,12 @@ if (process.env.USE_CORS === 'true') {
 
 // Able to receive JSON payloads
 app.use(express.json())
+
+// Simple request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`)
+  next()
+})
 
 app.get('/api/v1', (req, res) => {
   res.send('Runlog API v1 ✌️')
@@ -40,32 +47,8 @@ app.get('/api/v1/hello', (req, res) => {
 // Retrieve the latest run activities from Strava for the logged in user.
 app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
 
-// Get the routes for this user. Requires a JWT with the user's id in it.
-app.get('/api/v1/runs', authenticateToken, (req, res) => {
-  console.dir(req.user)
-
-  res.json({
-    runs: [
-      {
-        id: 1,
-        date: '2020-12-18',
-        userId: '',
-        userName: 'Matt Bakken',
-        distance: 7.55,
-        distanceUnits: 'Miles'
-      },
-
-      {
-        id: 2,
-        date: '2020-12-19',
-        userId: '',
-        userName: 'Matt Bakken',
-        distance: 8.17,
-        distanceUnits: 'Miles'
-      }
-    ]
-  })
-})
+// Get the Runlog runs for this user.
+app.get('/api/v1/runs', authenticateToken, getRuns)
 
 /*
  *  LOGIN ROUTES
