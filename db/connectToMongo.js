@@ -1,36 +1,35 @@
 import mongoose from 'mongoose'
 
-// Returns the Mongoose db object
+// Connect to the database. This happens async behind the scenes, but Mongoose will batch
+// up any queries we make until this is successful. Also handles closing the db when the
+// app is done.
 const connectToMongo = () => {
-  return new Promise((resolve, reject) => {
-    // Connect to DB
-    // Connect mongoose to the database
+  // Build the connection string 
+  const dbURI = 'mongodb://localhost/runlog' 
 
-    try {
-      console.log('Trying to connect to Mongoose...')
+  mongoose.connect(dbURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
 
-      mongoose.connect(
-        'mongodb://localhost/runlog',
-        {
-          useNewUrlParser: true,
-          useUnifiedTopology: true
-        }
-      )
+  mongoose.connection.on('connected', () => {
+    console.log('Mongoose default connection open to ' + dbURI)
+  }) 
 
-      const db = mongoose.connection
+  mongoose.connection.on('error', (err) => {
+    console.error('Mongoose default connection error: ' + err)
+  }) 
 
-      // Handles errors after connection
-      db.on('error', () => {
-        return reject(new Error(console.error.bind(console, 'connection error:')))
-      })
+  mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose default connection disconnected') 
+  })
 
-      db.once('open', () => {
-        console.log('Connected to Mongoose')
-        return resolve(db)
-      })
-    } catch (error) {
-      return reject(new Error('Unable to connect to Mongoose'))
-    }
+  // If the Node process ends, close the Mongoose connection
+  process.on('SIGINT', () => {
+    mongoose.connection.close(() => {
+      console.log('Mongoose default connection disconnected through app termination') 
+      process.exit(0) 
+    })
   })
 }
 

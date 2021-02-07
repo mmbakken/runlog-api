@@ -1,5 +1,5 @@
 import {} from 'dotenv/config.js'
-import mongoose from 'mongoose'
+import connectToMongo from './db/connectToMongo.js'
 import axios from 'axios'
 import qs from 'qs'
 import UserModel from '../db/UserModel.js'
@@ -7,24 +7,22 @@ import UserModel from '../db/UserModel.js'
 // This script will exchange the refresh token for a new access token and refresh token
 // pair from the Fitbit OAuth2 API
 
-/*
-  COPY USER INFO HERE
-*/
-const userEmail = 'mmbakken@gmail.com'
+const refreshFitbitTokens = async () => {
+  if (process.argv.length !== 3 || process.argv[2] == null) {
+    console.log('Usage: $ node scripts/refreshFitbitTokens.js <userEmail>')
+    return -1
+  }
 
-// Connect mongoose to the database
-mongoose.connect('mongodb://localhost/runlog', {useNewUrlParser: true, useUnifiedTopology: true})
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
+  const userEmail = process.argv[2]
 
-try {
-  db.once('open', async () => {
+  connectToMongo()
+
+  try {
     const user = await UserModel.findOne({ email: userEmail })
 
     if (user == null) {
       console.error(`No existing user with email "${userEmail}"`)
-      db.close()
-      return
+      return -1
     }
 
     // Use the refresh token to get a new token pair
@@ -36,7 +34,7 @@ try {
     const clientSecret = process.env.FITBIT_CLIENT_SECRET
     const basicAuthPassword = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
-    axios({
+    const response = await axios({
       method: 'post',
       url: 'https://api.fitbit.com/oauth2/token',
       data: qs.stringify({
@@ -47,21 +45,17 @@ try {
         'Authorization': `Basic ${basicAuthPassword.toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-    }).then(async (response) => {
-      console.log('Token refreshed successfully')
-
-      user.fitbitAccessToken = response.data.access_token
-      user.fitbitRefreshToken = response.data.refresh_token
-
-      await user.save()
-      db.close()
-    }).catch((error) => {
-      console.error(error.toJSON())
-      db.close()
-      return
     })
-  })
-} catch (err) {
-  console.error(err)
-  db.close()
+
+    console.log('Token refreshed successfully')
+
+    user.fitbitAccessToken = response.data.access_token
+    user.fitbitRefreshToken = response.data.refresh_token
+
+    await user.save()
+  } catch (err) {
+    console.error(err)
+  }
 }
+
+refreshFitbitTokens()

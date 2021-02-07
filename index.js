@@ -1,6 +1,10 @@
 import {} from 'dotenv/config.js'
 import express from 'express'
 import cors from 'cors'
+import { DateTime } from 'luxon'
+
+// Database
+import connectToMongo from './db/connectToMongo.js'
 
 // Authentication
 import authenticateToken from './auth/authenticateToken.js'
@@ -23,12 +27,14 @@ if (process.env.USE_CORS === 'true') {
   app.use(cors())
 }
 
+connectToMongo()
+
 // Able to receive JSON payloads
 app.use(express.json())
 
 // Simple request logging middleware
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`)
+  console.log(`${DateTime.utc().toString()} ${req.method} ${req.originalUrl}`)
   next()
 })
 
@@ -40,9 +46,8 @@ app.get('/api/v1/hello', (req, res) => {
   res.send('hello, stranger 👁️👄👁️')
 })
 
-/*
- *  RUN ROUTES
- */
+
+// RUN ROUTES
 
 // Retrieve the latest run activities from Strava for the logged in user.
 app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
@@ -50,9 +55,8 @@ app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
 // Get the Runlog runs for this user.
 app.get('/api/v1/runs', authenticateToken, getRuns)
 
-/*
- *  LOGIN ROUTES
- */
+
+// LOGIN ROUTES
 
 // For now, there is no way to create a user account except via the database.
 // See scripts/createUser.js
@@ -62,6 +66,9 @@ app.get('/api/v1/users/:userId', authenticateToken, getUserDetails)
 
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
+
+
+// STRAVA AUTH AND API HANDLERS
 
 // After user authorizes Runlog to access their Strava data, this endpoint takes the access
 // token and exchanges it for the user's access and refresh tokens for Strava API calls.

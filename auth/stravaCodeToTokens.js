@@ -1,7 +1,6 @@
 import {} from 'dotenv/config.js'
 import axios from 'axios'
 import qs from 'qs'
-import connectToMongo from '../db/connectToMongo.js'
 import UserModel from '../db/UserModel.js'
 
 const stravaCodeToTokens = async (req, res) => {
@@ -13,12 +12,10 @@ const stravaCodeToTokens = async (req, res) => {
   }
 
   try {
-    const db = await connectToMongo()
     const user = await UserModel.findById(userId)
 
     if (user == null) {
       console.error(`Unable to complete Strava code/token exchange: Unable to find user with id "${userId}"`)
-      db.close()
       return res.sendStatus(400)
     }
 
@@ -52,7 +49,6 @@ const stravaCodeToTokens = async (req, res) => {
     user.stravaTokenExpiresAt = parseInt(response.data.expires_at) * 1000
 
     await user.save()
-    db.close()
     return res.sendStatus(200)
   } catch (error) {
     console.error(error)

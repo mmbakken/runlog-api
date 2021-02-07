@@ -1,10 +1,9 @@
-import mongoose from 'mongoose'
 import UserModel from '../db/UserModel.js'
 
 // Returns more user fields to the client if they're already authenticated.
 // This is useful for refreshing the user data on the client if it has recently changed.
 
-const getUserDetails = (req, res) => {
+const getUserDetails = async (req, res) => {
   // Can't rely on the JWT for the user ID since some users can request OTHER user's records
   if (req.params.userId == null) {
     console.error('Unable to provide user details: userId missing in route params.')
@@ -18,40 +17,24 @@ const getUserDetails = (req, res) => {
     return res.sendStatus(403)
   }
 
-  // Connect mongoose to the database
-  mongoose.connect('mongodb://localhost/runlog', { useNewUrlParser: true, useUnifiedTopology: true })
-  const db = mongoose.connection
-  db.on('error', console.error.bind(console, 'connection error:'))
-
   try {
-    db.once('open', async () => {
-      // Look up user by email in mongo
-      UserModel.findById(req.user.id, (err, user) => {
-        if (err) {
-          console.error(err)
-          db.close()
-          return res.sendStatus(500)
-        }
+    // Look up user by email in mongo
+    const user = await UserModel.findById(req.user.id)
 
-        if (user == null) {
-          console.error(`Unable to find user with id "${req.user.id}"`)
-          db.close()
-          return res.sendStatus(400)
-        }
+    if (user == null) {
+      console.error(`Unable to find user with id "${req.user.id}"`)
+      return res.sendStatus(400)
+    }
 
-        db.close()
-        return res.json({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          hasFitbitAuth: user.hasFitbitAuth || false,
-          hasStravaAuth: user.hasStravaAuth || false,
-        })
-      })
+    return res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      hasFitbitAuth: user.hasFitbitAuth || false,
+      hasStravaAuth: user.hasStravaAuth || false,
     })
   } catch (err) {
     console.error(err)
-    db.close()
     return res.sendStatus(500)
   }
 }

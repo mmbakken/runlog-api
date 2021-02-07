@@ -1,5 +1,4 @@
 import axios from 'axios'
-import connectToMongo from '../db/connectToMongo.js'
 import UserModel from '../db/UserModel.js'
 import RunModel from '../db/RunModel.js'
 import { useFreshTokens } from '../auth/stravaTokens.js'
@@ -15,14 +14,11 @@ import { useFreshTokens } from '../auth/stravaTokens.js'
 
 const createNewActivity = async (activityId, athleteId) => {
   try {
-    const db = await connectToMongo()
-
     // Look up user by strava athlete id in mongo and get the token
     const user = await UserModel.findOne({ stravaUserId: athleteId })
 
     if (user == null) {
       console.error(`No user found for Strava athlete id "${athleteId}"`)
-      db.close()
       return
     }
 
@@ -44,7 +40,6 @@ const createNewActivity = async (activityId, athleteId) => {
     // Make sure we want to track it
     if (response.data.type !== 'Run') {
       console.log('Activity was not a run, disregard this one.')
-      db.close()
       return
     }
 
@@ -72,11 +67,9 @@ const createNewActivity = async (activityId, athleteId) => {
 
       console.log(`New run created successfully. Runlog Id: "${newRun._id}", Strava activityId: "${activityId}"`)
 
-      db.close()
       return
     } else {
       console.log('Activity already exists in db. Will not add a duplicate.')
-      db.close()
       return
     }
   } catch (err) {
@@ -126,6 +119,17 @@ const stravaWebhookHandler = async (req, res) => {
   //   owner_id: 8843745,
   //   subscription_id: 179879,
   //   updates: { title: 'Easy run' }
+  // }
+
+  // E.g. User deauthorizes Runlog from their Strava account
+  // {
+  //   aspect_type: 'update',
+  //   event_time: 1612570859,
+  //   object_id: 8843745,
+  //   object_type: 'athlete',
+  //   owner_id: 8843745,
+  //   subscription_id: 179879,
+  //   updates: { authorized: 'false' }
   // }
 
   if (req.body.object_type === 'activity' && req.body.aspect_type === 'create') {

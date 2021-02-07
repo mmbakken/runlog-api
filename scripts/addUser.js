@@ -1,30 +1,24 @@
 import bcrypt from 'bcrypt'
-import mongoose from 'mongoose'
+import connectToMongo from '../db/connectToMongo.js'
 import UserModel from '../db/UserModel.js'
 
 // This script will add a user to the database with an encrypted password
-
 const userData = {
   email: 'mmbakken@gmail.com',
   name: 'Matt Bakken',
-  password: 'majora6669',
+  password: 'goosethedog',
 }
 
+const addUser = async (userData) => {
+  connectToMongo()
 
-// Connect mongoose to the database
-mongoose.connect('mongodb://localhost/runlog', {useNewUrlParser: true, useUnifiedTopology: true})
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
-
-try {
-  db.once('open', async () => {
+  try {
     // Log all existing user records
     console.log('Existing users:')
-    console.log(await UserModel.find())
+    console.log(await UserModel.find({}, 'email'))
 
     if (await UserModel.exists({ email: userData.email })) {
       console.error(`Cannot add new user with email "${userData.email}": user already exists.`)
-      db.close()
       return
     }
 
@@ -36,10 +30,10 @@ try {
 
     await user.save()
 
-    db.close()
     return
-  })
-} catch (err) {
-  console.error(err)
-  db.close()
+  } catch (err) {
+    console.error(err)
+  }
 }
+
+addUser(userData)
