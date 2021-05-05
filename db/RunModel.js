@@ -23,6 +23,13 @@ const runSchema = new mongoose.Schema({
   // https://mongoosejs.com/docs/geojson.html
   startLatitude: Number,
   startLongitude: Number,
+
+  // User editable fields
+  shoes: { type: String, default: null },
+  ice: { type: Boolean, default: false},
+  stretch: { type: Boolean, default: false},
+  strength: { type: String, default: null},
+  results: { type: String, default: null },
  
   // TODO: Retrieve these fields in a separate call, not part of the bulk import
   // Fields that have to be retrieved from Strava's get activity details endpoint
