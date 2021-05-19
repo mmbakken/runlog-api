@@ -1,7 +1,7 @@
 import RunModel from '../db/RunModel.js'
 
 // Returns the logged in user's runs from the database.
-const getRuns = async (req, res) => {
+const getAllRuns = async (req, res) => {
   const runsArray = await RunModel.find({ userId: req.user.id }).lean()
 
   // Turn it into a map like {runId: {runField1: runValue1, ... }} so it's easier to lookup a single
@@ -17,4 +17,4 @@ const getRuns = async (req, res) => {
   return
 }
 
-export default getRuns
+export default getAllRuns

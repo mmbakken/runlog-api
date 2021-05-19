@@ -15,7 +15,8 @@ import stravaWebhookHandler from './auth/stravaWebhookHandler.js'
 import getUserDetails from './auth/getUserDetails.js'
 
 // Runs
-import getRuns from './runs/getRuns.js'
+import getAllRuns from './runs/getAllRuns.js'
+import getRun from './runs/getRun.js'
 import getStravaRuns from './runs/getStravaRuns.js'
 
 const app = express()
@@ -52,8 +53,11 @@ app.get('/api/v1/hello', (req, res) => {
 // Retrieve the latest run activities from Strava for the logged in user.
 app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
 
+// Get one specific Runlog run object
+app.get('/api/v1/runs/:runId', authenticateToken, getRun)
+
 // Get the Runlog runs for this user.
-app.get('/api/v1/runs', authenticateToken, getRuns)
+app.get('/api/v1/runs', authenticateToken, getAllRuns)
 
 
 // LOGIN ROUTES
