@@ -17,6 +17,7 @@ import getUserDetails from './auth/getUserDetails.js'
 // Runs
 import getAllRuns from './runs/getAllRuns.js'
 import getRun from './runs/getRun.js'
+import updateRun from './runs/updateRun.js'
 import getStravaRuns from './runs/getStravaRuns.js'
 
 const app = express()
@@ -58,6 +59,9 @@ app.get('/api/v1/runs/:runId', authenticateToken, getRun)
 
 // Get the Runlog runs for this user.
 app.get('/api/v1/runs', authenticateToken, getAllRuns)
+
+// Update the Runlog run object with any fields included in the message body
+app.put('/api/v1/runs/:runId', authenticateToken, updateRun)
 
 
 // LOGIN ROUTES
