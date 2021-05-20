@@ -1,5 +1,5 @@
-import connectToMongo from '../db/connectToMongo.js'
-import RunModel from '../db/RunModel.js'
+import connectToMongo from '../../db/connectToMongo.js'
+import RunModel from '../../db/RunModel.js'
 
 // This script changes run.strength into a boolean field, instead of a string.
 const makeStrengthFieldBoolean = async () => {
