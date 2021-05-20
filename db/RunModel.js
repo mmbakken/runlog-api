@@ -25,11 +25,11 @@ const runSchema = new mongoose.Schema({
   startLongitude: Number,
 
   // User editable fields
+  results: { type: String, default: null },
   shoes: { type: String, default: null },
   ice: { type: Boolean, default: false},
   stretch: { type: Boolean, default: false},
-  strength: { type: String, default: null},
-  results: { type: String, default: null },
+  strength: { type: Boolean, default: false},
  
   // TODO: Retrieve these fields in a separate call, not part of the bulk import
   // Fields that have to be retrieved from Strava's get activity details endpoint
