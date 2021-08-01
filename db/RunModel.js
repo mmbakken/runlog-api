@@ -8,6 +8,7 @@ const runSchema = new mongoose.Schema({
   startDate: Date, // ISO 8601 w/ UTC tz
   startDateLocal: Date, // ISO 8601 w/ UTC tz but it's actually the local time. idk man.
   timezone: String, // This is not just an offset
+  title: String, // Set based on the startDate and timezone. Can be modified by user.
   time: Number, // Strava: 'moving_time'
   distance: Number, // In meters
   averageSpeed: Number, // In meters per second
