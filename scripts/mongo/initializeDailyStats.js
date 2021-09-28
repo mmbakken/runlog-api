@@ -120,33 +120,23 @@ const initializeDailyStats = async () => {
         // Does a dailyStats record exist for this date?
         if (dailyStats[dateStr] != null) {
           // 7-day distance is just the sum of all distance for previous 6 days
+          console.log('    adding to 7day total')
           currentDailyStats.sevenDayDistance += dailyStats[dateStr].distance
-
-          
 
           // Have we hit the start of this week yet? If so, do not add this to the weekly distance
           if (!hitStartOfWeek) {
+            console.log('    adding to weekly total')
+
             // Update the halting flag, then add this date's distance to the weekly sum.
             hitStartOfWeek = date.weekday === user.stats.weekStartsOn
-            console.log(`    hitStartOfWeek is now ${hitStartOfWeek}; updating weeklyDistance regardless!`)
             currentDailyStats.weeklyDistance += dailyStats[dateStr].distance
-          } else{
-            console.log('    Already hit start of the week!')
           }
-        } else {
-          console.log('    => No dailyStats object for this date, skipping')
-
-          if (!hitStartOfWeek) {
-            // Even if the dailyStats object doesn't exist, we should see if this date is the first
-            // one of the week.
-            hitStartOfWeek = date.weekday === user.stats.weekStartsOn
-
-            console.log(`    hitStartOfWeek is now ${hitStartOfWeek}`)
-          }
+        } else if (!hitStartOfWeek) {
+          // Even if the dailyStats object doesn't exist, we should see if this date is the first
+          // one of the week.
+          hitStartOfWeek = date.weekday === user.stats.weekStartsOn
         }
       }
-      console.log('~~~~~~~~~~~~~~~~~~~~~')
-      console.log('\n\n')
     }
 
     console.log('\n\n\n')
