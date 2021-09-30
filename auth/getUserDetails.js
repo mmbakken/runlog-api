@@ -32,6 +32,7 @@ const getUserDetails = async (req, res) => {
       email: user.email,
       hasFitbitAuth: user.hasFitbitAuth || false,
       hasStravaAuth: user.hasStravaAuth || false,
+      stats: user.stats,
     })
   } catch (err) {
     console.error(err)
