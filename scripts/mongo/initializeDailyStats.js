@@ -40,7 +40,7 @@ const initializeDailyStats = async () => {
     try {
       allRuns = await RunModel.find(
         { userId: userId }, // all runs for this user
-        '_id startDate distance'
+        '_id startDate distance title'
       ).lean()
     } catch (err) {
       console.error(err)
@@ -63,6 +63,7 @@ const initializeDailyStats = async () => {
         dailyStats[startDate] = {
           ...dailyStats[startDate],
           distance: dailyStats[startDate].distance + run.distance,
+          title: 'Multiple runs',
           runIds: [
             ...dailyStats[startDate].runIds,
             run._id
@@ -74,6 +75,7 @@ const initializeDailyStats = async () => {
           userId: userId,
           date: startDate,
           distance: run.distance,
+          title: run.title,
           runIds: [run._id],
 
           // Add these fields later when we know which dates exist and their daily distance totals

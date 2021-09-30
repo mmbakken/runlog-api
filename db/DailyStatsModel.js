@@ -9,6 +9,7 @@ const dailyStatsSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
+  title: { type: String },
   runIds: [{ type: mongoose.ObjectId }],
   distance: { type: Number, default: 0 }, // Total of the distances of each run in runIds (in meters)
   sevenDayDistance: { type: Number, default: 0 }, // The running total of distance today + previous 6 days (in meters)
