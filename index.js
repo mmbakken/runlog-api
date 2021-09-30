@@ -20,6 +20,9 @@ import getRun from './runs/getRun.js'
 import updateRun from './runs/updateRun.js'
 import getStravaRuns from './runs/getStravaRuns.js'
 
+// DailyStats
+import getAllDailyStats from './dailyStats/getAllDailyStats.js'
+
 const app = express()
 const port = 4000
 
@@ -62,6 +65,12 @@ app.get('/api/v1/runs', authenticateToken, getAllRuns)
 
 // Update the Runlog run object with any fields included in the message body
 app.put('/api/v1/runs/:runId', authenticateToken, updateRun)
+
+
+// DAILY STATS ROUTES
+
+// Retrieve all daily stats documents for this user.
+app.get('/api/v1/dailyStats', authenticateToken, getAllDailyStats)
 
 
 // LOGIN ROUTES
