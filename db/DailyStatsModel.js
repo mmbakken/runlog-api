@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 const dailyStatsSchema = new mongoose.Schema({
   userId: { type: mongoose.ObjectId, default: null }, // Runlog: 'user._id'
   date: {
-    type: String, // ISO-8601 date format like 'yyyy-mm-dd'
+    type: Date, // ISO-8601 date format like 'yyyy-mm-dd'
     default: null,
     required: true,
   },

@@ -40,7 +40,7 @@ const initializeDailyStats = async () => {
     try {
       allRuns = await RunModel.find(
         { userId: userId }, // all runs for this user
-        '_id startDate distance title'
+        '_id startDate timezone distance title'
       ).lean()
     } catch (err) {
       console.error(err)
@@ -54,8 +54,11 @@ const initializeDailyStats = async () => {
     for (let j = 0; j < allRuns.length; j++) {
       let run = allRuns[j]
 
+      // Timeone field has a weird format like "(GMT-07:00) America/Denver", just ignore the offset
+      const tz = run.timezone.split(' ')[1]
+
       // Convert the run's full timestamp into a simpler yyyy-mm-dd date string
-      const startDate = DateTime.fromJSDate(run.startDate).toISODate()
+      const startDate = DateTime.fromJSDate(run.startDate, { zone: tz }).toISODate()
 
       // Is there is a DailyStats object with this run's startDate already?
       if (Object.keys(dailyStats).includes(startDate)) {
