@@ -105,7 +105,7 @@ const initializeDailyStats = async () => {
       const currentDate = DateTime.fromISO(currentDailyStats.date)
       let hitStartOfWeek = currentDate.weekday === user.stats.weekStartsOn // Set to true once first day of this week is found
 
-      console.log(`Date: ${dates[i]}`)
+      console.log(`DailyStats date: ${dates[i]}`)
       console.log(`weekday: ${currentDate.weekday}`)
       console.log('~~~~~~~~~~~~~~~~~~~~~')
       
@@ -119,8 +119,7 @@ const initializeDailyStats = async () => {
         let date = currentDate.minus({ day: dayOffset })
         const dateStr = date.toISODate()
 
-        console.log(`date: ${dateStr}`)
-        console.log(`weekday: ${date.weekday}`)
+        console.log(`date: ${dateStr} / weekday: ${date.weekday}`)
 
         // Does a dailyStats record exist for this date?
         if (dailyStats[dateStr] != null) {

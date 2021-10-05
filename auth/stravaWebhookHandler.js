@@ -1,7 +1,10 @@
 import axios from 'axios'
 import UserModel from '../db/UserModel.js'
 import RunModel from '../db/RunModel.js'
+//import DailyStatsModel from '../db/DailyStatsModel.js'
 import { useFreshTokens } from '../auth/stravaTokens.js'
+import generateTitle from '../runs/generateTitle.js'
+//import { DateTime } from 'luxon'
 
 // This route is for handling requests sent by Strava as part of their Webhook API.
 // When a new activity is added to Strava or a user deauthorizes Runlog from their OAuth 
@@ -52,6 +55,7 @@ const createNewActivity = async (activityId, athleteId) => {
         startDateLocal: response.data.start_date_local,
         timezone: response.data.timezone,
         time: response.data.moving_time,
+        title: generateTitle(response.data.start_date),
         distance: response.data.distance,
         averageSpeed: response.data.average_speed,
         totalElevationGain: response.data.total_elevation_gain,
@@ -66,6 +70,81 @@ const createNewActivity = async (activityId, athleteId) => {
       })
 
       console.log(`New run created successfully. Runlog Id: "${newRun._id}", Strava activityId: "${activityId}"`)
+
+//        A new run means daily totals have changed.
+//        Either create a new DailyStats document for this date, or look up the existing DailyStats
+//        document for this date and add distances and this runId to the document.
+//       const date = DateTime.fromISO(response.data.start_date)
+//       const priorDailyStats = await DailyStatsModel.find({ date: date.toISODate() })
+// 
+//        None exists => Make a new DailyStats document and save it
+//       if (priorDailyStats == null) {
+//          Need to determine the running totals for the other distance fields
+//         let sevenDayDistance = newRun.distance
+//         let weeklyDistance = newRun.distance
+// 
+//          These distances are determined by the distances of (at most) the previous 6 days of runs
+//         const previousDailyStats = await DailyStatsModel.find({
+//           date: {
+//             $or: [
+//               {$gte: date.minus({ days: 6 }).toISODate() },
+//               {$lte: date.toISODate() }
+//             ]
+//           }
+//         })
+// 
+//          How many days earlier is the start of this week?
+// 
+//          For each of the previous six consecutive dates (if any), add the distance to the weekly
+//          and sevenDay mileage, if applicable.
+// 
+//          Is the previous date we're considering part of the new run's week?
+//         let isInCurrentWeek = date.weekday - user.stats.startOfWeek
+// 
+//          For all 6 previous dates, check if there's a dailyStats object
+//          If so, add to the sevenDayDistance and check if this is in the current week
+//          Regardless
+//         const previousSixDates = [
+//           date.minus({ days: 1 }).toISODate(),
+//           date.minus({ days: 2 }).toISODate(),
+//           date.minus({ days: 3 }).toISODate(),
+//           date.minus({ days: 4 }).toISODate(),
+//           date.minus({ days: 5 }).toISODate(),
+//           date.minus({ days: 6 }).toISODate()
+//         ]
+// 
+//         for (let i = 0; i< previousDailyStats.length; i++) {
+//            Always add to the sevenDay total
+//           sevenDayDistance += previousDailyStats[i].distance
+// 
+//            Only add to the weekly total if this date is in the same week as the new run's date
+//            
+// 
+//           await previousDailyStats[i].save()
+//         }
+// 
+//          Save the new DailyStats
+//         await DailyStatsModel.create({
+//           userId: user._id,
+//           date: date.toISODate(),
+//           runIds: [newRun._id],
+//           title: newRun.title,
+//           distance: newRun.distance,
+//           sevenDayDistance: sevenDayDistance,
+//           weeklyDistance: weeklyDistance,
+//         })
+//       } else {
+//          Update the distances, runIds, and title
+//         priorDailyStats.title = 'Multiple runs'
+//         priorDailyStats.runIds = [
+//           ...priorDailyStats.runIds,
+//           newRun._id,
+//         ]
+//         priorDailyStats.distance += newRun.distance
+//         priorDailyStats.sevenDayDistance += newRun.distance
+//         priorDailyStats.weeklyDistance += newRun.distance  Same date => nothing fancy needed here
+//         await priorDailyStats.save()
+//       }
 
       return
     } else {

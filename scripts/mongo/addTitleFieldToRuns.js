@@ -1,41 +1,9 @@
 import connectToMongo from '../../db/connectToMongo.js'
 import RunModel from '../../db/RunModel.js'
-import { DateTime } from 'luxon'
+import generateTitle from '../../runs/generateTitle.js'
 
 // This script adds a string field `title` to all run objects. The value is added to each existing
 // run based on the same logic (at time of writing) as used in the RunPage.js component.
-
-// Given a run, returns a title string to use, based on the time of day
-const generateTitle = (runStartTime, timezone) => {
-  const dt = DateTime.fromJSDate(runStartTime, { zone: timezone })
-
-  console.dir(runStartTime)
-  console.dir(timezone)
-
-  // Thresholds
-  const startOfMorning = dt.set({ hour: 4, minute: 0, second: 0 })
-  const startOfAfternoon = dt.set({ hour: 12, minute: 0, second: 0 })
-  const startOfEvening = dt.set({ hour: 17, minute: 0, second: 0 })
-  const startOfLateNight = dt.set({ hour: 22, minute: 0, second: 0 })
-
-  console.log('dt:')
-  console.dir(dt)
-  console.log('~~~~~')
-  console.dir(startOfMorning)
-  console.dir(startOfAfternoon)
-  console.dir(startOfEvening)
-  console.dir(startOfLateNight)
-
-  if (dt < startOfMorning || dt >= startOfLateNight) {
-    return 'Late Night Run'
-  } else if (dt < startOfAfternoon) {
-    return 'Morning Run'
-  } else if (dt < startOfEvening) {
-    return 'Afternoon Run'
-  } else {
-    return 'Evening Run'
-  }
-}
 
 // Main function call for script
 const addTitleFieldToRuns = async () => {
