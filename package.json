@@ -5,7 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start-dev": "nodemon index.js"
+    "start-dev": "nodemon index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -20,7 +21,7 @@
   },
   "devDependencies": {
     "eslint": "^7.17.0",
-    "jest": "^26.6.3",
+    "jest": "^27.2.5",
     "nodemon": "^2.0.6"
   },
   "eslintConfig": {
@@ -41,5 +42,12 @@
         "single"
       ]
     }
+  },
+  "jest": {
+    "moduleFileExtensions": ["js"],
+    "moduleDirectories": ["node_modules", "runlog-api"],
+    "testEnvironment": "node",
+    "transform": {},
+    "transformIgnorePatterns": ["<rootDir>/node_modules/"]
   }
 }

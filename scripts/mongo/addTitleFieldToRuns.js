@@ -1,4 +1,5 @@
 import connectToMongo from '../../db/connectToMongo.js'
+import disconnectFromMongo from '../../db/disconnectFromMongo.js'
 import RunModel from '../../db/RunModel.js'
 import generateTitle from '../../runs/generateTitle.js'
 
@@ -33,10 +34,10 @@ const addTitleFieldToRuns = async () => {
     }
 
     console.log(`${allRuns.length} runs found, ${nModified} updated.`)
-
-    return
   } catch (err) {
     console.error(err)
+  } finally {
+    disconnectFromMongo()
   }
 }
 
