@@ -23,15 +23,15 @@ import DailyStatsModel from '../db/DailyStatsModel.js'
 const updateDailyStats = async (newRun, user) => {
   // Timeone field has a weird format like "(GMT-07:00) America/Denver", just ignore the offset
   const tz = newRun.timezone.split(' ')[1]
-  const date = DateTime.fromJSDate(newRun.startDate, { zone: tz })
+  const runStartDate = DateTime.fromJSDate(newRun.startDate, { zone: tz })
 
-  let currentDailyStats = await DailyStatsModel.find({ date: date.toISODate() })
+  let currentDailyStats = await DailyStatsModel.findOne({ date: runStartDate.toISODate(), userId: user._id })
 
   // None exists => Make a new DailyStats document for today's run date
   if (currentDailyStats == null) {
     currentDailyStats = new DailyStatsModel({
       userId: user._id,
-      date: date.toISODate(),
+      date: runStartDate.toISODate(),
       runIds: [newRun._id],
       title: newRun.title,
       distance: newRun.distance,
@@ -40,15 +40,15 @@ const updateDailyStats = async (newRun, user) => {
     })
   }
 
-  // Step 1: Update this date's sevenDayDistance and weeklyDistance fields.
+  // Step 1: Update this date's DailyStats' sevenDayDistance and weeklyDistance fields.
   // - sevenDayDistance: All prior dates within 7 days should be added to today's distance.
   // - weeklyDistance: All prior dates in the current week should be added to today's distance.
 
   // Find the DailyStats for the prior 6 days (if any exist)
   const recentDailyStats = await DailyStatsModel.find({
     date: {
-      $lt: date.toISODate(),
-      $gte: date.minus({ days: 6 }).toISODate()
+      $lt: runStartDate.toISODate(),
+      $gte: runStartDate.minus({ days: 6 }).toISODate()
     }
   }).sort('date', -1)
 
@@ -61,11 +61,11 @@ const updateDailyStats = async (newRun, user) => {
       recentDatesMap[thisDS.date.toISODate()] = thisDS
     }
 
-    let foundStartOfWeek = date.weekday === user.stats.weekStartsOn
+    let foundStartOfWeek = runStartDate.weekday === user.stats.weekStartsOn
 
     // For each of the prior 6 dates, update the sevenDay and weekly totals as necessary
-    for (let i = 1; i <= 6; i++) {
-      let compareDate = date.minus({ days: i })
+    for (let i = 1; i <= 6 || foundStartOfWeek; i++) {
+      let compareDate = runStartDate.minus({ days: i })
       let compareDailyStats = recentDatesMap[compareDate.toISODate()]
 
       // A DailyStats document may not exist for this date
@@ -98,8 +98,8 @@ const updateDailyStats = async (newRun, user) => {
   // Get the next seven date's DailyStats documents
   const upcomingDailyStats = await DailyStatsModel.find({
     date: {
-      $gt: date.toISODate(),
-      $lte: date.plus({ days: 6 }).toISODate()
+      $gt: runStartDate.toISODate(),
+      $lte: runStartDate.plus({ days: 6 }).toISODate()
     }
   }).sort('date', 1)
 
@@ -113,21 +113,23 @@ const updateDailyStats = async (newRun, user) => {
     }
 
     // For each of the next 6 dates, update the sevenDay and weekly totals as necessary
-    let foundEndOfWeek
-    for (let i = 1; i <= 6; i++) {
-      let compareDate = date.plus({ days: i })
-      let compareDailyStats = recentDatesMap[compareDate.toISODate()]
+    let foundEndOfWeek = false
+    for (let i = 1; i <= 6 || foundEndOfWeek; i++) {
+      let compareDate = runStartDate.plus({ days: i })
+      let compareDailyStats = upcomingDatesMap[compareDate.toISODate()]
 
       // A DailyStats document may not exist for this date
       if (compareDailyStats) {
         // sevenDayDistance: Always add today's distance
         compareDailyStats.sevenDayDistance += currentDailyStats.distance
 
-        // Have we hit the start of the week for this run? If so, don't add to the weekly total
+        // Have we hit the end of the week for this run? If so, don't add to the weekly total
         foundEndOfWeek = compareDate.weekday === user.stats.weekStartsOn
         if (!foundEndOfWeek) {
           compareDailyStats.weeklyDistance += currentDailyStats.distance
         }
+
+        await compareDailyStats.save()
       } else {
         // Even if the dailyStats object doesn't exist, we should see if this date is the first
         // one of the week.
@@ -135,9 +137,6 @@ const updateDailyStats = async (newRun, user) => {
       }
     }
   }
-
-  // Done updating the upcoming DailyStats documents
-  await currentDailyStats.save()
 }
 
 export default updateDailyStats

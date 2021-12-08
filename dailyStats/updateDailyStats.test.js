@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon'
 import mongoose from 'mongoose'
-import connectToMongo from '../db/connectToMongo.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
@@ -29,11 +28,19 @@ import { expect, beforeAll, afterEach, afterAll, test } from '@jest/globals'
 // - Add DailyStats to DB, validate
 // - Tear down db
 
-// STEP 2: Given a run object and user object, make sure 
+// TODO: this isn't working and I have no idea why.
 
 beforeAll(async () => {
   // Set up test DB
-  await connectToMongo('test')
+  try {
+    await mongoose.connect('mongodb://localhost/test', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+  } catch (err) {
+    console.error('Failed to connect to Mongoose')
+    console.dir(err)
+  }
 })
 
 afterEach(async () => {
@@ -43,9 +50,9 @@ afterEach(async () => {
   await UserModel.deleteMany()
 })
 
-afterAll(() => {
+afterAll(async () => {
   // Tear down test DB
-  mongoose.connection.close()
+  return mongoose.connection.close()
 })
 
 test('Can create a new DailyStats document', async () => {
