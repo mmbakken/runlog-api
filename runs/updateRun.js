@@ -1,4 +1,5 @@
 import RunModel from '../db/RunModel.js'
+import DailyStatsModel from '../db/DailyStatsModel.js'
 
 // Given a run id and a map of {field: value} pairs of updates, the run document will have the
 // changes applied.
@@ -34,6 +35,26 @@ const updateRun = async (req, res) => {
     }
 
     run[field] = value
+
+    // Do we need to update the DailyStats for this date too?
+    if (field === 'title') {
+      try {
+        await DailyStatsModel.update(
+          {
+            userId: req.user.id,
+            runIds: {
+              $eq: [run._id] // Only this run ID - otherwise title is still "multiple runs"
+            }
+          },
+          {
+            title: run.title
+          }
+        )
+      } catch (error) {
+        console.error(`Error while attempting to update DailyStats for run with id "${run._id}"`)
+        return res.sendStatus(500)
+      }
+    }
   }
 
   try {
