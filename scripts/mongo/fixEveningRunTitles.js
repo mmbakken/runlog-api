@@ -6,6 +6,8 @@ import generateTitle from '../../runs/generateTitle.js'
 // This script is used to fix runs titled "Evening Run" by a bug introduced in November 2021 and
 // fixed on March 29, 2022. It correctly titles the runs which were not already renamed.
 
+// ... So this script was buggy too. It assumed run.startDate was an ISO date, but it's a JS Date
+
 // Main function call for script
 const fixEveningRunTitles = async () => {
   connectToMongo()
@@ -14,7 +16,7 @@ const fixEveningRunTitles = async () => {
   try {
     const allRuns = await RunModel.find(
       {
-        title: 'Evening Run'
+        title: 'Run'
       },
       '_id timezone startDate'
     )
@@ -24,7 +26,7 @@ const fixEveningRunTitles = async () => {
     for (let i = 0; i < allRuns.length; i++) {
       let run = allRuns[i]
 
-      run.title = generateTitle(run._doc.startDate, run._doc.timezone.split(' ')[1])
+      run.title = generateTitle(Date(run._doc.startDate).toISODate(), run._doc.timezone.split(' ')[1])
 
       try {
         await run.save()
