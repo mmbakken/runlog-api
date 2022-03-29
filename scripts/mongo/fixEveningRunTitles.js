@@ -25,8 +25,8 @@ const fixEveningRunTitles = async () => {
     let nModified = 0
     for (let i = 0; i < allRuns.length; i++) {
       let run = allRuns[i]
-
-      run.title = generateTitle(Date(run._doc.startDate).toISOString(), run._doc.timezone.split(' ')[1])
+      const dateStr = new Date(run._doc.startDate).toISOString()
+      run.title = generateTitle(dateStr, run._doc.timezone.split(' ')[1])
 
       try {
         await run.save()
