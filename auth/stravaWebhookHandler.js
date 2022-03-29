@@ -49,6 +49,9 @@ const createRunFromStravaActivity = async (activityId, athleteId) => {
 
     // Only add to db if this is a new activity
     if (!runExists) {
+      // Format should be like '(GMT-08:00) America/Denver', luxon wants just the latter half
+      const tz = response.data.timezone.split(' ')[1]
+
       const newRun = await RunModel.create({
         userId: user._id,
         name: response.data.name,
@@ -56,7 +59,7 @@ const createRunFromStravaActivity = async (activityId, athleteId) => {
         startDateLocal: response.data.start_date_local,
         timezone: response.data.timezone,
         time: response.data.moving_time,
-        title: generateTitle(response.data.start_date),
+        title: generateTitle(response.data.start_date, tz),
         distance: response.data.distance,
         averageSpeed: response.data.average_speed,
         totalElevationGain: response.data.total_elevation_gain,

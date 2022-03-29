@@ -31,6 +31,11 @@ const updateDailyStats = async (newRun, user) => {
   const currentWeekDates = getWeekDates(runStartDate.toISODate(), user.stats.weekStartsOn)
 
   let currentDailyStats = await DailyStatsModel.findOne({ date: runStartDate.toISODate(), userId: user._id })
+  let newRunDistance = null
+
+  // Step 1: Update this date's DailyStats' sevenDayDistance and weeklyDistance fields.
+  // - sevenDayDistance: All prior dates within 7 days should be added to today's distance.
+  // - weeklyDistance: All prior dates in the current week should be added to today's distance.
 
   // None exists => Make a new DailyStats document for today's run date
   if (currentDailyStats == null) {
@@ -43,50 +48,53 @@ const updateDailyStats = async (newRun, user) => {
       sevenDayDistance: newRun.distance,
       weeklyDistance: newRun.distance,
     })
-  }
 
-  // Step 1: Update this date's DailyStats' sevenDayDistance and weeklyDistance fields.
-  // - sevenDayDistance: All prior dates within 7 days should be added to today's distance.
-  // - weeklyDistance: All prior dates in the current week should be added to today's distance.
+    // Find the DailyStats for the prior 6 days (if any exist)
+    const recentDailyStats = await DailyStatsModel.find({
+      date: {
+        $lt: runStartDate.toISODate(),
+        $gte: runStartDate.minus({ days: 6 }).toISODate()
+      }
+    }).sort({date: -1})
 
-  // Find the DailyStats for the prior 6 days (if any exist)
-  const recentDailyStats = await DailyStatsModel.find({
-    date: {
-      $lt: runStartDate.toISODate(),
-      $gte: runStartDate.minus({ days: 6 }).toISODate()
-    }
-  }).sort({date: -1})
+    let recentDatesMap = {}
 
-  let recentDatesMap = {}
+    if (recentDailyStats && recentDailyStats.length) {
+      // Convert the DailyStats array into a map so we can easily look them up by ISO date string
+      for (let i = 0; i < recentDailyStats.length; i++) {
+        let thisDS = recentDailyStats[i]
+        recentDatesMap[DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()] = thisDS
+      }
 
-  if (recentDailyStats && recentDailyStats.length) {
-    // Convert the DailyStats array into a map so we can easily look them up by ISO date string
-    for (let i = 0; i < recentDailyStats.length; i++) {
-      let thisDS = recentDailyStats[i]
-      recentDatesMap[DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()] = thisDS
-    }
+      // For each of the prior 6 dates, update the sevenDay and weekly totals as necessary
+      for (let i = 1; i <= 6; i++) {
+        let compareDate = runStartDate.minus({ days: i })
+        let compareDailyStats = recentDatesMap[compareDate.toISODate()]
 
-    // For each of the prior 6 dates, update the sevenDay and weekly totals as necessary
-    for (let i = 1; i <= 6; i++) {
-      let compareDate = runStartDate.minus({ days: i })
-      let compareDailyStats = recentDatesMap[compareDate.toISODate()]
+        // A DailyStats document may not exist for this date
+        if (compareDailyStats) {
+          // sevenDayDistance: Sum the distance from the prior 6 dates
+          currentDailyStats.sevenDayDistance += compareDailyStats.distance
 
-      // A DailyStats document may not exist for this date
-      if (compareDailyStats) {
-        // sevenDayDistance: Sum the distance from the prior 6 dates
-        currentDailyStats.sevenDayDistance += compareDailyStats.distance
-
-        if (currentWeekDates.includes(compareDate.toISODate())) {
-          currentDailyStats.weeklyDistance += compareDailyStats.distance
+          if (currentWeekDates.includes(compareDate.toISODate())) {
+            currentDailyStats.weeklyDistance += compareDailyStats.distance
+          }
         }
       }
     }
+  } else {
+    // When another run is added to a day with an existing dailystats, we should only add the new
+    // run's distance to other day's dailystats.
+    newRunDistance = newRun.distance
+
+    // We don't need to recalculate the existing dailystats distances from past dates.
+    currentDailyStats.distance += newRunDistance
+    currentDailyStats.sevenDayDistance += newRunDistance
+    currentDailyStats.weeklyDistance += newRunDistance
   }
 
   // The run date's DailyStats document is up to date
   await currentDailyStats.save()
-
-  // TODO: The below code is untested and likely buggy. Do not rely on it!
 
   // Step 2: Update future DailyStats sevenDayDistance and weeklyDistance fields.
   // Only need to update the next 6 dates' DailyStats at most.
@@ -116,10 +124,10 @@ const updateDailyStats = async (newRun, user) => {
       // A DailyStats document may not exist for this date
       if (compareDailyStats) {
         // sevenDayDistance: Always add today's distance
-        compareDailyStats.sevenDayDistance += currentDailyStats.distance
+        compareDailyStats.sevenDayDistance += newRunDistance != null ? newRunDistance : currentDailyStats.distance
 
         if (currentWeekDates.includes(compareDate.toISODate())) {
-          compareDailyStats.weeklyDistance += currentDailyStats.distance
+          compareDailyStats.weeklyDistance += newRunDistance != null ? newRunDistance : currentDailyStats.distance
         }
 
         await compareDailyStats.save()
