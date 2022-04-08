@@ -23,6 +23,13 @@ import getStravaRuns from './runs/getStravaRuns.js'
 // DailyStats
 import getAllDailyStats from './dailyStats/getAllDailyStats.js'
 
+// Training Plans
+import getAllTrainingPlans from './training/getAllTrainingPlans.js'
+import getTrainingPlan from './training/getTrainingPlan.js'
+import createTrainingPlan from './training/createTrainingPlan.js'
+import updateTrainingPlan from './training/updateTrainingPlan.js'
+import deleteTrainingPlan from './training/deleteTrainingPlan.js'
+
 const app = express()
 const port = 4000
 
@@ -71,6 +78,24 @@ app.put('/api/v1/runs/:runId', authenticateToken, updateRun)
 
 // Retrieve all daily stats documents for this user.
 app.get('/api/v1/dailyStats', authenticateToken, getAllDailyStats)
+
+
+// TRAINING PLAN ROUTES
+
+// Create a new training plan for this user
+app.post('/api/v1/training', authenticateToken, createTrainingPlan)
+
+// Get one specific training plan object
+app.get('/api/v1/training/:id', authenticateToken, getTrainingPlan)
+
+// Get all training plans for this user
+app.get('/api/v1/training', authenticateToken, getAllTrainingPlans)
+
+// Update the training plan with any fields included in the message body
+app.put('/api/v1/training/:id', authenticateToken, updateTrainingPlan)
+
+// Delete the training plan with this specific ID
+app.delete('/api/v1/training/:id', authenticateToken, deleteTrainingPlan)
 
 
 // LOGIN ROUTES
