@@ -8,6 +8,7 @@ const trainingSchema = new mongoose.Schema({
   endDate: Date, // ISO 8601, like 2022-03-29
   timezone: String, // This is not just an offset
   title: String, // User-defined name, required to create a new training plan
+  goal: String, // Allows the user to keep their aspirations in view while reviewing training plan
   
   // Plan-wide distance totals
   actualDistance: Number, // Total of all runs that have actually happened in this plan period
