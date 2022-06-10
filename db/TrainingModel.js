@@ -16,6 +16,7 @@ const trainingSchema = new mongoose.Schema({
 
   // Week-specific distance totals
   weeks: [{
+    // TODO: Add a startDate here for clarity on the dates in this week? Or assume it comes from plan startDate + (index * 7) days?
     actualDistance: Number, // Sum of the actual mileage for every date this week
     plannedDistance: Number, // Sum of the actualDistance + planned mileage for every date this week without actual mileage.
     percentChange: Number, // % change vs previous week's actualDistance

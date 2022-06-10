@@ -46,6 +46,31 @@ const createTrainingPlan = async (req, res) => {
     return res.status(400).json({ error: 'Unable to create training plan: goal must be a string'})
   }
 
+  // Generate a week object to track the week-specific stuff for this plan
+  const weeks = []
+  for (let i = 0; i < weekCount; i++) {
+    weeks.push({
+      actualDistance: 0,
+      plannedDistance: 0,
+      percentChange: null,
+    })
+  }
+
+  // Generate an object for each date within this training plan's date range
+  const dates = []
+  const days = weekCount * 7
+  for (let i = 0; i < days; i++) {
+    dates.push({
+      date: startDT.plus({ days: i }).toISODate(),
+      actualDistance: 0,
+      plannedDistance: 0,
+      workout: '',
+      workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
+    })
+  }
+
+  // TODO: What if the start date is in the past? We would need to backfill all of the distances into this plan
+
   const newPlan = {
     userId: req.user.id,
     startDate: startDate,
@@ -54,9 +79,12 @@ const createTrainingPlan = async (req, res) => {
     timezone: timezone,
     title: title,
     goal: goal,
+    actualDistance: 0,
+    plannedDistance: 0,
+    weeks: weeks,
+    dates: dates,
+    journal: [],
   }
-
-  // TODO: Generateate the fields that are dependent on the dates
 
   // Save to db
   try {

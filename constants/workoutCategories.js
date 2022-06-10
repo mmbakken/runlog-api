@@ -1,5 +1,6 @@
 // Enum representing the types of workouts within a training plan date
 const workoutCategories = [
+  'Not Selected',
   'Easy',
   'Tempo',
   'Intervals',
