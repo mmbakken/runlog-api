@@ -9,6 +9,10 @@ const trainingSchema = new mongoose.Schema({
   timezone: String, // This is not just an offset
   title: String, // User-defined name, required to create a new training plan
   goal: String, // Allows the user to keep their aspirations in view while reviewing training plan
+  isActive: {  // Is this plan the one the user is currently following?
+    type: Boolean,
+    default: false,
+  },
   
   // Plan-wide distance totals
   actualDistance: Number, // Total of all runs that have actually happened in this plan period

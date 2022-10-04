@@ -6,13 +6,14 @@ import { DateTime, IANAZone } from 'luxon'
 const createTrainingPlan = async (req, res) => {
   // Parse the required and optional fields, then validate them
   const startDate = req.body.startDate // ISO Date like yyyy-mm-dd
-  const startDT = DateTime.fromISO(startDate)
+  const startDT = DateTime.fromISO(req.body.startDate)
   const endDate = req.body.endDate // ISO Date like yyyy-mm-dd
-  const endDT = DateTime.fromISO(endDate)
+  const endDT = DateTime.fromISO(req.body.endDate)
   const weekCount = req.body.weekCount
   const timezone = req.body.timezone
   const title = req.body.title
   const goal = req.body.goal
+  const isActive = req.body.isActive == null ? false : req.body.isActive
 
   if (startDate == null || !startDT.isValid) {
     return res.status(400).json({ error: 'Unable to create training plan: startDate field must be a valid ISO 8601 date string like yyyy-mm-dd'})
@@ -79,6 +80,7 @@ const createTrainingPlan = async (req, res) => {
     timezone: timezone,
     title: title,
     goal: goal,
+    isActive: isActive,
     actualDistance: 0,
     plannedDistance: 0,
     weeks: weeks,
