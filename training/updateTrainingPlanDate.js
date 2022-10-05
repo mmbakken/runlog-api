@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import TrainingModel from '../db/TrainingModel.js'
 
 const updateTrainingPlanDate = async (req, res) => {
@@ -46,6 +47,30 @@ const updateTrainingPlanDate = async (req, res) => {
       return res.sendStatus(400)
     }
 
+    // Do we need to update the week.plannedDistance and plan.plannedDistance fields?
+    if (field === 'plannedDistance') {
+      // Difference of new value and old value added to plan.plannedDistance and appropriate
+      // weekly.plannedDistance, based on date.
+      const thisDateDT = DateTime.fromISO(req.params.dateISO, { zone: 'utc' })
+
+      let weekStartDT
+      let weekEndDT
+      const thisWeek = training.weeks.find( week => {
+        weekStartDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' })
+        weekEndDT = weekStartDT.plus({ days: 6 })
+        return (thisDateDT.equals(weekStartDT)) || (thisDateDT.equals(weekEndDT)) || (weekStartDT < thisDateDT && thisDateDT < weekEndDT)
+      })
+
+      if (thisWeek == null) {
+        console.error(`Unable to find week containing ${req.params.dateISO}. Aborting training plan update.`)
+        return res.sendStatus(500)
+      }
+
+      const diff = (value - trainingDate.plannedDistance)
+      training.plannedDistance += diff
+      thisWeek.plannedDistance += diff
+    }
+
     trainingDate[field] = value
   }
 
@@ -56,7 +81,7 @@ const updateTrainingPlanDate = async (req, res) => {
     return res.sendStatus(500)
   }
 
-  return res.json(trainingDate.toObject())
+  return res.json(training.toObject())
 }
 
 export default updateTrainingPlanDate
