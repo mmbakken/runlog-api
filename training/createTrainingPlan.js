@@ -51,6 +51,7 @@ const createTrainingPlan = async (req, res) => {
   const weeks = []
   for (let i = 0; i < weekCount; i++) {
     weeks.push({
+      startDateISO: startDT.plus({ days: (i * 7) }).toISODate(),
       actualDistance: 0,
       plannedDistance: 0,
       percentChange: null,
@@ -62,7 +63,7 @@ const createTrainingPlan = async (req, res) => {
   const days = weekCount * 7
   for (let i = 0; i < days; i++) {
     dates.push({
-      date: startDT.plus({ days: i }).toISODate(),
+      dateISO: startDT.plus({ days: i }).toISODate(),
       actualDistance: 0,
       plannedDistance: 0,
       workout: '',

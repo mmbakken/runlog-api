@@ -28,6 +28,7 @@ import getAllTrainingPlans from './training/getAllTrainingPlans.js'
 import getTrainingPlan from './training/getTrainingPlan.js'
 import createTrainingPlan from './training/createTrainingPlan.js'
 import updateTrainingPlan from './training/updateTrainingPlan.js'
+import updateTrainingPlanDate from './training/updateTrainingPlanDate.js'
 import deleteTrainingPlan from './training/deleteTrainingPlan.js'
 
 const app = express()
@@ -90,6 +91,9 @@ app.get('/api/v1/training/:id', authenticateToken, getTrainingPlan)
 
 // Get all training plans for this user
 app.get('/api/v1/training', authenticateToken, getAllTrainingPlans)
+
+// Update a specific date withing a training plan with any fields included in the message body
+app.put('/api/v1/training/:id/date/:dateISO', authenticateToken, updateTrainingPlanDate)
 
 // Update the training plan with any fields included in the message body
 app.put('/api/v1/training/:id', authenticateToken, updateTrainingPlan)

@@ -20,7 +20,7 @@ const trainingSchema = new mongoose.Schema({
 
   // Week-specific distance totals
   weeks: [{
-    // TODO: Add a startDate here for clarity on the dates in this week? Or assume it comes from plan startDate + (index * 7) days?
+    startDateISO: String, // ISO 8601, like 2022-03-29
     actualDistance: Number, // Sum of the actual mileage for every date this week
     plannedDistance: Number, // Sum of the actualDistance + planned mileage for every date this week without actual mileage.
     percentChange: Number, // % change vs previous week's actualDistance
@@ -29,7 +29,7 @@ const trainingSchema = new mongoose.Schema({
   // These objects are the basis of the Calendar section. They allow the user to see daily distance
   // totals, workout descriptions, and 
   dates: [{
-    date: Date, // ISO 8601, like 2022-03-29
+    dateISO: Date, // ISO 8601, like 2022-03-29
     actualDistance: Number,
     plannedDistance: Number, // 
     workout: String, // Text description of this workout.
