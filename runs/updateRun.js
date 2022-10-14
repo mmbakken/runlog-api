@@ -10,14 +10,14 @@ const updateRun = async (req, res) => {
   let run
 
   try {
-    run = await RunModel.findById(req.params.runId)
+    run = await RunModel.findById(req.params.id)
   } catch (error) {
     console.error(error)
     return res.sendStatus(500)
   }
 
   if (run == null) {
-    console.error(`Run with id "${req.params.runId}" was not found.`)
+    console.error(`Run with id "${req.params.id}" was not found.`)
     return res.sendStatus(404)
   }
 

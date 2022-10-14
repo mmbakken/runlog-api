@@ -4,7 +4,7 @@ import qs from 'qs'
 import UserModel from '../db/UserModel.js'
 
 const stravaCodeToTokens = async (req, res) => {
-  const userId = req.params.userId
+  const userId = req.params.id
   const stravaCode = req.params.stravaCode
 
   if (userId == null || stravaCode == null) {

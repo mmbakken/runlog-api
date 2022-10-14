@@ -5,15 +5,15 @@ import UserModel from '../db/UserModel.js'
 
 const getUserDetails = async (req, res) => {
   // Can't rely on the JWT for the user ID since some users can request OTHER user's records
-  if (req.params.userId == null) {
-    console.error('Unable to provide user details: userId missing in route params.')
+  if (req.params.id == null) {
+    console.error('Unable to provide user details: id missing in route params.')
     return res.sendStatus(400)
   }
 
   // Make sure the authenticated user is the one whose details are being requested
-  if (req.user.id !== req.params.userId) {
+  if (req.user.id !== req.params.id) {
     // TODO: allow admin users to skip this check
-    console.error(`User with id "${req.user.id} is forbidden from accessing user details for user id: "${req.params.userId}"`)
+    console.error(`User with id "${req.user.id} is forbidden from accessing user details for user id: "${req.params.id}"`)
     return res.sendStatus(403)
   }
 
