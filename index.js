@@ -4,6 +4,7 @@ import cors from 'cors'
 import { DateTime } from 'luxon'
 
 // Database
+import mongoose from 'mongoose'
 import connectToMongo from './db/connectToMongo.js'
 
 // Authentication
@@ -22,6 +23,14 @@ import getStravaRuns from './runs/getStravaRuns.js'
 
 // DailyStats
 import getAllDailyStats from './dailyStats/getAllDailyStats.js'
+
+// Training Plans
+import getAllTrainingPlans from './training/getAllTrainingPlans.js'
+import getTrainingPlan from './training/getTrainingPlan.js'
+import createTrainingPlan from './training/createTrainingPlan.js'
+import updateTrainingPlan from './training/updateTrainingPlan.js'
+import updateTrainingPlanDate from './training/updateTrainingPlanDate.js'
+import deleteTrainingPlan from './training/deleteTrainingPlan.js'
 
 const app = express()
 const port = 4000
@@ -43,6 +52,28 @@ app.use((req, res, next) => {
   next()
 })
 
+// Validate ObjectId params to avoid annoying exceptions in findById calls
+// app.use((req, res, next) => {
+//   if (req.params.id != null) {
+//     if (!mongoose.isValidObjectId(req.params.id)) {
+//       console.error('id param requires a valid ObjectId string')
+//       return res.sendStatus(500)
+//     }
+//   }
+
+//   // problem: req.params is undefined here because it's not a route we know about, really
+//   // Need to find some way to process all ":id" params, to ensure they're valid ObjectIds
+
+//   // console.log(`req.params.id: "${req.params.id}", ${typeof req.params.id}`)
+//   // console.log('req.params:')
+//   // console.dir(req.params)
+
+//   // TODO: router.param() instead??
+//   // https://expressjs.com/en/4x/api.html#router.param
+
+//   next()
+// })
+
 app.get('/api/v1', (req, res) => {
   res.send('Runlog API v1 ✌️')
 })
@@ -58,13 +89,13 @@ app.get('/api/v1/hello', (req, res) => {
 app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
 
 // Get one specific Runlog run object
-app.get('/api/v1/runs/:runId', authenticateToken, getRun)
+app.get('/api/v1/runs/:id', authenticateToken, getRun)
 
 // Get the Runlog runs for this user.
 app.get('/api/v1/runs', authenticateToken, getAllRuns)
 
 // Update the Runlog run object with any fields included in the message body
-app.put('/api/v1/runs/:runId', authenticateToken, updateRun)
+app.put('/api/v1/runs/:id', authenticateToken, updateRun)
 
 
 // DAILY STATS ROUTES
@@ -73,13 +104,34 @@ app.put('/api/v1/runs/:runId', authenticateToken, updateRun)
 app.get('/api/v1/dailyStats', authenticateToken, getAllDailyStats)
 
 
+// TRAINING PLAN ROUTES
+
+// Create a new training plan for this user
+app.post('/api/v1/training', authenticateToken, createTrainingPlan)
+
+// Get one specific training plan object
+app.get('/api/v1/training/:id', authenticateToken, getTrainingPlan)
+
+// Get all training plans for this user
+app.get('/api/v1/training', authenticateToken, getAllTrainingPlans)
+
+// Update a specific date withing a training plan with any fields included in the message body
+app.put('/api/v1/training/:id/date/:dateISO', authenticateToken, updateTrainingPlanDate)
+
+// Update the training plan with any fields included in the message body
+app.put('/api/v1/training/:id', authenticateToken, updateTrainingPlan)
+
+// Delete the training plan with this specific ID
+app.delete('/api/v1/training/:id', authenticateToken, deleteTrainingPlan)
+
+
 // LOGIN ROUTES
 
 // For now, there is no way to create a user account except via the database.
 // See scripts/createUser.js
 
 // This route is for providing user information to the client if they already have a JWT.
-app.get('/api/v1/users/:userId', authenticateToken, getUserDetails)
+app.get('/api/v1/users/:id', authenticateToken, getUserDetails)
 
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
@@ -89,7 +141,7 @@ app.post('/api/v1/users/login', login)
 
 // After user authorizes Runlog to access their Strava data, this endpoint takes the access
 // token and exchanges it for the user's access and refresh tokens for Strava API calls.
-app.post('/api/v1/users/:userId/stravaCode/:stravaCode', authenticateToken, stravaCodeToTokens)
+app.post('/api/v1/users/:id/stravaCode/:stravaCode', authenticateToken, stravaCodeToTokens)
 
 // Callback URL specified in scripts/createStravaWebhook.js
 app.get('/api/v1/strava/webhook', stravaWebhookVerification)
