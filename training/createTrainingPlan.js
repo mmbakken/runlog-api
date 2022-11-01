@@ -1,4 +1,5 @@
 import TrainingModel from '../db/TrainingModel.js'
+import RunModel from '../db/RunModel.js'
 import { DateTime, IANAZone } from 'luxon'
 
 // Creates a new training plan for this user, saves it to the database, and returns the new training
@@ -47,31 +48,71 @@ const createTrainingPlan = async (req, res) => {
     return res.status(400).json({ error: 'Unable to create training plan: goal must be a string'})
   }
 
+  // Get all of the runs that have occurred during this plan's date range
+  const runs = await RunModel.find({
+    startDate: {
+      $gte: startDT.startOf('day').toISODate(),
+      $lt: endDT.plus({ days: 1 }).startOf('day').toISODate(),
+    }
+  }).lean()
+
+  let runMap = {}
+  let runDates = []
+
+  if (runs.length) {
+    runs.sort((runA, runB) => {
+      return runA.startDate - runB.startDate
+    })
+
+    let runStartDateISOString
+
+    // Create a map of runs on their ISO date strings for fast lookup
+    runs.forEach((run) => {
+      runStartDateISOString = DateTime.fromJSDate(run.startDate, { zone: 'utc' }).startOf('day').toISODate()
+      runMap[runStartDateISOString] = run
+      runDates.push(runStartDateISOString)
+    })
+  }
+
+  let planActualDistance = 0
+
   // Generate a week object to track the week-specific stuff for this plan
+  const dates = []
   const weeks = []
+  let weekActualDistance
+
   for (let i = 0; i < weekCount; i++) {
+    weekActualDistance = 0
+
+    // Generate an object for each date within this training plan's date range
+    let dateISOString
+
+    for (let j = 0; j < 7; j++) {
+      let dateActualDistance = 0
+      dateISOString = startDT.plus({ days: (i * 7) + j }).startOf('day').toISODate()
+
+      if (runs.length && runDates.includes(dateISOString)) {
+        dateActualDistance = runMap[dateISOString].distance
+        weekActualDistance += dateActualDistance
+      }
+
+      dates.push({
+        dateISO: dateISOString,
+        actualDistance: dateActualDistance,
+        plannedDistance: 0,
+        workout: '',
+        workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
+      })
+    }
+
     weeks.push({
       startDateISO: startDT.plus({ days: (i * 7) }).toISODate(),
-      actualDistance: 0,
+      actualDistance: weekActualDistance,
       plannedDistance: 0,
-      percentChange: null,
     })
-  }
 
-  // Generate an object for each date within this training plan's date range
-  const dates = []
-  const days = weekCount * 7
-  for (let i = 0; i < days; i++) {
-    dates.push({
-      dateISO: startDT.plus({ days: i }).toISODate(),
-      actualDistance: 0,
-      plannedDistance: 0,
-      workout: '',
-      workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
-    })
+    planActualDistance += weekActualDistance
   }
-
-  // TODO: What if the start date is in the past? We would need to backfill all of the distances into this plan
 
   const newPlan = {
     userId: req.user.id,
@@ -82,7 +123,7 @@ const createTrainingPlan = async (req, res) => {
     title: title,
     goal: goal,
     isActive: isActive,
-    actualDistance: 0,
+    actualDistance: planActualDistance,
     plannedDistance: 0,
     weeks: weeks,
     dates: dates,

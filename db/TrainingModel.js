@@ -15,15 +15,14 @@ const trainingSchema = new mongoose.Schema({
   },
   
   // Plan-wide distance totals
-  actualDistance: Number, // Total of all runs that have actually happened in this plan period
-  plannedDistance: Number, // Sum of all runs that have actually happened + planned runs in future dates for this plan
+  actualDistance: Number, // Meters; Total of all runs that have actually happened in this plan period
+  plannedDistance: Number, // Miles (TODO, use meters); Sum of all runs that have actually happened + planned runs in future dates for this plan
 
   // Week-specific distance totals
   weeks: [{
     startDateISO: String, // ISO 8601, like 2022-03-29
     actualDistance: Number, // Sum of the actual mileage for every date this week
     plannedDistance: Number, // Sum of the actualDistance + planned mileage for every date this week without actual mileage.
-    percentChange: Number, // % change vs previous week's actualDistance
   }],
 
   // These objects are the basis of the Calendar section. They allow the user to see daily distance
