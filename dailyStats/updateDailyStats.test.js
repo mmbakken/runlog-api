@@ -33,7 +33,7 @@ import updateDailyStats from './updateDailyStats.js'
 beforeAll(async () => {
   // Set up test DB
   try {
-    await mongoose.connect('mongodb://localhost/test', {
+    await mongoose.connect('mongodb://localhost/dailyStats', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
@@ -52,7 +52,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   // Tear down test DB
-  return mongoose.connection.close()
+  return await mongoose.connection.close()
 })
 
 describe('DailyStats creation', () => {

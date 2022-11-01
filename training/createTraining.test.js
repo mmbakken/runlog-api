@@ -9,7 +9,7 @@ import createTrainingPlan from './createTrainingPlan.js'
 beforeAll(async () => {
   // Set up test DB
   try {
-    await mongoose.connect('mongodb://localhost/test', {
+    await mongoose.connect('mongodb://localhost/training', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
@@ -28,7 +28,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   // Tear down test DB
-  return mongoose.connection.close()
+  return await mongoose.connection.close()
 })
 
 describe('Training creation', () => {

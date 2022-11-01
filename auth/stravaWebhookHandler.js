@@ -1,92 +1,7 @@
 import axios from 'axios'
-
 import UserModel from '../db/UserModel.js'
-import RunModel from '../db/RunModel.js'
-
 import { useFreshTokens } from '../auth/stravaTokens.js'
-import generateTitle from '../runs/generateTitle.js'
-import updateDailyStats from '../dailyStats/updateDailyStats.js'
-
-// This function will create a new Run document based on the Strava activity id provided.
-// It does this by fetching the Activity details from the Strava API, then using that to create a
-// Run document in Runlog's database with the revelant fields.
-//
-// If a run already exists with this Strava activity id, no attempt to update the Run will be made.
-//
-// A DailyStats object for the date of this run may also be created or if that date already has a
-// DailyStats document, it will be updated as necessary. All DailyStats with weekly and sevenDay
-// distance totals within 6 days will be updated as well (as relevant).
-const createRunFromStravaActivity = async (activityId, athleteId) => {
-  try {
-    // Look up user by strava athlete id in mongo and get the token
-    const user = await UserModel.findOne({ stravaUserId: athleteId })
-
-    if (user == null) {
-      console.error(`No user found for Strava athlete id "${athleteId}"`)
-      return
-    }
-
-    const freshAccessToken = await useFreshTokens(user)
-
-    const response = await axios({
-      method: 'get',
-      url: `https://www.strava.com/api/v3/activities/${activityId}`,
-      params: {
-        include_all_efforts: false,
-      },
-      headers: {
-        Authorization: `Bearer ${freshAccessToken}`,
-      }
-    })
-
-    const runExists = await RunModel.exists({ stravaActivityId: activityId })
-
-    // Make sure we want to track it
-    if (response.data.type !== 'Run') {
-      console.log('Activity was not a run, disregard this one.')
-      return
-    }
-
-    // Only add to db if this is a new activity
-    if (!runExists) {
-      // Format should be like '(GMT-08:00) America/Denver', luxon wants just the latter half
-      const tz = response.data.timezone.split(' ')[1]
-
-      const newRun = await RunModel.create({
-        userId: user._id,
-        name: response.data.name,
-        startDate: response.data.start_date,
-        startDateLocal: response.data.start_date_local,
-        timezone: response.data.timezone,
-        time: response.data.moving_time,
-        title: generateTitle(response.data.start_date, tz),
-        distance: response.data.distance,
-        averageSpeed: response.data.average_speed,
-        totalElevationGain: response.data.total_elevation_gain,
-        hasHeartRate: response.data.has_heartrate,
-        averageHeartRate: response.data.average_heartrate,
-        maxHeartRate: response.data.max_heartrate,
-        deviceName: response.data.device_name,
-        stravaActivityId: response.data.id,
-        stravaExternalId: response.data.external_id,
-        startLatitude: response.data.start_latitude,
-        startLongitude: response.data.start_longitude,
-      })
-
-      console.log(`New run created successfully. Runlog Id: "${newRun._id}", Strava activityId: "${activityId}"`)
-
-      // A new run means daily totals have changed. Update them appropriately.
-      await updateDailyStats(newRun, user)
-
-      return
-    } else {
-      console.log('Strava Activity already exists as a Run document. Will not add a duplicate.')
-      return
-    }
-  } catch (err) {
-    console.error(err)
-  }
-}
+import createRunFromStravaActivity from '../runs/createRunFromStravaActivity.js'
 
 // This route is for handling requests sent by Strava as part of their Webhook API.
 // When a new activity is added to Strava or a user deauthorizes Runlog from their OAuth 
@@ -152,7 +67,34 @@ const stravaWebhookHandler = async (req, res) => {
   // }
 
   if (req.body.object_type === 'activity' && req.body.aspect_type === 'create') {
-    await createRunFromStravaActivity(req.body.object_id, req.body.owner_id)
+    // Look up user by strava athlete id in mongo and get the token
+    const user = await UserModel.findOne({ stravaUserId: req.body.owner_id })
+
+    if (user == null) {
+      console.error(`No user found for Strava athlete id "${req.body.owner_id}"`)
+      return
+    }
+
+    const freshAccessToken = await useFreshTokens(user)
+
+    try {
+      // Fetch the Activity details from the Strava API so we can create a Run document from it.
+      const response = await axios({
+        method: 'get',
+        url: `https://www.strava.com/api/v3/activities/${req.body.object_id}`,
+        params: {
+          include_all_efforts: false,
+        },
+        headers: {
+          Authorization: `Bearer ${freshAccessToken}`,
+        }
+      })
+
+      await createRunFromStravaActivity(user, response.data)
+    } catch (err) {
+      console.error(err)
+    }
+
   } else {
     console.log('Unsupported webhook callback message body. Might want to implement this?')
   }
