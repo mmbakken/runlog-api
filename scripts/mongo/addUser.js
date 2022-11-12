@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
-import connectToMongo from '../db/connectToMongo.js'
-import UserModel from '../db/UserModel.js'
+import connectToMongo from '../../db/connectToMongo.js'
+import UserModel from '../../db/UserModel.js'
 
 // This script will add a user to the database with an encrypted password
 const userData = {
