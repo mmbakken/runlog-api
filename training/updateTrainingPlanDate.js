@@ -1,49 +1,51 @@
 import { DateTime } from 'luxon'
 import TrainingModel from '../db/TrainingModel.js'
 
+import addFloats from '../utils/addFloats.js'
+
 const updateTrainingPlanDate = async (req, res) => {
-  let training
+  let plan
 
   try {
-    training = await TrainingModel.findById(req.params.id)
+    plan = await TrainingModel.findById(req.params.id)
   } catch (error) {
     console.error(error)
     return res.sendStatus(500)
   }
 
-  if (training == null) {
+  if (plan == null) {
     console.error(`Training plan with id "${req.params.id}" was not found.`)
     return res.sendStatus(404)
   }
 
   if (req.body == null || req.body.updates == null) {
-    console.error(`Cannot update date within training plan with id "${training._id}": Must include req.body.updates.`)
+    console.error(`Cannot update date within plan with id "${plan._id}": Must include req.body.updates.`)
     return res.sendStatus(400)
   }
 
-  // Make sure training plan has the date specified
-  if (training.dates == null) {
-    console.error(`Cannot update date within training plan with id "${training._id}": training.dates array is missing."`)
+  // Make sure plan has the date specified
+  if (plan.dates == null) {
+    console.error(`Cannot update date within plan with id "${plan._id}": plan.dates array is missing."`)
     return res.sendStatus(400)
   }
 
   let jsDate
-  const trainingDate = training.dates.find(date => {
-    jsDate = new Date(date._doc.dateISO)
+  const date = plan.dates.find(dateObj => {
+    jsDate = new Date(dateObj._doc.dateISO)
     return jsDate.toISOString().split('T')[0] === req.params.dateISO
   })
 
-  if (trainingDate == null) {
-    console.error(`Cannot update date "${req.params.dateISO}" within training plan with id "${training._id}": training.dates does not contain this date."`)
+  if (date == null) {
+    console.error(`Cannot update date "${req.params.dateISO}" within plan with id "${plan._id}": plan.dates does not contain this date."`)
     return res.sendStatus(400)
   }
 
-  // Update the training plan date with new values
-  const validFields = Object.keys(training.dates[0]._doc)
+  // Update the plan date with new values
+  const validFields = Object.keys(plan.dates[0]._doc)
 
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
-      console.error(`Cannot update date "${req.params.dateISO}" within training plan with id "${training._id}": Field "${field}" is not present in the date document`)
+      console.error(`Cannot update date "${req.params.dateISO}" within plan with id "${plan._id}": Field "${field}" is not present in the date document`)
       return res.sendStatus(400)
     }
 
@@ -55,33 +57,33 @@ const updateTrainingPlanDate = async (req, res) => {
 
       let weekStartDT
       let weekEndDT
-      const thisWeek = training.weeks.find( week => {
+      const thisWeek = plan.weeks.find( week => {
         weekStartDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' })
         weekEndDT = weekStartDT.plus({ days: 6 })
         return (thisDateDT.equals(weekStartDT)) || (thisDateDT.equals(weekEndDT)) || (weekStartDT < thisDateDT && thisDateDT < weekEndDT)
       })
 
       if (thisWeek == null) {
-        console.error(`Unable to find week containing ${req.params.dateISO}. Aborting training plan update.`)
+        console.error(`Unable to find week containing ${req.params.dateISO}. Aborting plan update.`)
         return res.sendStatus(500)
       }
 
-      const diff = (value - trainingDate.plannedDistance)
-      training.plannedDistance += diff
-      thisWeek.plannedDistance += diff
+      const diff = addFloats(value,  -1 * date.plannedDistance) // Find the difference between new and old value
+      plan.plannedDistance = addFloats(diff, plan.plannedDistance)
+      thisWeek.plannedDistance = addFloats(diff, thisWeek.plannedDistance)
     }
 
-    trainingDate[field] = value
+    date[field] = value
   }
 
   try {
-    await training.save()
+    await plan.save()
   } catch (error) {
     console.error(error)
     return res.sendStatus(500)
   }
 
-  return res.json(training.toObject())
+  return res.json(plan.toObject())
 }
 
 export default updateTrainingPlanDate

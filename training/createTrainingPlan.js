@@ -1,6 +1,7 @@
 import TrainingModel from '../db/TrainingModel.js'
-import RunModel from '../db/RunModel.js'
 import { DateTime, IANAZone } from 'luxon'
+
+import updatePlanActualDistances from '../training/updatePlanActualDistances.js'
 
 // Creates a new training plan for this user, saves it to the database, and returns the new training
 // plan to the requestor.
@@ -48,56 +49,19 @@ const createTrainingPlan = async (req, res) => {
     return res.status(400).json({ error: 'Unable to create training plan: goal must be a string'})
   }
 
-  // Get all of the runs that have occurred during this plan's date range
-  const runs = await RunModel.find({
-    startDate: {
-      $gte: startDT.startOf('day').toISODate(),
-      $lt: endDT.plus({ days: 1 }).startOf('day').toISODate(),
-    }
-  }).lean()
-
-  let runMap = {}
-  let runDates = []
-
-  if (runs.length) {
-    runs.sort((runA, runB) => {
-      return runA.startDate - runB.startDate
-    })
-
-    let runStartDateISOString
-
-    // Create a map of runs on their ISO date strings for fast lookup
-    runs.forEach((run) => {
-      runStartDateISOString = DateTime.fromJSDate(run.startDate, { zone: 'utc' }).startOf('day').toISODate()
-      runMap[runStartDateISOString] = run
-      runDates.push(runStartDateISOString)
-    })
-  }
-
-  let planActualDistance = 0
-
   // Generate a week object to track the week-specific stuff for this plan
   const dates = []
   const weeks = []
-  let weekActualDistance
-
   for (let i = 0; i < weekCount; i++) {
-    weekActualDistance = 0
-
     // Generate an object for each date within this training plan's date range
-    let dateISOString
+    let date
 
     for (let j = 0; j < 7; j++) {
       let dateActualDistance = 0
-      dateISOString = startDT.plus({ days: (i * 7) + j }).startOf('day').toISODate()
-
-      if (runs.length && runDates.includes(dateISOString)) {
-        dateActualDistance = runMap[dateISOString].distance
-        weekActualDistance += dateActualDistance
-      }
+      date = startDT.plus({ days: (i * 7) + j }).startOf('day').toJSDate()
 
       dates.push({
-        dateISO: dateISOString,
+        dateISO: date,
         actualDistance: dateActualDistance,
         plannedDistance: 0,
         workout: '',
@@ -107,14 +71,11 @@ const createTrainingPlan = async (req, res) => {
 
     weeks.push({
       startDateISO: startDT.plus({ days: (i * 7) }).toISODate(),
-      actualDistance: weekActualDistance,
       plannedDistance: 0,
     })
-
-    planActualDistance += weekActualDistance
   }
 
-  const newPlan = {
+  let newPlan = {
     userId: req.user.id,
     startDate: startDate,
     endDate: endDate,
@@ -123,7 +84,6 @@ const createTrainingPlan = async (req, res) => {
     title: title,
     goal: goal,
     isActive: isActive,
-    actualDistance: planActualDistance,
     plannedDistance: 0,
     weeks: weeks,
     dates: dates,
@@ -132,6 +92,7 @@ const createTrainingPlan = async (req, res) => {
 
   // Save to db
   try {
+    newPlan = await updatePlanActualDistances(newPlan)
     await TrainingModel.insertMany(newPlan)
     return res.json({ plan: newPlan })
   } catch (err) {

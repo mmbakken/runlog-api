@@ -13,7 +13,7 @@ const updatePlanActualDistances = async (plan) => {
   const ds = await DailyStatsModel.find({
     userId: plan.userId,
     date: {
-      $lt: plan.endDate,
+      $lte: plan.endDate,
       $gte: plan.startDate
     }
   }).exec()

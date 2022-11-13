@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import TrainingModel from '../db/TrainingModel.js'
 import RunModel from '../db/RunModel.js'
+import DailyStatsModel from '../db/DailyStatsModel.js'
 import UserModel from '../db/UserModel.js'
 import { jest, describe, expect, beforeAll, afterEach, afterAll, test } from '@jest/globals'
 
@@ -24,6 +25,7 @@ afterEach(async () => {
   await TrainingModel.deleteMany()
   await UserModel.deleteMany()
   await RunModel.deleteMany()
+  await DailyStatsModel.deleteMany()
 })
 
 afterAll(async () => {
@@ -163,6 +165,18 @@ describe('Training creation', () => {
       distance: 3218.69, // 2 miles, in meters
     })
 
+    // Matching DailyStats objects for the runs
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-10',
+      distance: 1609.34,
+    })
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-16',
+      distance: 3218.69,
+    })
+
     // Request to create 1-week training plan during week of the runs
     const req = {
       user: {
@@ -225,6 +239,24 @@ describe('Training creation', () => {
       startDateLocal: new Date('2022-10-17T17:07:39Z'),
       timezone: '(GMT-06:00) America/Chicago',
       distance: 1609.34, // 1 mile, in meters
+    })
+
+    // Matching DailyStats objects for the runs
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-10',
+      distance: 1609.34,
+    })
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-11',
+      distance: 3218.69,
+    })
+    // Matching DailyStats objects for the runs
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-17',
+      distance: 1609.34,
     })
 
     // Request to create 1-week training plan during week of the runs
