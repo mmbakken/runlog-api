@@ -66,16 +66,19 @@ beforeEach(async () => {
     isActive: true,
     actualDistance: 2000.03,
     plannedDistance: 0,
+    plannedDistanceMeters: 0,
     weeks: [
     {
       startDateISO: '2022-10-10',
       actualDistance: 1000.01,
       plannedDistance: 0,
+      plannedDistanceMeters: 0,
     },
     {
       startDateISO: '2022-10-17',
       actualDistance: 1000.02,
       plannedDistance: 0,
+      plannedDistanceMeters: 0,
     }
     ],
     dates: [
@@ -83,6 +86,7 @@ beforeEach(async () => {
         dateISO: '2022-10-10',
         actualDistance: 1000.01,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -90,6 +94,7 @@ beforeEach(async () => {
         dateISO: '2022-10-11',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -97,6 +102,7 @@ beforeEach(async () => {
         dateISO: '2022-10-12',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -104,6 +110,7 @@ beforeEach(async () => {
         dateISO: '2022-10-13',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -111,6 +118,7 @@ beforeEach(async () => {
         dateISO: '2022-10-14',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -118,6 +126,7 @@ beforeEach(async () => {
         dateISO: '2022-10-15',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -125,6 +134,7 @@ beforeEach(async () => {
         dateISO: '2022-10-16',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -132,6 +142,7 @@ beforeEach(async () => {
         dateISO: '2022-10-17',
         actualDistance: 1000.02,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -139,6 +150,7 @@ beforeEach(async () => {
         dateISO: '2022-10-18',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -146,6 +158,7 @@ beforeEach(async () => {
         dateISO: '2022-10-19',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -153,6 +166,7 @@ beforeEach(async () => {
         dateISO: '2022-10-20',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -160,6 +174,7 @@ beforeEach(async () => {
         dateISO: '2022-10-21',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -167,6 +182,7 @@ beforeEach(async () => {
         dateISO: '2022-10-22',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -174,6 +190,7 @@ beforeEach(async () => {
         dateISO: '2022-10-23',
         actualDistance: 0,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
       },
@@ -236,9 +253,12 @@ describe('Training Plan date update endpoint', () => {
     })
 
     expect(plan.plannedDistance).toBe(1)
+    expect(plan.plannedDistanceMeters).toBe(1609.34)
 
     expect(plan.weeks[0].plannedDistance).toBe(1)
     expect(plan.weeks[1].plannedDistance).toBe(0)
+    expect(plan.weeks[0].plannedDistanceMeters).toBe(1609.34)
+    expect(plan.weeks[1].plannedDistanceMeters).toBe(0)
 
     expect(plan.dates[0].plannedDistance).toBe(1)
     expect(plan.dates[1].plannedDistance).toBe(0)
@@ -254,5 +274,20 @@ describe('Training Plan date update endpoint', () => {
     expect(plan.dates[11].plannedDistance).toBe(0)
     expect(plan.dates[12].plannedDistance).toBe(0)
     expect(plan.dates[13].plannedDistance).toBe(0)
+
+    expect(plan.dates[0].plannedDistanceMeters).toBe(1609.34)
+    expect(plan.dates[1].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[2].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[3].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[4].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[5].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[6].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[7].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[8].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[9].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[10].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[11].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[12].plannedDistanceMeters).toBe(0)
+    expect(plan.dates[13].plannedDistanceMeters).toBe(0)
   })
 })

@@ -1,6 +1,8 @@
 import TrainingModel from '../db/TrainingModel.js'
 import updatePlanActualDistances from './updatePlanActualDistances.js'
 
+import { METERS_PER_MILE } from '../constants/unitConversion.js'
+
 const updateTrainingPlan = async (req, res) => {
   let plan
 
@@ -30,12 +32,41 @@ const updateTrainingPlan = async (req, res) => {
       return res.sendStatus(400)
     }
 
-    plan[field] = value
+    // Do not allow the user to update this field directly. Its value is determined by the
+    // plannedDistance field, just expressed as a different unit (meters instead of miles).
+    if (field === 'plannedDistanceMeters') {
+      continue
+    }
+
+    if (field === 'plannedDistance') {
+      plan['plannedDistanceMeters'] = Math.round(value * METERS_PER_MILE * 100) / 100
+    }
+
+    // For each week and each date, calculate the plannedDistanceMeters field
+    else if (field === 'weeks') {
+      value = value.map((week) => {
+        return ({
+          ...week,
+          plannedDistanceMeters: Math.round(week.plannedDistance * METERS_PER_MILE * 100) / 100,
+        })
+      })
+    }
+
+    else if (field === 'dates') {
+      value = value.map((date) => {
+        return ({
+          ...date,
+          plannedDistanceMeters: Math.round(date.plannedDistance * METERS_PER_MILE * 100) / 100,
+        })
+      })
+    }
 
     // If either of the dates are updated, we need to recalculate the actualDistance fields for the plan
     if (!shouldUpdateActualDistances && (field === 'startDate' || field === 'endDate') && plan[field] !== value) {
       shouldUpdateActualDistances = true
     }
+
+    plan[field] = value
   }
 
   // If the dates of the plan have been edited, then we need to recalculate the actualDistance

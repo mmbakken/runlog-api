@@ -15,22 +15,25 @@ const trainingSchema = new mongoose.Schema({
   },
   
   // Plan-wide distance totals
-  actualDistance: Number, // Meters; Total of all runs that have actually happened in this plan period
-  plannedDistance: Number, // Miles (TODO, use meters); Sum of all runs that have actually happened + planned runs in future dates for this plan
+  actualDistance: Number, // Meters; Sum of all run distances that have actually happened in this plan period
+  plannedDistance: Number, // Miles; Sum of all user-entered mileage amounts in this plan period
+  plannedDistanceMeters: Number, // Meters; Sum of all user-entered mileage amounts in this plan period (used to compare with actualDistance fields)
 
   // Week-specific distance totals
   weeks: [{
-    startDateISO: String, // ISO 8601, like 2022-03-29
-    actualDistance: Number, // Sum of the actual mileage for every date this week
-    plannedDistance: Number, // Sum of the actualDistance + planned mileage for every date this week without actual mileage.
+    startDateISO: String, // ISO 8601, like 2022-03-29 TODO: Should this be a Date instead?
+    actualDistance: Number, // Meters; Sum of all run distances that have actually happened in this week
+    plannedDistance: Number, // Miles; Sum of all user-entered mileage amounts in this week
+    plannedDistanceMeters: Number, // Meters; Sum of all user-entered mileage amounts in this week (used to compare with actualDistance fields)
   }],
 
   // These objects are the basis of the Calendar section. They allow the user to see daily distance
-  // totals, workout descriptions, and 
+  // totals, workout descriptions, and workout categories
   dates: [{
-    dateISO: Date, // ISO 8601, like 2022-03-29
-    actualDistance: Number,
-    plannedDistance: Number, // 
+    dateISO: Date, // ISO 8601, like 2022-03-29 TODO: Should this just be a string?
+    actualDistance: Number, // Meters; Sum of all run distances that have actually happened on this date for this user
+    plannedDistance: Number, // Miles; The user-entered mileage amount they plan to run on this date.
+    plannedDistanceMeters: Number, // Meters; The user-entered mileage amount they plan to run on this date (used to compare with actualDistance fields)
     workout: String, // Text description of this workout.
     workoutCategory: Number, // Index of the category enum, see runlog-api/constants/workoutCategories.js
   }],

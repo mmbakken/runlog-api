@@ -64,6 +64,7 @@ const createTrainingPlan = async (req, res) => {
         dateISO: date,
         actualDistance: dateActualDistance,
         plannedDistance: 0,
+        plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
       })
@@ -72,6 +73,7 @@ const createTrainingPlan = async (req, res) => {
     weeks.push({
       startDateISO: startDT.plus({ days: (i * 7) }).toISODate(),
       plannedDistance: 0,
+      plannedDistanceMeters: 0,
     })
   }
 
@@ -85,6 +87,7 @@ const createTrainingPlan = async (req, res) => {
     goal: goal,
     isActive: isActive,
     plannedDistance: 0,
+    plannedDistanceMeters: 0,
     weeks: weeks,
     dates: dates,
     journal: [],

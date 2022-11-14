@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import TrainingModel from '../db/TrainingModel.js'
 
 import addFloats from '../utils/addFloats.js'
+import { METERS_PER_MILE } from '../constants/unitConversion.js'
 
 const updateTrainingPlanDate = async (req, res) => {
   let plan
@@ -69,8 +70,14 @@ const updateTrainingPlanDate = async (req, res) => {
       }
 
       const diff = addFloats(value,  -1 * date.plannedDistance) // Find the difference between new and old value
+
+      date.plannedDistanceMeters = Math.round(value * METERS_PER_MILE * 100) / 100
+
       plan.plannedDistance = addFloats(diff, plan.plannedDistance)
+      plan.plannedDistanceMeters = Math.round(plan.plannedDistance * METERS_PER_MILE * 100) / 100
+
       thisWeek.plannedDistance = addFloats(diff, thisWeek.plannedDistance)
+      thisWeek.plannedDistanceMeters = Math.round(thisWeek.plannedDistance * METERS_PER_MILE * 100) / 100
     }
 
     date[field] = value
