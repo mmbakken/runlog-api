@@ -1,6 +1,8 @@
 import TrainingModel from '../db/TrainingModel.js'
 import { DateTime, IANAZone } from 'luxon'
 
+import updatePlanActualDistances from '../training/updatePlanActualDistances.js'
+
 // Creates a new training plan for this user, saves it to the database, and returns the new training
 // plan to the requestor.
 const createTrainingPlan = async (req, res) => {
@@ -48,32 +50,34 @@ const createTrainingPlan = async (req, res) => {
   }
 
   // Generate a week object to track the week-specific stuff for this plan
+  const dates = []
   const weeks = []
   for (let i = 0; i < weekCount; i++) {
+    // Generate an object for each date within this training plan's date range
+    let date
+
+    for (let j = 0; j < 7; j++) {
+      let dateActualDistance = 0
+      date = startDT.plus({ days: (i * 7) + j }).startOf('day').toJSDate()
+
+      dates.push({
+        dateISO: date,
+        actualDistance: dateActualDistance,
+        plannedDistance: 0,
+        plannedDistanceMeters: 0,
+        workout: '',
+        workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
+      })
+    }
+
     weeks.push({
       startDateISO: startDT.plus({ days: (i * 7) }).toISODate(),
-      actualDistance: 0,
       plannedDistance: 0,
-      percentChange: null,
+      plannedDistanceMeters: 0,
     })
   }
 
-  // Generate an object for each date within this training plan's date range
-  const dates = []
-  const days = weekCount * 7
-  for (let i = 0; i < days; i++) {
-    dates.push({
-      dateISO: startDT.plus({ days: i }).toISODate(),
-      actualDistance: 0,
-      plannedDistance: 0,
-      workout: '',
-      workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
-    })
-  }
-
-  // TODO: What if the start date is in the past? We would need to backfill all of the distances into this plan
-
-  const newPlan = {
+  let newPlan = {
     userId: req.user.id,
     startDate: startDate,
     endDate: endDate,
@@ -82,8 +86,8 @@ const createTrainingPlan = async (req, res) => {
     title: title,
     goal: goal,
     isActive: isActive,
-    actualDistance: 0,
     plannedDistance: 0,
+    plannedDistanceMeters: 0,
     weeks: weeks,
     dates: dates,
     journal: [],
@@ -91,6 +95,7 @@ const createTrainingPlan = async (req, res) => {
 
   // Save to db
   try {
+    newPlan = await updatePlanActualDistances(newPlan)
     await TrainingModel.insertMany(newPlan)
     return res.json({ plan: newPlan })
   } catch (err) {
