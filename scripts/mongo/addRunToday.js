@@ -15,7 +15,7 @@ const addRunToday = async () => {
   await connectToMongo()
 
   if (process?.env?.APP_ENV !== 'dev') {
-    console.erorr('Do not use this script in prod! It drops all of the users and runs and daily stats. Only use in dev.')
+    console.erorr('Do not use this script in prod! It drops all of the runs and daily stats for today\'s date. Only use in dev.')
     return -1
   }
 
@@ -86,7 +86,7 @@ const addRunToday = async () => {
       average_heartrate: 149.3,
       max_heartrate: 167,
       device_name: 'Garmin Forerunner 245',
-      id: '4874302952-test',
+      id: '1234',
       external_id: 'garmin_push_6358009720',
       start_latlng: [39.758085, -104.989269],
     }
