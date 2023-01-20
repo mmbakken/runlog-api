@@ -1,7 +1,6 @@
 import {} from 'dotenv/config.js'
 import express from 'express'
 import cors from 'cors'
-import { DateTime } from 'luxon'
 
 // Database
 // import mongoose from 'mongoose'
@@ -49,7 +48,7 @@ app.use(express.json())
 
 // Simple request logging middleware
 app.use((req, res, next) => {
-  console.log(`${DateTime.utc().toString()} ${req.method} ${req.originalUrl}`)
+  console.log(`${req.method} ${req.originalUrl}`)
   next()
 })
 
