@@ -4,7 +4,7 @@ import cors from 'cors'
 import { DateTime } from 'luxon'
 
 // Database
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 import connectToMongo from './db/connectToMongo.js'
 
 // Authentication
@@ -19,6 +19,7 @@ import getUserDetails from './auth/getUserDetails.js'
 import getAllRuns from './runs/getAllRuns.js'
 import getRun from './runs/getRun.js'
 import updateRun from './runs/updateRun.js'
+import deleteRun from './runs/deleteRun.js'
 import getStravaRuns from './runs/getStravaRuns.js'
 
 // DailyStats
@@ -96,6 +97,9 @@ app.get('/api/v1/runs', authenticateToken, getAllRuns)
 
 // Update the Runlog run object with any fields included in the message body
 app.put('/api/v1/runs/:id', authenticateToken, updateRun)
+
+// Delete the Runlog run object
+app.delete('/api/v1/runs/:id', authenticateToken, deleteRun)
 
 
 // DAILY STATS ROUTES
