@@ -86,7 +86,7 @@ const addRunToday = async () => {
       average_heartrate: 149.3,
       max_heartrate: 167,
       device_name: 'Garmin Forerunner 245',
-      id: '1234',
+      id: '1',
       external_id: 'garmin_push_6358009720',
       start_latlng: [39.758085, -104.989269],
     }
