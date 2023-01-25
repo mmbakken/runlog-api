@@ -1,9 +1,9 @@
 import {} from 'dotenv/config.js'
 import express from 'express'
 import cors from 'cors'
+import logTimestamp from 'log-timestamp'
 
 // Database
-// import mongoose from 'mongoose'
 import connectToMongo from './db/connectToMongo.js'
 
 // Authentication
@@ -35,6 +35,8 @@ import deleteTrainingPlan from './training/deleteTrainingPlan.js'
 const app = express()
 const port = 4000
 
+logTimestamp() // Prepends timestamp to all console methods
+
 // Only use CORS for dev environment
 if (process.env.USE_CORS === 'true') {
   console.log('Using CORS')
@@ -51,28 +53,6 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.originalUrl}`)
   next()
 })
-
-// Validate ObjectId params to avoid annoying exceptions in findById calls
-// app.use((req, res, next) => {
-//   if (req.params.id != null) {
-//     if (!mongoose.isValidObjectId(req.params.id)) {
-//       console.error('id param requires a valid ObjectId string')
-//       return res.sendStatus(500)
-//     }
-//   }
-
-//   // problem: req.params is undefined here because it's not a route we know about, really
-//   // Need to find some way to process all ":id" params, to ensure they're valid ObjectIds
-
-//   // console.log(`req.params.id: "${req.params.id}", ${typeof req.params.id}`)
-//   // console.log('req.params:')
-//   // console.dir(req.params)
-
-//   // TODO: router.param() instead??
-//   // https://expressjs.com/en/4x/api.html#router.param
-
-//   next()
-// })
 
 app.get('/api/v1', (req, res) => {
   res.send('Runlog API v1 ✌️')
