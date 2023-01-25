@@ -6,6 +6,9 @@ import logTimestamp from 'log-timestamp'
 // Database
 import connectToMongo from './db/connectToMongo.js'
 
+// Utility functions
+import sleep from './utils/sleep.js'
+
 // Authentication
 import authenticateToken from './auth/authenticateToken.js'
 import login from './auth/login.js'
@@ -53,6 +56,13 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.originalUrl}`)
   next()
 })
+
+if (process.env.APP_ENV === 'dev') {
+  app.use(async (req, res, next) => {
+    await sleep(200)
+    next()
+  })
+}
 
 app.get('/api/v1', (req, res) => {
   res.send('Runlog API v1 ✌️')
