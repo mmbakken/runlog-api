@@ -33,6 +33,7 @@ const getUserDetails = async (req, res) => {
       hasFitbitAuth: user.hasFitbitAuth || false,
       hasStravaAuth: user.hasStravaAuth || false,
       stats: user.stats,
+      gear: user.gear,
     })
   } catch (err) {
     console.error(err)
