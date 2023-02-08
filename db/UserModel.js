@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
 
   gear: {
     shoes: [{
-      _id: mongoose.ObjectId,
+      id: mongoose.ObjectId,
       title: String,
       runIds: [mongoose.ObjectId],
       distance: Number, // In meters, like runs area

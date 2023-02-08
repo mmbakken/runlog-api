@@ -3,7 +3,7 @@ import RunModel from '../db/RunModel.js'
 
 
 // Removes the given run from the database
-const getRun = async (req, res) => {
+const deleteRun = async (req, res) => {
   try {
     const run = await RunModel.findById(req.params.id).lean()
 
@@ -24,4 +24,4 @@ const getRun = async (req, res) => {
   }
 }
 
-export default getRun
+export default deleteRun
