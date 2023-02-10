@@ -31,19 +31,8 @@ const runSchema = new mongoose.Schema({
   ice: { type: Boolean, default: false},
   stretch: { type: Boolean, default: false},
   strength: { type: Boolean, default: false},
- 
-  // TODO: Retrieve these fields in a separate call, not part of the bulk import
-  // Fields that have to be retrieved from Strava's get activity details endpoint
-  // GET /activity/:id
-//   calories: Number, // TODO: Is this used for run activities?
-//   description: String, // From Strava; Need to decide if "comments" is the same
-//   laps: [], // TODO: lap data might get big; think about this more.
-// 
-//   // Runlog-added fields
-//   comments: String,
-//   strengthComments: String,
-//   didStretch: Boolean,
-//   didIce: Boolean,
+
+  shoeId: { type: mongoose.ObjectId, default: null },
 })
 
 export default mongoose.model('Runs', runSchema)
