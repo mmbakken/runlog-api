@@ -1,6 +1,8 @@
 import RunModel from '../db/RunModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 
+import updateUserShoeList from './updateUserShoeList.js'
+
 // Given a run id and a map of {field: value} pairs of updates, the run document will have the
 // changes applied.
 //
@@ -26,7 +28,7 @@ const updateRun = async (req, res) => {
     return res.sendStatus(400)
   }
 
-  // Update the run with 
+  // Update the fields specified by the user's request. See req.body.updates for syntax.
   const validFields = Object.keys(RunModel.schema.paths)
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
@@ -34,6 +36,7 @@ const updateRun = async (req, res) => {
       return res.sendStatus(400)
     }
 
+    const currentValue = run[field]
     run[field] = value
 
     // Do we need to update the DailyStats for this date too?
@@ -52,6 +55,17 @@ const updateRun = async (req, res) => {
         )
       } catch (error) {
         console.error(`Error while attempting to update DailyStats for run with id "${run._id}"`)
+        return res.sendStatus(500)
+      }
+    }
+
+    // Update the user's shoe distance if the shoe was added to the run for the first time.
+    if (field === 'shoeId') {
+      try {
+        await updateUserShoeList(req.user.id, value, currentValue, run._id, run.distance)
+      } catch (err) {
+        console.error(`Error while attempting to update user shoe list for run with id "${run._id}"`)
+        console.dir(err)
         return res.sendStatus(500)
       }
     }

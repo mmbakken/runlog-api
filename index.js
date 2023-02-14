@@ -15,7 +15,6 @@ import login from './auth/login.js'
 import stravaCodeToTokens from './auth/stravaCodeToTokens.js'
 import stravaWebhookVerification from './auth/stravaWebhookVerification.js'
 import stravaWebhookHandler from './auth/stravaWebhookHandler.js'
-import getUserDetails from './auth/getUserDetails.js'
 
 // Runs
 import getAllRuns from './runs/getAllRuns.js'
@@ -34,6 +33,11 @@ import createTrainingPlan from './training/createTrainingPlan.js'
 import updateTrainingPlan from './training/updateTrainingPlan.js'
 import updateTrainingPlanDate from './training/updateTrainingPlanDate.js'
 import deleteTrainingPlan from './training/deleteTrainingPlan.js'
+
+// Users
+import getUserDetails from './users/getUserDetails.js'
+import createShoes from './users/createShoes.js'
+import deleteShoes from './users/deleteShoes.js'
 
 const app = express()
 const port = 4000
@@ -128,6 +132,18 @@ app.get('/api/v1/users/:id', authenticateToken, getUserDetails)
 
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
+
+
+// USER ROUTES
+
+// Used for adding, removing, and updating mileage for user's gear
+
+// Create a new shoe for this user.
+// NB: Shoe mileage can only be updated when runs add a shoe to their list. See PUT /run/:id
+app.post('/api/v1/user/gear/shoes', authenticateToken, createShoes)
+
+// Delete shoes. This unlinks them from each run too.
+app.delete('/api/v1/user/gear/shoes/:shoeId', authenticateToken, deleteShoes)
 
 
 // STRAVA AUTH AND API HANDLERS
