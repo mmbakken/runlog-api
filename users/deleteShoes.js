@@ -1,4 +1,5 @@
 import UserModel from '../db/UserModel.js'
+import RunModel from '../db/RunModel.js'
 
 // Removes the given run from the database
 const deleteShoes = async (req, res) => {
@@ -30,6 +31,17 @@ const deleteShoes = async (req, res) => {
     }
 
     user.gear.shoes = newShoes
+
+    // Any run with the deleted shoeId should be updated to have null instead
+    await RunModel.updateMany(
+      {
+        shoeId: req.params.shoeId,
+      },
+      {
+        shoeId: null,
+      }
+    )
+
     await user.save()
 
     console.log(`Deleted shoes from user "${req.user.id}", with shoe id "${req.params.shoeId}"`)

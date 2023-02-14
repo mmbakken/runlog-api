@@ -36,9 +36,6 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
     return 
   }
 
-  console.log(`currentShoeId: ${currentShoeId}`)
-  console.log(`newShoeId: ${newShoeId}`)
-
   // Update the user's shoe list with correct distance and runIds.
   const newShoes = user.gear.shoes.map((shoe) => {
     let newShoe = {
@@ -46,15 +43,11 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
     }
 
     const runIdsAsStrings = shoe.runIds.map((shoeRunId) => { return shoeRunId.toString() })
- 
+
     // Find the shoe the user selected
     if (shoe._id.toString() === newShoeId) {
-      console.log('found shoe:')
-      console.dir(JSON.stringify(shoe, null, 2))
-
       // if the shoeId is null, that means the shoe was removed from the run
       if (newShoeId == null) {
-        console.log('newShoeId was null, so the user un-set their shoe. Removing mileage from shoe')
         newShoe.distance = addFloats(newShoe.distance, -1 * distance)
         newShoe.runIds = shoe.runIds.filter((id) => {
           return id.toString() !== runId.toString()
@@ -63,29 +56,19 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
 
       // The shoeId is not null, but if the run is already tied to this shoe, then do not add distance to the shoe
       if (!runIdsAsStrings.includes(runId.toString())) {
-        console.log('Adding mileage to shoe')
         // Otherwise, add the distance to the shoe and add the runId too
         newShoe.distance = addFloats(newShoe.distance, distance)
         newShoe.runIds = [
           ...shoe.runIds,
           runId
         ]
-      } else {
-        console.log('runId already present in runIds array! Will not update the run list or distance for this shoe.')
       }
-
-      console.log('new shoe:')
-      console.dir(newShoe)
     }
 
     // This is not the shoe the user selected. But if it was the former shoe, then we should remove
     // mileage from that shoe
-    if (shoe._id.toString() === currentShoeId.toString()) {
-      console.log('Found former shoe for this run.')
-      console.dir(shoe)
-
+    if (shoe._id.toString() === currentShoeId?.toString()) {
       if (runIdsAsStrings.includes(runId.toString())) {
-        console.log('Run was in the runIds list, so we can remove the distance and update the runIds list.')
         newShoe.distance = addFloats(newShoe.distance, -1 * distance)
         newShoe.runIds = shoe.runIds.filter((id) => {
           return id.toString() !== runId.toString()
@@ -95,9 +78,6 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
 
     return newShoe
   })
-
-  console.log('newShoes:')
-  console.dir(newShoes)
 
   await UserModel.updateOne(
     {
