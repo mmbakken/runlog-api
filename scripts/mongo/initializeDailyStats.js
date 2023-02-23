@@ -152,7 +152,7 @@ const initializeDailyStats = async () => {
       try {
         // Bulk insert all of the DailyStats objects you made out of the runs
         console.dir(ds)
-        await DailyStatsModel.insertOne(ds)
+        await DailyStatsModel.insertMany(ds)
       } catch (err) {
         console.error(err)
       } 
