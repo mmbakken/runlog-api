@@ -151,9 +151,11 @@ const initializeDailyStats = async () => {
       // Insert the user's DailyStats documents to the collection
       try {
         // Bulk insert all of the DailyStats objects you made out of the runs
-        console.dir(ds)
+        console.log(ds.date)
         await DailyStatsModel.insertMany(ds)
       } catch (err) {
+        console.error('Failed to insert this ds:')
+        console.dir(ds)
         console.error(err)
       } 
     }
