@@ -4,6 +4,7 @@ import UserModel from '../../db/UserModel.js'
 import RunModel from '../../db/RunModel.js'
 import DailyStatsModel from '../../db/DailyStatsModel.js'
 import { DateTime } from 'luxon'
+import addFloats from '../../utils/addFloats.js'
 
 // This script adds documents to the DailyStats collection based on the existing run data
 
@@ -65,7 +66,7 @@ const initializeDailyStats = async () => {
         // Add the distance to the existing distance for today
         dailyStats[startDate] = {
           ...dailyStats[startDate],
-          distance: dailyStats[startDate].distance + run.distance,
+          distance: addFloats(dailyStats[startDate].distance, run.distance),
           title: 'Multiple runs',
           runIds: [
             ...dailyStats[startDate].runIds,
@@ -144,16 +145,19 @@ const initializeDailyStats = async () => {
     }
 
     console.log('\n\n\n')
+    console.log('Inserting DS into mongo for this user:')
 
-    console.log('Temp dailyStats object:')
-    console.dir(dailyStats)
-
-    // Insert the user's DailyStats documents to the collection
-    try {
-      // Bulk insert all of the DailyStats objects you made out of the runs
-      await DailyStatsModel.insertMany(Object.values(dailyStats))
-    } catch (err) {
-      console.error(err)
+    for (let ds of Object.values(dailyStats)) {
+      // Insert the user's DailyStats documents to the collection
+      try {
+        // Bulk insert all of the DailyStats objects you made out of the runs
+        console.log(ds.date)
+        await DailyStatsModel.insertMany(ds)
+      } catch (err) {
+        console.error('Failed to insert this ds:')
+        console.dir(ds)
+        console.error(err)
+      } 
     }
   }
 
