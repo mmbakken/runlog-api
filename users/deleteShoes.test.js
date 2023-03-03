@@ -8,7 +8,7 @@ import deleteShoes from './deleteShoes.js'
 beforeAll(async () => {
   // Set up test DB
   try {
-    await mongoose.connect('mongodb://localhost/runs', {
+    await mongoose.connect('mongodb://localhost/updateUserShoeList', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
@@ -41,6 +41,7 @@ describe('User can add a shoes to a run', () => {
       gear: {
         shoes: [
           {
+            _id: mongoose.Types.ObjectId(),
             title: 'First shoe',
             distance: 0,
             runIds: [],
@@ -61,6 +62,7 @@ describe('User can add a shoes to a run', () => {
 
     user.gear.shoes = [
       {
+        _id: user.gear.shoes[0]._id,
         title: 'First shoe',
         distance: run.distance,
         runIds: [run._id],
