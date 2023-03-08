@@ -8,7 +8,7 @@ import deleteShoes from './deleteShoes.js'
 beforeAll(async () => {
   // Set up test DB
   try {
-    await mongoose.connect('mongodb://localhost/updateUserShoeList', {
+    await mongoose.connect('mongodb://localhost/deleteShoes', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })

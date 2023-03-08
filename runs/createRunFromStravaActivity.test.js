@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import TrainingModel from '../db/TrainingModel.js'
+import DailyStatsModel from '../db/DailyStatsModel.js'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
 import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
@@ -26,6 +27,7 @@ beforeEach(() => {
 afterEach(async () => {
   // Clean out the db after each test run
   await TrainingModel.deleteMany()
+  await DailyStatsModel.deleteMany()
   await UserModel.deleteMany()
   await RunModel.deleteMany()
 })
@@ -75,7 +77,7 @@ describe('Run creation', () => {
     })
 
     // Create some runs that exist prior to the creation of the next run
-    await RunModel.create({
+    const run1 = await RunModel.create({
       userId: user._id,
       name: 'Test Run 1',
       startDate: new Date('2022-10-10T23:07:39Z'), // first day of plan
@@ -83,7 +85,8 @@ describe('Run creation', () => {
       timezone: '(GMT-06:00) America/Chicago',
       distance: 1609.34, // 1 mile, in meters
     })
-    await RunModel.create({
+
+    const run2 = await RunModel.create({
       userId: user._id,
       name: 'Test Run 2',
       startDate: new Date('2022-10-16T23:07:39Z'),
@@ -92,8 +95,23 @@ describe('Run creation', () => {
       distance: 1609.34, // 1 mile, in meters
     })
 
+    // Existing DS documents
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-10',
+      distance: 1609.34,
+      runIds: [run1._id],
+    })
+
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-16',
+      distance: 1609.34,
+      runIds: [run2._id],
+    })
+
     // Create a plan that includes these runs
-    await TrainingModel.create({
+    let plan = await TrainingModel.create({
       userId: user._id,
       startDate: '2022-10-10',
       endDate: '2022-10-23',
@@ -257,8 +275,10 @@ describe('Run creation', () => {
     }
 
     await createRunFromStravaActivity(user, stravaActivity)
-    const plan = await TrainingModel.findOne({}).exec()
+    const plans = await TrainingModel.find({}).exec()
+    expect (plans.length).toBe(1)
 
+    plan = plans[0]
     expect(plan.actualDistance).toBe(4828.02) // 3 miles, in meters
     expect(plan.weeks[0].actualDistance).toBe(3218.68) // 2 miles, in meters
     expect(plan.weeks[1].actualDistance).toBe(1609.34) // 1 mile, in meters
