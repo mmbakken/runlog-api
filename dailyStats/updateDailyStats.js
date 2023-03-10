@@ -2,23 +2,6 @@ import { DateTime } from 'luxon'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import getWeekDates from './getWeekDates.js'
 
-// TODO: Test cases to implement:
-// 1. Add a run that is later than every existing run
-//   - This will be the most common scenario (new run happens today, is synced right after)
-// 2. Add a run that is later than some runs in a week, but not the latest.
-//   - E.g. Multiple runs added back to back, but later run is added before an earlier one in the same week
-// 3. Add a run that has no other runs in the same week or within seven days
-//   - E.g. The user takes a break from running for a while. Only this DS document should be affected.
-// 4. Add a run that occurs before and after existing runs
-//   - E.g. Something went wrong and we went to resync Strava runs, and now we're adding a run far in the past
-//
-// Test framework:
-// - Generate a set of DailyStats and Run documents to populate a test database
-// - Attempt to add another run via stravaWebhookHandler.js
-// - This function gets called for a new run
-// - Validate that the database has exactly the new contents we anticipate, given the new run's date
-//   and the Runs/DailyStats we populated the test database with.
-
 // Either create a new DailyStats document for this date, or look up the existing DailyStats
 // document for this date and add distances and this runId to the document.
 //

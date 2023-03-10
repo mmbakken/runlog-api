@@ -11,23 +11,23 @@ const getUserDetails = async (req, res) => {
   }
 
   // Make sure the authenticated user is the one whose details are being requested
-  if (req.user.id !== req.params.id) {
+  if (req.user._id !== req.params.id) {
     // TODO: allow admin users to skip this check
-    console.error(`User with id "${req.user.id} is forbidden from accessing user details for user id: "${req.params.id}"`)
+    console.error(`User with id "${req.user._id} is forbidden from accessing user details for user id: "${req.params.id}"`)
     return res.sendStatus(403)
   }
 
   try {
     // Look up user by email in mongo
-    const user = await UserModel.findById(req.user.id)
+    const user = await UserModel.findById(req.user._id)
 
     if (user == null) {
-      console.error(`Unable to find user with id "${req.user.id}"`)
+      console.error(`Unable to find user with id "${req.user._id}"`)
       return res.sendStatus(400)
     }
 
     return res.json({
-      id: user.id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       hasFitbitAuth: user.hasFitbitAuth || false,

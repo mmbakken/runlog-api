@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 import RunModel from '../db/RunModel.js'
 
+import resetDailyStats from '../dailyStats/resetDailyStats.js'
+import addRunDistanceToPlans from './addRunDistanceToPlans.js'
 
 // Removes the given run from the database
 const deleteRun = async (req, res) => {
@@ -14,6 +16,12 @@ const deleteRun = async (req, res) => {
 
     await RunModel.deleteOne({_id: mongoose.Types.ObjectId(req.params.id)})
     console.log(`Deleted run with id "${req.params.id}"`)
+
+    // Correct the distances in DS now that run is deleted
+    await resetDailyStats(req.user)
+
+    // Update the plan distances once DS is correct.
+    await addRunDistanceToPlans(run, req.user)
 
     return res.json(run)
   } catch (e) {

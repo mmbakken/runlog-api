@@ -8,9 +8,9 @@ import updatePlanActualDistances from '../training/updatePlanActualDistances.js'
 const createTrainingPlan = async (req, res) => {
   // Parse the required and optional fields, then validate them
   const startDate = req.body.startDate // ISO Date like yyyy-mm-dd
-  const startDT = DateTime.fromISO(req.body.startDate)
+  const startDT = DateTime.fromISO(req.body.startDate, { zone: 'utc' }).startOf('day')
   const endDate = req.body.endDate // ISO Date like yyyy-mm-dd
-  const endDT = DateTime.fromISO(req.body.endDate)
+  const endDT = DateTime.fromISO(req.body.endDate, { zone: 'utc' }).startOf('day')
   const weekCount = req.body.weekCount
   const timezone = req.body.timezone
   const title = req.body.title
@@ -78,7 +78,7 @@ const createTrainingPlan = async (req, res) => {
   }
 
   let newPlan = {
-    userId: req.user.id,
+    userId: req.user._id,
     startDate: startDate,
     endDate: endDate,
     weekCount: weekCount,

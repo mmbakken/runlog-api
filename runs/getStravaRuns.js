@@ -4,10 +4,10 @@ import { useFreshTokens } from '../auth/stravaTokens.js'
 
 const getStravaRuns = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.user.id)
+    const user = await UserModel.findById(req.user._id)
 
     if (user == null) {
-      console.error(`Unable to find user with id "${req.user.id}"`)
+      console.error(`Unable to find user with id "${req.user._id}"`)
       return res.sendStatus(400)
     }
 

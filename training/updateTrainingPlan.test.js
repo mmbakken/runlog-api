@@ -219,7 +219,7 @@ describe('Training Plan is updated', () => {
     // Request to update existing training plan's dates
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       params: {
         id: plan._id,
@@ -389,7 +389,7 @@ describe('Training Plan is updated', () => {
     // plannedDistanceMeters field should always be ignored by endpoint
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       params: {
         id: plan._id,

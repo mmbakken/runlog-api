@@ -124,7 +124,7 @@ describe('Training creation', () => {
     // Now test if the creation function works, not just the db
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       body: {
         startDate: '2022-10-10',
@@ -189,7 +189,7 @@ describe('Training creation', () => {
     // Request to create 1-week training plan during week of the runs
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       body: {
         startDate: '2022-10-10',
@@ -271,7 +271,7 @@ describe('Training creation', () => {
     // Request to create 1-week training plan during week of the runs
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       body: {
         startDate: '2022-10-10',
