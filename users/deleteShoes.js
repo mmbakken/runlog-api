@@ -4,7 +4,7 @@ import RunModel from '../db/RunModel.js'
 // Removes the given run from the database
 const deleteShoes = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.user.id)
+    const user = await UserModel.findById(req.user._id)
 
     if (user == null) {
       console.error('Cannot delete shoes: user was not found.')
@@ -44,10 +44,10 @@ const deleteShoes = async (req, res) => {
 
     await user.save()
 
-    console.log(`Deleted shoes from user "${req.user.id}", with shoe id "${req.params.shoeId}"`)
+    console.log(`Deleted shoes from user "${req.user._id}", with shoe id "${req.params.shoeId}"`)
 
     return res.json({
-      id: user.id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       hasFitbitAuth: user.hasFitbitAuth || false,

@@ -219,7 +219,7 @@ describe('Training Plan date update endpoint', () => {
     // Request to update existing training plan's dates
     const req = {
       user: {
-        id: user._id,
+        _id: user._id,
       },
       params: {
         id: plan._id,

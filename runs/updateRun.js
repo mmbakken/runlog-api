@@ -44,7 +44,7 @@ const updateRun = async (req, res) => {
       try {
         await DailyStatsModel.update(
           {
-            userId: req.user.id,
+            userId: req.user._id,
             runIds: {
               $eq: [run._id] // Only this run ID - otherwise title is still "multiple runs"
             }
@@ -62,7 +62,7 @@ const updateRun = async (req, res) => {
     // Update the user's shoe distance if the shoe was added to the run for the first time.
     if (field === 'shoeId') {
       try {
-        await updateUserShoeList(req.user.id, value, currentValue, run._id, run.distance)
+        await updateUserShoeList(req.user._id, value, currentValue, run._id, run.distance)
       } catch (err) {
         console.error(`Error while attempting to update user shoe list for run with id "${run._id}"`)
         console.dir(err)

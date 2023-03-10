@@ -9,7 +9,7 @@ const createShoes = async (req, res) => {
     return res.status(400).json({ error: 'Unable to create training plan: title must be a string'})
   }
 
-  if (req.user == null || req.user.id == null) {
+  if (req.user == null || req.user._id == null) {
     return res.status(500).json({ error: 'Unable to add shoes to user: user not found.' })
   }
 
@@ -22,10 +22,10 @@ const createShoes = async (req, res) => {
   // Get the user object and add the shoes to it
   let user
   try {
-    user = await UserModel.findById(req.user.id)
+    user = await UserModel.findById(req.user._id)
 
     if (user == null) {
-      console.error(`Unable to find user with id "${req.user.id}"`)
+      console.error(`Unable to find user with id "${req.user._id}"`)
       return res.sendStatus(400)
     }
 
@@ -40,7 +40,7 @@ const createShoes = async (req, res) => {
     user = await user.save()
 
     return res.json({
-      id: user.id,
+      id: user._id,
       name: user.name,
       email: user.email,
       hasFitbitAuth: user.hasFitbitAuth || false,

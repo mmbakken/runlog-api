@@ -18,11 +18,17 @@ const login = async (req, res) => {
       // Transform the user response from Mongoose into a plain object with only the public info
       // as visible fields
       const payload = {
-        id: user._id,
+        _id: user._id,
         email: user.email,
         name: user.name,
         hasFitbitAuth: user.hasFitbitAuth || false,
         hasStravaAuth: user.hasStravaAuth || false,
+        stats: {
+          weekStartsOn: user.weekStartsOn,
+        },
+        gear: {
+          shoes: user.gear.shoes,
+        }
       }
 
       // TODO: Generate JWT for public user data and send back as bearer token
