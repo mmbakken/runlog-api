@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { DateTime } from 'luxon'
 
-import updatePlanActualDistances from '../training/updatePlanActualDistances.js'
+import updatePlanDistances from '../training/updatePlanDistances.js'
 import TrainingModel from '../db/TrainingModel.js'
 
 // Takes a new run and the user it belongs to. Updates each affected plan with this new distance.
@@ -40,7 +40,7 @@ const addRunDistanceToPlans = async (run, user) => {
 
   // Recalculate the plan, week, and date actualDistance fields for each plan this run's date belongs to.
   for (let plan of plans) {
-    plan = await updatePlanActualDistances(plan)
+    plan = await updatePlanDistances(plan)
     await plan.save()
   }
 }

@@ -1,7 +1,7 @@
 import TrainingModel from '../db/TrainingModel.js'
 import { DateTime, IANAZone } from 'luxon'
 
-import updatePlanActualDistances from '../training/updatePlanActualDistances.js'
+import updatePlanDistances from '../training/updatePlanDistances.js'
 
 // Creates a new training plan for this user, saves it to the database, and returns the new training
 // plan to the requestor.
@@ -95,7 +95,7 @@ const createTrainingPlan = async (req, res) => {
 
   // Save to db
   try {
-    newPlan = await updatePlanActualDistances(newPlan)
+    newPlan = await updatePlanDistances(newPlan)
     await TrainingModel.insertMany(newPlan)
     return res.json({ plan: newPlan })
   } catch (err) {

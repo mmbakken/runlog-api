@@ -1,5 +1,5 @@
 import TrainingModel from '../db/TrainingModel.js'
-import updatePlanActualDistances from './updatePlanActualDistances.js'
+import updatePlanDistances from './updatePlanDistances.js'
 
 import { METERS_PER_MILE } from '../constants/unitConversion.js'
 
@@ -24,7 +24,7 @@ const updateTrainingPlan = async (req, res) => {
   }
 
   // Update the plan with new values
-  let shouldUpdateActualDistances = false
+  let shouldUpdateDistances = false
   const validFields = Object.keys(TrainingModel.schema.paths)
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
@@ -62,8 +62,8 @@ const updateTrainingPlan = async (req, res) => {
     }
 
     // If either of the dates are updated, we need to recalculate the actualDistance fields for the plan
-    if (!shouldUpdateActualDistances && (field === 'startDate' || field === 'endDate') && plan[field] !== value) {
-      shouldUpdateActualDistances = true
+    if (!shouldUpdateDistances && (field === 'startDate' || field === 'endDate') && plan[field] !== value) {
+      shouldUpdateDistances = true
     }
 
     plan[field] = value
@@ -71,8 +71,8 @@ const updateTrainingPlan = async (req, res) => {
 
   // If the dates of the plan have been edited, then we need to recalculate the actualDistance
   // fields for the new dates, new weeks, and plan total
-  if (shouldUpdateActualDistances) {
-    plan = await updatePlanActualDistances(plan)
+  if (shouldUpdateDistances) {
+    plan = await updatePlanDistances(plan)
   }
 
   try {
