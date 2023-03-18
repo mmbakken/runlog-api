@@ -1,7 +1,7 @@
 import connectToMongo from '../../db/connectToMongo.js'
 import disconnectFromMongo from '../../db/disconnectFromMongo.js'
 import TrainingModel from '../../db/TrainingModel.js'
-import updatePlanDistances from '../../dailystats/updatePlanDistances.js'
+import updatePlanDistances from '../../training/updatePlanDistances.js'
 
 // Sets the plannedDistance values for 
 const updateAllPlanDistances = async () => {
@@ -14,14 +14,15 @@ const updateAllPlanDistances = async () => {
   try {
     allPlans = await TrainingModel.find(
       {},
-    ).lean()
+    )
   } catch (err) {
     console.error(err)
   }
 
   for (let i = 0; i < allPlans.length; i++) {
     try {
-      let plan = await updatePlanDistances(allPlans[i])
+      let plan = allPlans[i]
+      plan = await updatePlanDistances(allPlans[i])
       await plan.save()
     } catch (err) {
       console.error(err)
