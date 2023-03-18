@@ -4,9 +4,9 @@ import DailyStatsModel from '../db/DailyStatsModel.js'
 import addFloats from '../utils/addFloats.js'
 
 // Given a Training Plan document, returns the correct values for: plan, week, date
-const updatePlanActualDistances = async (plan) => {
+const updatePlanDistances = async (plan) => {
   if (plan == null) {
-    throw new Error('updatePlanActualDistances requires plan as a parameter')
+    throw new Error('updatePlanDistances requires plan as a parameter')
   }
 
   // Grab the dailystats for the plan's date range
@@ -34,14 +34,21 @@ const updatePlanActualDistances = async (plan) => {
   // Sum the week distances for the plan's actualDistance
 
   let planActualDistance = 0
+  let planPlannedDistance = 0
+  let planPlannedDistanceMeters = 0
+  let weekActualDistance
+  let weekPlannedDistance
+  let weekPlannedDistanceMeters
   let weekStartDT
   let weekEndDT
-  let weekActualDistance
+  
 
   for (let week of plan.weeks) {
     weekStartDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' }).startOf('day')
     weekEndDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' }).plus({ days: 7 }).startOf('day')
     weekActualDistance = 0
+    weekPlannedDistance = 0
+    weekPlannedDistanceMeters = 0
 
     let thisDateDT
     let thisDS
@@ -55,16 +62,24 @@ const updatePlanActualDistances = async (plan) => {
         thisDS = allDailyStatsByDate[thisDateDT.toISODate()]
         date.actualDistance = thisDS?.distance || 0
         weekActualDistance = addFloats(thisDS?.distance || 0, weekActualDistance)
+        weekPlannedDistance = addFloats(date.plannedDistance || 0, weekPlannedDistance)
+        weekPlannedDistanceMeters = addFloats(date.plannedDistanceMeters || 0, weekPlannedDistanceMeters)
       }
     }
 
     week.actualDistance = weekActualDistance
+    week.plannedDistance = weekPlannedDistance
+    week.plannedDistanceMeters = weekPlannedDistanceMeters
     planActualDistance = addFloats(weekActualDistance, planActualDistance)
+    planPlannedDistance = addFloats(weekPlannedDistance, planPlannedDistance)
+    planPlannedDistanceMeters = addFloats(weekPlannedDistanceMeters, planPlannedDistanceMeters)
   }
 
   plan.actualDistance = planActualDistance
+  plan.plannedDistance = planPlannedDistance
+  plan.plannedDistanceMeters = planPlannedDistanceMeters
 
   return plan
 }
 
-export default updatePlanActualDistances
+export default updatePlanDistances

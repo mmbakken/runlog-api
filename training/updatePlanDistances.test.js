@@ -5,12 +5,12 @@ import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import UserModel from '../db/UserModel.js'
 
-import updatePlanActualDistances from './updatePlanActualDistances.js'
+import updatePlanDistances from './updatePlanDistances.js'
 
 beforeAll(async () => {
   // Set up test DB
   try {
-    await mongoose.connect('mongodb://localhost/updatePlanActualDistances', {
+    await mongoose.connect('mongodb://localhost/updatePlanDistances', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
@@ -36,7 +36,7 @@ afterAll(async () => {
   return await mongoose.connection.close()
 })
 
-describe('Plan actualDistance recalculation function', () => {
+describe('Plan distance recalculation function', () => {
   test('Actual distance fields are summed from DailyStats appropriately', async () => {
     // These tests use the same initial database state
     const user = await UserModel.create({
@@ -232,8 +232,7 @@ describe('Plan actualDistance recalculation function', () => {
 
     const plan = await TrainingModel.findOne({}).exec()
 
-    // TODO: updatePlanActualDistances RETURNS the plan for you to deal with - it doesn't hit the db
-    let updatedPlan = await updatePlanActualDistances(plan)
+    let updatedPlan = await updatePlanDistances(plan)
 
     expect(updatedPlan.actualDistance).toBe(3000.06)
     expect(updatedPlan.weeks[0].actualDistance).toBe(1000.01)
