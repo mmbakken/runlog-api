@@ -58,6 +58,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-04',
@@ -66,6 +67,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-05',
@@ -74,6 +76,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-06',
@@ -82,6 +85,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-07',
@@ -90,6 +94,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-08',
@@ -98,6 +103,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-09',
@@ -106,6 +112,7 @@ describe('Training creation', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         }
       ],
       journal: []
@@ -157,7 +164,7 @@ describe('Training creation', () => {
     })
 
     // Create some runs that exist prior to the creation of this plan
-    await RunModel.create({
+    const run1 = await RunModel.create({
       userId: user._id,
       name: 'Test Run 1',
       startDate: new Date('2022-10-10T23:07:39Z'), // first day of plan
@@ -165,7 +172,7 @@ describe('Training creation', () => {
       timezone: '(GMT-06:00) America/Chicago',
       distance: 1609.34, // 1 mile, in meters
     })
-    await RunModel.create({
+    const run2 = await RunModel.create({
       userId: user._id,
       name: 'Test Run 2',
       startDate: new Date('2022-10-16T23:07:39Z'), // last day of plan
@@ -213,9 +220,36 @@ describe('Training creation', () => {
 
     expect(plan1.actualDistance).toBe(4828.03) // 3 miles (in meters)
     expect(plan1.weeks[0].actualDistance).toBe(4828.03) // 3 miles (in meters)
+
+    // Mon 10/10
     expect(plan1.dates[0].actualDistance).toBe(1609.34) // 1 mile, in meters
-    expect(plan1.dates[1].actualDistance).toBe(0) // 2 miles, in meters
+    expect(plan1.dates[0].runIds.length).toBe(1)
+    expect(plan1.dates[0].runIds[0]).toBe(run1._id.toString())
+
+    // Tue 10/11
+    expect(plan1.dates[1].actualDistance).toBe(0)
+    expect(plan1.dates[1].runIds.length).toBe(0)
+
+    // Wed 10/12
+    expect(plan1.dates[2].actualDistance).toBe(0)
+    expect(plan1.dates[2].runIds.length).toBe(0)
+
+    // Thu 10/13
+    expect(plan1.dates[3].actualDistance).toBe(0)
+    expect(plan1.dates[3].runIds.length).toBe(0)
+
+    // Fri 10/14
+    expect(plan1.dates[4].actualDistance).toBe(0)
+    expect(plan1.dates[4].runIds.length).toBe(0)
+
+    // Sat 10/15
+    expect(plan1.dates[5].actualDistance).toBe(0)
+    expect(plan1.dates[5].runIds.length).toBe(0)
+
+    // Sun 10/16
     expect(plan1.dates[6].actualDistance).toBe(3218.69) // 2 miles, in meters
+    expect(plan1.dates[6].runIds.length).toBe(1)
+    expect(plan1.dates[6].runIds[0]).toBe(run2._id.toString())
   })
 
   test('Creates a Training Plan with multiple weeks of existing runs', async () => {

@@ -1,7 +1,8 @@
 import TrainingModel from '../db/TrainingModel.js'
 import { DateTime, IANAZone } from 'luxon'
 
-import updatePlanDistances from '../training/updatePlanDistances.js'
+import addRunIdsToDates from './addRunIdsToDates.js'
+import updatePlanDistances from './updatePlanDistances.js'
 
 // Creates a new training plan for this user, saves it to the database, and returns the new training
 // plan to the requestor.
@@ -50,23 +51,23 @@ const createTrainingPlan = async (req, res) => {
   }
 
   // Generate a week object to track the week-specific stuff for this plan
-  const dates = []
+  let dates = []
   const weeks = []
   for (let i = 0; i < weekCount; i++) {
     // Generate an object for each date within this training plan's date range
     let date
 
     for (let j = 0; j < 7; j++) {
-      let dateActualDistance = 0
       date = startDT.plus({ days: (i * 7) + j }).startOf('day').toJSDate()
 
       dates.push({
         dateISO: date,
-        actualDistance: dateActualDistance,
+        actualDistance: 0,
         plannedDistance: 0,
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0, // Index of the category enum, see runlog-api/constants/workoutCategories.js
+        runIds: [],
       })
     }
 
@@ -76,6 +77,9 @@ const createTrainingPlan = async (req, res) => {
       plannedDistanceMeters: 0,
     })
   }
+
+  // Get the runIds for all dates in the plan
+  dates = await addRunIdsToDates(dates, startDT, endDT, req.user._id)
 
   let newPlan = {
     userId: req.user._id,
