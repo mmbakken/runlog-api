@@ -3,13 +3,21 @@ import { DateTime } from 'luxon'
 import updatePlanDistances from '../training/updatePlanDistances.js'
 import TrainingModel from '../db/TrainingModel.js'
 
-const updatePlanDateRunIds = (plan, dateISO, runId) => {
+// Updates the plan dates to have the correct runIds array.
+// addRun - boolean. If true, adds the runId to the array. Else, removes the runId from the array.
+const updatePlanDateRunIds = (plan, dateISO, runId, addRun) => {
   // For this plan, find the date of the run
   for (let planDate of plan.dates) {
     const planDateISO = DateTime.fromJSDate(planDate.dateISO, { zone: 'utc' }).toISODate()
 
     if (planDateISO === dateISO) {
-      planDate.runIds.push(runId)
+      if (addRun) {
+        planDate.runIds.push(runId)
+      } else {
+        planDate.runIds = planDate.runIds.filter((thisRunId) => {
+          return thisRunId !== runId
+        })
+      }
     }
   }
 
@@ -18,7 +26,7 @@ const updatePlanDateRunIds = (plan, dateISO, runId) => {
 
 // Takes a new run and the user it belongs to. Updates each affected plan with this new distance.
 // Updates the plan date for this run
-const updatePlansFromRun = async (run, userId) => {
+const updatePlansFromRun = async (run, userId, addRun) => {
   if (run == null) {
     console.error('Cannot update training plan actualDistance fields: run is required.')
     return
@@ -56,7 +64,7 @@ const updatePlansFromRun = async (run, userId) => {
     plan = await updatePlanDistances(plan)
 
     // Add the run id to its plan date
-    plan = await updatePlanDateRunIds(plan, startOfRunLocalISOString, run._id.toString())
+    plan = await updatePlanDateRunIds(plan, startOfRunLocalISOString, run._id.toString(), addRun)
     await plan.save()
   }
 }

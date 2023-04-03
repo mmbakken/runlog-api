@@ -86,6 +86,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 1609.34, // 1 mile, in meters
           workout: '',
           workoutCategory: 1, // Easy
+          runIds: [run._id.toString()],
         },
         {
           dateISO: '2022-10-04',
@@ -94,6 +95,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-05',
@@ -102,6 +104,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-06',
@@ -110,6 +113,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-07',
@@ -118,6 +122,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-08',
@@ -126,6 +131,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-09',
@@ -134,6 +140,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         }
       ],
       journal: []
@@ -172,5 +179,6 @@ describe('Run deletion', () => {
     expect(plan.dates[0].actualDistance).toBe(0)
     expect(plan.dates[0].plannedDistance).toBe(1)
     expect(plan.dates[0].plannedDistanceMeters).toBe(1609.34)
+    expect(plan.dates[0].runIds.length).toBe(0)
   })
 })

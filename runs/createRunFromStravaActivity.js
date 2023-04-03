@@ -56,7 +56,7 @@ const createRunFromStravaActivity = async (user, activity) => {
       await updateDailyStats(newRun, user)
 
       // Update all of the plans that include this run
-      await updatePlansFromRun(newRun, user._id.toString())
+      await updatePlansFromRun(newRun, user._id.toString(), true)
 
       return
     } else {

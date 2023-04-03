@@ -21,7 +21,7 @@ const deleteRun = async (req, res) => {
     await resetDailyStats(req.user)
 
     // Update the plan distances once DS is correct.
-    await updatePlansFromRun(run, req.user)
+    await updatePlansFromRun(run, req.user, false)
 
     return res.json(run)
   } catch (e) {
