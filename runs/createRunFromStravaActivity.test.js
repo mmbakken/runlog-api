@@ -289,4 +289,162 @@ describe('Run creation', () => {
     expect(plan.dates[7].actualDistance).toBe(1609.34) // 1 miles, in meters (10/17)
     expect(plan.dates[8].actualDistance).toBe(0) // (10/18)
   })
+
+  test('Updates the existing training plan\'s date.runIds array correctly when a new run is created from Strava', async () => {
+    const user = await UserModel.create({
+      name: 'Vlad',
+      email: 'lenin@gmail.com'
+    })
+
+    // Create some runs that exist prior to the creation of the next run
+    const run1 = await RunModel.create({
+      userId: user._id,
+      name: 'Test Run 1',
+      startDate: new Date('2022-10-10T23:07:39Z'), // first day of plan
+      startDateLocal: new Date('2022-10-10T17:07:39Z'),
+      timezone: '(GMT-06:00) America/Chicago',
+      distance: 1609.34, // 1 mile, in meters
+    })
+
+    // Existing DS documents
+    await DailyStatsModel.create({
+      userId: user._id,
+      date: '2022-10-10',
+      distance: 1609.34,
+      runIds: [run1._id],
+    })
+
+    // Create a plan that includes these runs
+    let plan = await TrainingModel.create({
+      userId: user._id,
+      startDate: '2022-10-10',
+      endDate: '2022-10-16',
+      timezone: 'America/Denver',
+      title: 'Training Plan 1 Weeks',
+      goal: 'Create training plans without bugs :)',
+      isActive: true,
+      actualDistance: 3218.68, // 2 miles, in meters
+      plannedDistance: 0,
+      plannedDistanceMeters: 0,
+      weeks: [
+        {
+          startDateISO: '2022-10-10',
+          actualDistance: 3218.68, // 2 miles, in meters
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+        },
+      ],
+      dates: [
+        {
+          dateISO: '2022-10-10',
+          actualDistance: 1609.34, // 1 mile, in meters
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [run1._id.toString()],
+        },
+        {
+          dateISO: '2022-10-11',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-12',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-13',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-14',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-15',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-16',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+      ],
+      journal: []
+    })
+
+    // Add a new run via the Strava webhook whose distance SHOULD be added to this plan
+    // See: https://developers.strava.com/docs/reference/#api-Activities-getActivityById
+    const stravaActivity = {
+      id: 12345678987654321,
+      type: 'Run',
+      name: 'Morning Run',
+      start_date: '2022-10-16T23:07:39Z',
+      start_date_local: '2022-10-16T17:07:39Z',
+      timezone: '(GMT-08:00) America/Denver',
+      moving_time: 4207,
+      distance: 1609.34, // 1 mile, in meters
+      average_speed: 6.679,
+      total_elevation_gain: 100,
+      has_heartrate: true,
+      average_heartrate: 145,
+      max_heartrate: 160,
+      device_name: 'Garmin Forerunner 945',
+      external_id: 'garmin_push_12345678987654321',
+      start_latlng: [ 37.83, -122.26 ],
+    }
+
+    await createRunFromStravaActivity(user, stravaActivity)
+    const plans = await TrainingModel.find({}).exec()
+    const runs = await RunModel.find({
+      startDateLocal: new Date('2022-10-16T17:07:39Z')
+    }).exec()
+
+    expect(plans.length).toBe(1)
+    expect(runs.length).toBe(1)
+
+    plan = plans[0]
+    let newRunId = runs[0]._id.toString()
+
+    expect(plan.dates[0].runIds.length).toBe(1)
+    expect(plan.dates[0].runIds[0]).toBe(run1._id.toString())
+
+    expect(plan.dates[1].runIds.length).toBe(0)
+    expect(plan.dates[2].runIds.length).toBe(0)
+    expect(plan.dates[3].runIds.length).toBe(0)
+    expect(plan.dates[4].runIds.length).toBe(0)
+    expect(plan.dates[5].runIds.length).toBe(0)
+
+    expect(plan.dates[6].runIds.length).toBe(1)
+    expect(plan.dates[6].runIds[0]).toBe(newRunId)
+  })
 })

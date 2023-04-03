@@ -1,12 +1,25 @@
-import mongoose from 'mongoose'
 import { DateTime } from 'luxon'
 
 import updatePlanDistances from '../training/updatePlanDistances.js'
 import TrainingModel from '../db/TrainingModel.js'
 
+const updatePlanDateRunIds = (plan, dateISO, runId) => {
+  // For this plan, find the date of the run
+  for (let planDate of plan.dates) {
+    const planDateISO = DateTime.fromJSDate(planDate.dateISO, { zone: 'utc' }).toISODate()
+
+    if (planDateISO === dateISO) {
+      planDate.runIds.push(runId)
+    }
+  }
+
+  return plan
+}
+
 // Takes a new run and the user it belongs to. Updates each affected plan with this new distance.
-const addRunDistanceToPlans = async (run, user) => {
-  if (user == null) {
+// Updates the plan date for this run
+const updatePlansFromRun = async (run, userId) => {
+  if (run == null) {
     console.error('Cannot update training plan actualDistance fields: run is required.')
     return
   }
@@ -16,8 +29,8 @@ const addRunDistanceToPlans = async (run, user) => {
     return
   }
 
-  if (user == null) {
-    console.error('Cannot update training plan actualDistance fields: user is required.')
+  if (userId == null) {
+    console.error('Cannot update training plan actualDistance fields: userId is required.')
     return
   }
 
@@ -30,19 +43,22 @@ const addRunDistanceToPlans = async (run, user) => {
   const plans = await TrainingModel.find({
     startDate: { $lte: startOfRunLocalDT.toJSDate() },
     endDate: { $gte: startOfRunLocalDT.toJSDate() },
-    userId: mongoose.Types.ObjectId(user._id),
+    userId: userId,
   }).exec()
 
   if (plans == null || plans.length === 0) {
-    console.log(`addRunDistanceToPlans: No training plans found for this user that include local run start date of "${startOfRunLocalISOString}". Will not modify any plans.`)
+    console.log(`updatePlansFromRun: No training plans found for this user that include local run start date of "${startOfRunLocalISOString}". Will not modify any plans.`)
     return
   }
-
-  // Recalculate the plan, week, and date actualDistance fields for each plan this run's date belongs to.
+  
   for (let plan of plans) {
+    // Recalculate the plan, week, and date actualDistance fields for each plan this run's date belongs to.
     plan = await updatePlanDistances(plan)
+
+    // Add the run id to its plan date
+    plan = await updatePlanDateRunIds(plan, startOfRunLocalISOString, run._id.toString())
     await plan.save()
   }
 }
 
-export default addRunDistanceToPlans
+export default updatePlansFromRun

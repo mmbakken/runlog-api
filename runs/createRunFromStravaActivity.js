@@ -2,7 +2,7 @@ import RunModel from '../db/RunModel.js'
 
 import generateTitle from './generateTitle.js'
 import updateDailyStats from '../dailyStats/updateDailyStats.js'
-import addRunDistanceToPlans from './addRunDistanceToPlans.js'
+import updatePlansFromRun from './updatePlansFromRun.js'
 
 // This function will create a new Run document based on the Strava activity provided.
 //
@@ -55,8 +55,8 @@ const createRunFromStravaActivity = async (user, activity) => {
       // A new run means daily totals have changed. Update them appropriately.
       await updateDailyStats(newRun, user)
 
-      // Update any plan actualDistance fields that include this run's date
-      await addRunDistanceToPlans(newRun, user)
+      // Update all of the plans that include this run
+      await updatePlansFromRun(newRun, user._id.toString())
 
       return
     } else {
