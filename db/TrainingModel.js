@@ -36,6 +36,7 @@ const trainingSchema = new mongoose.Schema({
     plannedDistanceMeters: Number, // Meters; The user-entered mileage amount they plan to run on this date (used to compare with actualDistance fields)
     workout: String, // Text description of this workout.
     workoutCategory: Number, // Index of the category enum, see runlog-api/constants/workoutCategories.js
+    runIds: [String], // IDs of the run objects that happened on this date (local time)
   }],
 
   // The journal is a section of the training plan where the user can add text comments about their

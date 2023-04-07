@@ -1,8 +1,10 @@
 import {} from 'dotenv/config.js'
+import { DateTime } from 'luxon'
 import connectToMongo from '../../db/connectToMongo.js'
 import disconnectFromMongo from '../../db/disconnectFromMongo.js'
 import RunModel from '../../db/RunModel.js'
 import DailyStatsModel from '../../db/DailyStatsModel.js'
+import TrainingModel from '../../db/TrainingModel.js'
 import UserModel from '../../db/UserModel.js'
 
 import createRunFromStravaActivity from '../../runs/createRunFromStravaActivity.js'
@@ -14,13 +16,14 @@ const initializeDevDatabase = async () => {
   await connectToMongo()
 
   if (process?.env?.APP_ENV !== 'dev') {
-    console.erorr('Do not use this script in prod! It drops all of the users and runs and daily stats. Only use in dev.')
+    console.erorr('Do not use this script in prod! It drops all of the plans, runs, and daily stats. Only use in dev.')
     return -1
   }
 
   try {
     await RunModel.deleteMany({})
     await DailyStatsModel.deleteMany({})
+    await TrainingModel.deleteMany({})
 
     const email = 'mmbakken@gmail.com'
     const user = await UserModel.findOne({ email: email })
@@ -30,13 +33,16 @@ const initializeDevDatabase = async () => {
       return -1
     }
 
+    let date = DateTime.now().startOf('day')
+    let index = 0
+
     const runs = [
       {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-01T22:46:33Z',
-        start_date_local: '2022-10-01T15:46:33Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:46:33Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:46:33Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2491,
         distance: 8497.1,
@@ -54,8 +60,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-02T22:21:03Z',
-        start_date_local: '2022-10-02T15:21:03Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:21:03Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:21:03Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 4101,
         distance: 14485.2,
@@ -73,8 +79,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-04T00:59:21Z',
-        start_date_local: '2022-10-03T17:59:21Z',
+        start_date: `${date.minus({ days: index }).toISODate()}T00:59:21Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T17:59:21Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2119,
         distance: 6983.6,
@@ -92,8 +98,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-07T23:07:39Z',
-        start_date_local: '2022-10-07T17:07:39Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T23:07:39Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T17:07:39Z`,
         timezone: '(GMT-06:00) America/Chicago',
         moving_time: 16,
         distance: 28.3,
@@ -111,8 +117,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-08T22:44:02Z',
-        start_date_local: '2022-10-08T15:44:02Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:44:02Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:44:02Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2270,
         distance: 7506,
@@ -130,8 +136,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Lunch Run',
-        start_date: '2022-10-09T19:09:04Z',
-        start_date_local: '2022-10-09T12:09:04Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T19:09:04Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T12:09:04Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 4278,
         distance: 14555.3,
@@ -149,8 +155,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-10T20:47:09Z',
-        start_date_local: '2022-10-10T13:47:09Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T20:47:09Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T13:47:09Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2401,
         distance: 8182.7,
@@ -168,8 +174,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name : 'Afternoon Run',
-        start_date : '2022-10-11T21:06:01Z',
-        start_date_local : '2022-10-11T14:06:01Z',
+        start_date : `${date.minus({ days: index++ }).toISODate()}T21:06:01Z`,
+        start_date_local : `${date.minus({ days: index }).toISODate()}T14:06:01Z`,
         timezone : '(GMT-07:00) America/Denver',
         moving_time : 2290,
         distance : 8479,
@@ -187,8 +193,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-11T21:58:28Z',
-        start_date_local: '2022-10-11T14:58:28Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T21:58:28Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T14:58:28Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 703,
         distance: 2339.7,
@@ -206,8 +212,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-12T22:07:11Z',
-        start_date_local: '2022-10-12T15:07:11Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:07:11Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:07:11Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 3081,
         distance: 9962.6,
@@ -225,8 +231,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-13T20:12:29Z',
-        start_date_local: '2022-10-13T13:12:29Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T20:12:29Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T13:12:29Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 5617,
         distance: 17334.9,
@@ -244,8 +250,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-19T00:07:08Z',
-        start_date_local: '2022-10-18T17:07:08Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T00:07:08Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T17:07:08Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 3539,
         distance: 11264.8,
@@ -263,8 +269,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-20T22:43:49Z',
-        start_date_local: '2022-10-20T15:43:49Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:43:49Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:43:49Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 3406,
         distance: 11585,
@@ -282,8 +288,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Lunch Run',
-        start_date: '2022-10-21T18:22:44Z',
-        start_date_local: '2022-10-21T11:22:44Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T18:22:44Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T11:22:44Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 4317,
         distance: 14486.6,
@@ -301,8 +307,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-22T20:35:00Z',
-        start_date_local: '2022-10-22T13:35:00Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T20:35:00Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T13:35:00Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 3746,
         distance: 12938,
@@ -320,8 +326,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Evening Run',
-        start_date: '2022-10-24T01:07:59Z',
-        start_date_local: '2022-10-23T18:07:59Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T01:07:59Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T18:07:59Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2003,
         distance: 6620.9,
@@ -339,8 +345,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-24T20:42:11Z',
-        start_date_local: '2022-10-24T13:42:11Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T20:42:11Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T13:42:11Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 2622,
         distance: 8645.2,
@@ -358,8 +364,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-26T22:10:59Z',
-        start_date_local: '2022-10-26T15:10:59Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:10:59Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:10:59Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 4073,
         distance: 14485.6,
@@ -377,8 +383,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-27T21:10:41Z',
-        start_date_local: '2022-10-27T14:10:41Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T21:10:41Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T14:10:41Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 1985,
         distance: 6675.1,
@@ -396,8 +402,8 @@ const initializeDevDatabase = async () => {
         userId : user._id,
         type: 'Run',
         name: 'Afternoon Run',
-        start_date: '2022-10-28T22:13:18Z',
-        start_date_local: '2022-10-28T15:13:18Z',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T22:13:18Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T15:13:18Z`,
         timezone: '(GMT-07:00) America/Denver',
         moving_time: 4871,
         distance: 16498.2,

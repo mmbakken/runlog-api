@@ -86,6 +86,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 1609.34, // 1 mile, in meters
           workout: '',
           workoutCategory: 1, // Easy
+          runIds: [run._id.toString()],
         },
         {
           dateISO: '2022-10-04',
@@ -94,6 +95,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-05',
@@ -102,6 +104,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-06',
@@ -110,6 +113,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-07',
@@ -118,6 +122,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-08',
@@ -126,6 +131,7 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
         },
         {
           dateISO: '2022-10-09',
@@ -134,6 +140,92 @@ describe('Run deletion', () => {
           plannedDistanceMeters: 0,
           workout: '',
           workoutCategory: 0,
+          runIds: [],
+        }
+      ],
+      journal: []
+    })
+
+    await TrainingModel.create({
+      userId: user._id,
+      startDate: '2022-10-03',
+      endDate: '2022-10-09',
+      timezone: 'America/Denver',
+      title: 'Another training plan',
+      goal: 'Delete run inside training plans without bugs :)',
+      isActive: true,
+      actualDistance: 1609.34, // 1 mile, in meters
+      plannedDistance: 1,
+      plannedDistanceMeters: 1609.34, // 1 mile, in meters
+      weeks: [{
+        startDateISO: '2022-10-03',
+        actualDistance: 1609.34, // 1 mile, in meters
+        plannedDistance: 1,
+        plannedDistanceMeters: 1609.34, // 1 mile, in meters
+      }],
+      dates: [
+        {
+          dateISO: '2022-10-03',
+          actualDistance: 1609.34, // 1 mile, in meters
+          plannedDistance: 1,
+          plannedDistanceMeters: 1609.34, // 1 mile, in meters
+          workout: '',
+          workoutCategory: 1, // Easy
+          runIds: [run._id.toString()],
+        },
+        {
+          dateISO: '2022-10-04',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-05',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-06',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-07',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-08',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
+        },
+        {
+          dateISO: '2022-10-09',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+          workout: '',
+          workoutCategory: 0,
+          runIds: [],
         }
       ],
       journal: []
@@ -160,17 +252,31 @@ describe('Run deletion', () => {
     expect(dsList.length).toBe(0)
 
     const plans = await TrainingModel.find({}).exec()
-    expect(plans.length).toBe(1)
+    expect(plans.length).toBe(2)
 
-    const plan = plans[0]
-    expect(plan.actualDistance).toBe(0)
-    expect(plan.plannedDistance).toBe(1)
-    expect(plan.plannedDistanceMeters).toBe(1609.34)
-    expect(plan.weeks[0].actualDistance).toBe(0)
-    expect(plan.weeks[0].plannedDistance).toBe(1)
-    expect(plan.weeks[0].plannedDistanceMeters).toBe(1609.34)
-    expect(plan.dates[0].actualDistance).toBe(0)
-    expect(plan.dates[0].plannedDistance).toBe(1)
-    expect(plan.dates[0].plannedDistanceMeters).toBe(1609.34)
+    const planA = plans[0]
+    expect(planA.actualDistance).toBe(0)
+    expect(planA.plannedDistance).toBe(1)
+    expect(planA.plannedDistanceMeters).toBe(1609.34)
+    expect(planA.weeks[0].actualDistance).toBe(0)
+    expect(planA.weeks[0].plannedDistance).toBe(1)
+    expect(planA.weeks[0].plannedDistanceMeters).toBe(1609.34)
+    expect(planA.dates[0].actualDistance).toBe(0)
+    expect(planA.dates[0].plannedDistance).toBe(1)
+    expect(planA.dates[0].plannedDistanceMeters).toBe(1609.34)
+    expect(planA.dates[0].runIds.length).toBe(0)
+
+    // Make sure all plans that include this run's date get updated appropriately
+    const planB = plans[0]
+    expect(planB.actualDistance).toBe(0)
+    expect(planB.plannedDistance).toBe(1)
+    expect(planB.plannedDistanceMeters).toBe(1609.34)
+    expect(planB.weeks[0].actualDistance).toBe(0)
+    expect(planB.weeks[0].plannedDistance).toBe(1)
+    expect(planB.weeks[0].plannedDistanceMeters).toBe(1609.34)
+    expect(planB.dates[0].actualDistance).toBe(0)
+    expect(planB.dates[0].plannedDistance).toBe(1)
+    expect(planB.dates[0].plannedDistanceMeters).toBe(1609.34)
+    expect(planB.dates[0].runIds.length).toBe(0)
   })
 })

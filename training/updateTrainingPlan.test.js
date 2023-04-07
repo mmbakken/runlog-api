@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DateTime } from 'luxon'
 import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
 
+import RunModel from '../db/RunModel.js'
 import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import UserModel from '../db/UserModel.js'
@@ -30,29 +31,68 @@ beforeEach(async () => {
     email: 'lenin@gmail.com'
   })
 
-  // Only need to create the dailystats - runs aren't necessary for calculations
+  const run1 = await RunModel.create({
+    userId: user._id,
+    name: 'Test Run 1',
+    startDate: new Date('2022-10-03T23:07:39Z'), // first day of plan
+    startDateLocal: new Date('2022-10-03T17:07:39Z'),
+    timezone: '(GMT-06:00) America/Chicago',
+    distance: 1000.01, // 1 mile, in meters
+  })
+
+  const run2 = await RunModel.create({
+    userId: user._id,
+    name: 'Test Run 2',
+    startDate: new Date('2022-10-10T23:07:39Z'), // last day of plan
+    startDateLocal: new Date('2022-10-10T17:07:39Z'),
+    timezone: '(GMT-06:00) America/Chicago',
+    distance: 1000.02, // 2 miles, in meters
+  })
+
+  const run3 = await RunModel.create({
+    userId: user._id,
+    name: 'Test Run 1',
+    startDate: new Date('2022-10-17T23:07:39Z'), // first day of plan
+    startDateLocal: new Date('2022-10-17T17:07:39Z'),
+    timezone: '(GMT-06:00) America/Chicago',
+    distance: 1000.03, // 1 mile, in meters
+  })
+
+  const run4 = await RunModel.create({
+    userId: user._id,
+    name: 'Test Run 2',
+    startDate: new Date('2022-10-24T23:07:39Z'), // last day of plan
+    startDateLocal: new Date('2022-10-24T17:07:39Z'),
+    timezone: '(GMT-06:00) America/Chicago',
+    distance: 1000.04, // 2 miles, in meters
+  })
+
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-03',
     distance: 1000.01,
+    runIds: [run1._id.toString()]
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-10',
     distance: 1000.02,
+    runIds: [run2._id.toString()]
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-17',
     distance: 1000.03,
+    runIds: [run3._id.toString()]
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-24',
     distance: 1000.04,
+    runIds: [run4._id.toString()]
   })
 
   // Create a plan that includes these runs
@@ -89,6 +129,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [run2._id.toString()],
       },
       {
         dateISO: '2022-10-11',
@@ -97,6 +138,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-12',
@@ -105,6 +147,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-13',
@@ -113,6 +156,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-14',
@@ -121,6 +165,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-15',
@@ -129,6 +174,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-16',
@@ -137,6 +183,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-17',
@@ -145,6 +192,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [run3._id.toString()],
       },
       {
         dateISO: '2022-10-18',
@@ -153,6 +201,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-19',
@@ -161,6 +210,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-20',
@@ -169,6 +219,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-21',
@@ -177,6 +228,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-22',
@@ -185,6 +237,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
       {
         dateISO: '2022-10-23',
@@ -193,6 +246,7 @@ beforeEach(async () => {
         plannedDistanceMeters: 0,
         workout: '',
         workoutCategory: 0,
+        runIds: [],
       },
     ],
     journal: []
@@ -212,7 +266,7 @@ afterAll(async () => {
 })
 
 describe('Training Plan is updated', () => {
-  test('Plan startDate and endDate (1 week earlier, same weekCount) result in correct actualDistance fields', async () => {
+  test('Update plan startDate and endDate (1 week earlier, same weekCount)', async () => {
     const user = await UserModel.findOne({}).exec()
     let plan = await TrainingModel.findOne({}).exec()
 
@@ -365,20 +419,27 @@ describe('Training Plan is updated', () => {
     expect(plan.weeks[0].actualDistance).toBe(1000.01)
     expect(plan.weeks[1].actualDistance).toBe(1000.02)
 
-    expect(plan.dates[0].actualDistance).toBe(1000.01)
-    expect(plan.dates[1].actualDistance).toBe(0)
-    expect(plan.dates[2].actualDistance).toBe(0)
-    expect(plan.dates[3].actualDistance).toBe(0)
-    expect(plan.dates[4].actualDistance).toBe(0)
-    expect(plan.dates[5].actualDistance).toBe(0)
-    expect(plan.dates[6].actualDistance).toBe(0)
-    expect(plan.dates[7].actualDistance).toBe(1000.02)
-    expect(plan.dates[8].actualDistance).toBe(0)
-    expect(plan.dates[9].actualDistance).toBe(0)
-    expect(plan.dates[10].actualDistance).toBe(0)
-    expect(plan.dates[11].actualDistance).toBe(0)
-    expect(plan.dates[12].actualDistance).toBe(0)
-    expect(plan.dates[13].actualDistance).toBe(0)
+    expect(plan.dates[0].actualDistance).toBe(1000.01) // 10/03
+    expect(plan.dates[0].runIds.length).toBe(1)
+
+    expect(plan.dates[1].actualDistance).toBe(0) // 10/04
+    expect(plan.dates[2].actualDistance).toBe(0) // 10/05
+    expect(plan.dates[3].actualDistance).toBe(0) // 10/06
+    expect(plan.dates[4].actualDistance).toBe(0) // 10/07
+    expect(plan.dates[5].actualDistance).toBe(0) // 10/08
+    expect(plan.dates[6].actualDistance).toBe(0) // 10/09
+
+    expect(plan.dates[7].actualDistance).toBe(1000.02) // 10/10
+    expect(plan.dates[7].runIds.length).toBe(1)
+
+    expect(plan.dates[8].actualDistance).toBe(0) // 10/11
+    expect(plan.dates[9].actualDistance).toBe(0) // 10/12
+    expect(plan.dates[10].actualDistance).toBe(0) // 10/13
+    expect(plan.dates[11].actualDistance).toBe(0) // 10/14
+    expect(plan.dates[12].actualDistance).toBe(0) // 10/15
+
+    expect(plan.dates[13].actualDistance).toBe(0) // 10/16
+    expect(plan.dates[13].runIds.length).toBe(0) // 10/16
   })
 
   test('Plan date.plannedDistance value results in correct date.plannedDistanceMeters field', async () => {
