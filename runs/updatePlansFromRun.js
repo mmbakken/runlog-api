@@ -15,7 +15,6 @@ const updatePlanDateRunIds = (plan, dateISO, runId, addRun) => {
   // For this plan, find the date of the run
   for (let planDate of plan.dates) {
     const planDateISO = DateTime.fromJSDate(planDate.dateISO, { zone: 'utc' }).toISODate()
-
     console.debug(`  planDateISO: ${planDateISO}`)
 
     if (planDateISO === dateISO) {
