@@ -6,33 +6,33 @@ import TrainingModel from '../db/TrainingModel.js'
 // Updates the plan dates to have the correct runIds array.
 // addRun - boolean. If true, adds the runId to the array. Else, removes the runId from the array.
 const updatePlanDateRunIds = (plan, dateISO, runId, addRun) => {
-  console.debug('~~~~~~~~~~~~~~')
-  console.debug('updatePlanDateRunIds called')
-  console.debug(`  runId:       ${runId}`)
-  console.debug(`  dateISO:     ${dateISO}`)
-  console.debug(`  addRun:      ${addRun}`)
+  console.log('~~~~~~~~~~~~~~')
+  console.log('updatePlanDateRunIds called')
+  console.log(`  runId:       ${runId}`)
+  console.log(`  dateISO:     ${dateISO}`)
+  console.log(`  addRun:      ${addRun}`)
 
   // For this plan, find the date of the run
   for (let planDate of plan.dates) {
     const planDateISO = DateTime.fromJSDate(planDate.dateISO, { zone: 'utc' }).toISODate()
-    console.debug(`  planDateISO: ${planDateISO}`)
+    console.log(`  planDateISO: ${planDateISO}`)
 
     if (planDateISO === dateISO) {
       if (addRun) {
-        console.debug('    adding runId to array')
+        console.log('    adding runId to array')
         planDate.runIds.push(runId)
       } else {
-        console.debug('    removing runId from array')
+        console.log('    removing runId from array')
         planDate.runIds = planDate.runIds.filter((thisRunId) => {
           return thisRunId !== runId
         })
       }
     } else {
-      console.debug('    miss')
+      console.log('    miss')
     }
   }
 
-  console.debug('~~~~~~~~~~~~~~')
+  console.log('~~~~~~~~~~~~~~')
 
   return plan
 }
