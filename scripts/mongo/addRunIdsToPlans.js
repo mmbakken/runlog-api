@@ -9,7 +9,7 @@ import TrainingModel from '../../db/TrainingModel.js'
 // plan based on the same logic (at time of writing) as used in the RunPage.js component.
 
 // Main function call for script
-const addTitleFieldToRuns = async () => {
+const addRunIdsToPlans = async () => {
   connectToMongo()
 
   try {
@@ -81,4 +81,4 @@ const addTitleFieldToRuns = async () => {
   }
 }
 
-addTitleFieldToRuns()
+addRunIdsToPlans()
