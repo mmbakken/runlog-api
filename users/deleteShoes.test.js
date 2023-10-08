@@ -41,7 +41,7 @@ describe('User can add a shoes to a run', () => {
       gear: {
         shoes: [
           {
-            _id: mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             title: 'First shoe',
             distance: 0,
             runIds: [],

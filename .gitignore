@@ -1,5 +1,5 @@
-/node_modules
-/mongodump
+node_modules
+mongodump
 .env
 yarn-error.log
 .DS_Store

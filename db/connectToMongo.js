@@ -26,7 +26,7 @@ const connectToMongo = async (dbStr) => {
   }
 
   // Build the connection string 
-  const dbURI = `mongodb://localhost/${dbName}`
+  const dbURI = `mongodb://127.0.0.1/${dbName}`
 
   await mongoose.connect(dbURI, {
     useNewUrlParser: true,

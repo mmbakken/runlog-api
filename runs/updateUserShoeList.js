@@ -81,7 +81,7 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
 
   await UserModel.updateOne(
     {
-      _id: mongoose.Types.ObjectId(userId)
+      _id: new mongoose.Types.ObjectId(userId)
     },
     {
       gear: {

@@ -14,7 +14,7 @@ const deleteRun = async (req, res) => {
       return res.sendStatus(404)
     }
 
-    await RunModel.deleteOne({_id: mongoose.Types.ObjectId(req.params.id)})
+    await new RunModel.deleteOne({_id: mongoose.Types.ObjectId(req.params.id)})
     console.log(`Deleted run with id "${req.params.id}"`)
 
     // Correct the distances in DS now that run is deleted
