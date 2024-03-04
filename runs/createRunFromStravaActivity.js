@@ -1,6 +1,7 @@
 import RunModel from '../db/RunModel.js'
 
 import generateTitle from './generateTitle.js'
+import generateLocation from './generateLocation.js'
 import updateDailyStats from '../dailyStats/updateDailyStats.js'
 import updatePlansFromRun from './updatePlansFromRun.js'
 
@@ -29,6 +30,10 @@ const createRunFromStravaActivity = async (user, activity) => {
       // Format should be like '(GMT-08:00) America/Denver', luxon wants just the latter half
       const tz = activity.timezone.split(' ')[1]
 
+      const lat = activity?.start_latlng[0]
+      const lng = activity?.start_latlng[1]
+      const location = generateLocation(lat, lng)
+
       const newRun = await RunModel.create({
         userId: user._id,
         name: activity.name,
@@ -46,8 +51,9 @@ const createRunFromStravaActivity = async (user, activity) => {
         deviceName: activity.device_name,
         stravaActivityId: activity.id,
         stravaExternalId: activity.external_id,
-        startLatitude: activity?.start_latlng[0],
-        startLongitude: activity?.start_latlng[1],
+        startLatitude: lat,
+        startLongitude: lng,
+        startLocation: location,
       })
 
       console.log(

@@ -125,7 +125,7 @@ app.delete('/api/v1/training/:id', authenticateToken, deleteTrainingPlan)
 // LOGIN ROUTES
 
 // For now, there is no way to create a user account except via the database.
-// See scripts/createUser.js
+// See scripts/addUser.js
 
 // This route is for providing user information to the client if they already have a JWT.
 app.get('/api/v1/users/:id', authenticateToken, getUserDetails)
