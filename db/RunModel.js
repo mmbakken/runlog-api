@@ -24,6 +24,7 @@ const runSchema = new mongoose.Schema({
   // https://mongoosejs.com/docs/geojson.html
   startLatitude: Number,
   startLongitude: Number,
+  startLocation: String, // Reverse geocoded location string based on start lat/lng
 
   // User editable fields
   results: { type: String, default: null },
