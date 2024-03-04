@@ -20,7 +20,9 @@ const updateTrainingPlan = async (req, res) => {
   }
 
   if (req.body == null || req.body.updates == null) {
-    console.error(`Cannot update training plan with id "${plan._id}": Must include req.body.updates.`)
+    console.error(
+      `Cannot update training plan with id "${plan._id}": Must include req.body.updates.`
+    )
     return res.sendStatus(400)
   }
 
@@ -29,7 +31,9 @@ const updateTrainingPlan = async (req, res) => {
   const validFields = Object.keys(TrainingModel.schema.paths)
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
-      console.error(`Cannot update training plan with id "${plan._id}": Field "${field}" is not present in the document`)
+      console.error(
+        `Cannot update training plan with id "${plan._id}": Field "${field}" is not present in the document`
+      )
       return res.sendStatus(400)
     }
 
@@ -40,30 +44,35 @@ const updateTrainingPlan = async (req, res) => {
     }
 
     if (field === 'plannedDistance') {
-      plan['plannedDistanceMeters'] = Math.round(value * METERS_PER_MILE * 100) / 100
+      plan['plannedDistanceMeters'] =
+        Math.round(value * METERS_PER_MILE * 100) / 100
     }
 
     // For each week and each date, calculate the plannedDistanceMeters field
     else if (field === 'weeks') {
       value = value.map((week) => {
-        return ({
+        return {
           ...week,
-          plannedDistanceMeters: Math.round(week.plannedDistance * METERS_PER_MILE * 100) / 100,
-        })
+          plannedDistanceMeters:
+            Math.round(week.plannedDistance * METERS_PER_MILE * 100) / 100,
+        }
       })
-    }
-
-    else if (field === 'dates') {
+    } else if (field === 'dates') {
       value = value.map((date) => {
-        return ({
+        return {
           ...date,
-          plannedDistanceMeters: Math.round(date.plannedDistance * METERS_PER_MILE * 100) / 100,
-        })
+          plannedDistanceMeters:
+            Math.round(date.plannedDistance * METERS_PER_MILE * 100) / 100,
+        }
       })
     }
 
     // If either of the dates are updated, we need to recalculate the actualDistance fields for the plan
-    if (!shouldUpdateDates && (field === 'startDate' || field === 'endDate') && plan[field] !== value) {
+    if (
+      !shouldUpdateDates &&
+      (field === 'startDate' || field === 'endDate') &&
+      plan[field] !== value
+    ) {
       shouldUpdateDates = true
     }
 

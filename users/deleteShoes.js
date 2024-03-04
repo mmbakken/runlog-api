@@ -27,7 +27,7 @@ const deleteShoes = async (req, res) => {
     if (newShoes.length === user.gear.shoes.length) {
       const message = `Cannot delete shoe: Shoes with id "${req.params.shoeId}" were not found in the user's shoe list.`
       console.error(message)
-      return res.status(404).json({ message: message})
+      return res.status(404).json({ message: message })
     }
 
     user.gear.shoes = newShoes
@@ -44,7 +44,9 @@ const deleteShoes = async (req, res) => {
 
     await user.save()
 
-    console.log(`Deleted shoes from user "${req.user._id}", with shoe id "${req.params.shoeId}"`)
+    console.log(
+      `Deleted shoes from user "${req.user._id}", with shoe id "${req.params.shoeId}"`
+    )
 
     return res.json({
       _id: user._id,
@@ -56,7 +58,9 @@ const deleteShoes = async (req, res) => {
       gear: user.gear,
     })
   } catch (e) {
-    console.error(`Error while trying to delete shoes with id "${req.params.shoeId}". Aborting delete action.`)
+    console.error(
+      `Error while trying to delete shoes with id "${req.params.shoeId}". Aborting delete action.`
+    )
     console.dir(e)
 
     return res.sendStatus(500)

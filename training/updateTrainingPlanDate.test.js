@@ -1,6 +1,15 @@
 import mongoose from 'mongoose'
 import { DateTime } from 'luxon'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
@@ -13,7 +22,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/updateTrainingPlanDate', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -27,7 +36,7 @@ beforeEach(async () => {
   // These tests use the same initial database state
   const user = await UserModel.create({
     name: 'Vlad',
-    email: 'lenin@gmail.com'
+    email: 'lenin@gmail.com',
   })
 
   // Only need to create the dailystats - runs aren't necessary for calculations
@@ -68,18 +77,18 @@ beforeEach(async () => {
     plannedDistance: 0,
     plannedDistanceMeters: 0,
     weeks: [
-    {
-      startDateISO: '2022-10-10',
-      actualDistance: 1000.01,
-      plannedDistance: 0,
-      plannedDistanceMeters: 0,
-    },
-    {
-      startDateISO: '2022-10-17',
-      actualDistance: 1000.02,
-      plannedDistance: 0,
-      plannedDistanceMeters: 0,
-    }
+      {
+        startDateISO: '2022-10-10',
+        actualDistance: 1000.01,
+        plannedDistance: 0,
+        plannedDistanceMeters: 0,
+      },
+      {
+        startDateISO: '2022-10-17',
+        actualDistance: 1000.02,
+        plannedDistance: 0,
+        plannedDistanceMeters: 0,
+      },
     ],
     dates: [
       {
@@ -195,7 +204,7 @@ beforeEach(async () => {
         workoutCategory: 0,
       },
     ],
-    journal: []
+    journal: [],
   })
 })
 
@@ -232,10 +241,10 @@ describe('Training Plan date update endpoint', () => {
           workout: '',
           workoutCategory: 0,
         },
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }

@@ -17,7 +17,9 @@ const getTrainingPlan = async (req, res) => {
 
     return res.json(plan)
   } catch (e) {
-    console.error(`Error while trying to get training plan with id "${req.params.id}"`)
+    console.error(
+      `Error while trying to get training plan with id "${req.params.id}"`
+    )
     console.dir(e)
 
     return res.sendStatus(500)

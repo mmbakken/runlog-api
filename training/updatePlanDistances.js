@@ -14,15 +14,17 @@ const updatePlanDistances = async (plan) => {
     userId: plan.userId,
     date: {
       $lte: plan.endDate,
-      $gte: plan.startDate
-    }
+      $gte: plan.startDate,
+    },
   }).exec()
 
   const allDailyStatsByDate = {}
 
   let dateISO
   ds.map((dailyStatsObj) => {
-    dateISO = DateTime.fromJSDate(dailyStatsObj.date, { zone: 'utc' }).toISODate().split('T')[0]
+    dateISO = DateTime.fromJSDate(dailyStatsObj.date, { zone: 'utc' })
+      .toISODate()
+      .split('T')[0]
     allDailyStatsByDate[dateISO] = dailyStatsObj
   })
 
@@ -41,11 +43,14 @@ const updatePlanDistances = async (plan) => {
   let weekPlannedDistanceMeters
   let weekStartDT
   let weekEndDT
-  
 
   for (let week of plan.weeks) {
-    weekStartDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' }).startOf('day')
-    weekEndDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' }).plus({ days: 7 }).startOf('day')
+    weekStartDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' }).startOf(
+      'day'
+    )
+    weekEndDT = DateTime.fromISO(week.startDateISO, { zone: 'utc' })
+      .plus({ days: 7 })
+      .startOf('day')
     weekActualDistance = 0
     weekPlannedDistance = 0
     weekPlannedDistanceMeters = 0
@@ -61,9 +66,18 @@ const updatePlanDistances = async (plan) => {
         // Find the DS for this date and save its distance
         thisDS = allDailyStatsByDate[thisDateDT.toISODate()]
         date.actualDistance = thisDS?.distance || 0
-        weekActualDistance = addFloats(thisDS?.distance || 0, weekActualDistance)
-        weekPlannedDistance = addFloats(date.plannedDistance || 0, weekPlannedDistance)
-        weekPlannedDistanceMeters = addFloats(date.plannedDistanceMeters || 0, weekPlannedDistanceMeters)
+        weekActualDistance = addFloats(
+          thisDS?.distance || 0,
+          weekActualDistance
+        )
+        weekPlannedDistance = addFloats(
+          date.plannedDistance || 0,
+          weekPlannedDistance
+        )
+        weekPlannedDistanceMeters = addFloats(
+          date.plannedDistanceMeters || 0,
+          weekPlannedDistanceMeters
+        )
       }
     }
 
@@ -72,7 +86,10 @@ const updatePlanDistances = async (plan) => {
     week.plannedDistanceMeters = weekPlannedDistanceMeters
     planActualDistance = addFloats(weekActualDistance, planActualDistance)
     planPlannedDistance = addFloats(weekPlannedDistance, planPlannedDistance)
-    planPlannedDistanceMeters = addFloats(weekPlannedDistanceMeters, planPlannedDistanceMeters)
+    planPlannedDistanceMeters = addFloats(
+      weekPlannedDistanceMeters,
+      planPlannedDistanceMeters
+    )
   }
 
   plan.actualDistance = planActualDistance

@@ -8,7 +8,7 @@ const addShoeFieldToRuns = async () => {
   // Get each run document and set the shoeId field to null
   try {
     const allRuns = await RunModel.find(
-      { }, // all runs
+      {}, // all runs
       '_id'
     )
 

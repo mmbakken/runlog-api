@@ -11,9 +11,15 @@ const updateDailyStats = async (newRun, user) => {
   // Timeone field has a weird format like "(GMT-07:00) America/Denver", just ignore the offset
   const tz = newRun.timezone.split(' ')[1]
   const runStartDate = DateTime.fromJSDate(newRun.startDate, { zone: tz })
-  const currentWeekDates = getWeekDates(runStartDate.toISODate(), user.stats.weekStartsOn)
+  const currentWeekDates = getWeekDates(
+    runStartDate.toISODate(),
+    user.stats.weekStartsOn
+  )
 
-  let currentDailyStats = await DailyStatsModel.findOne({ date: runStartDate.toISODate(), userId: user._id })
+  let currentDailyStats = await DailyStatsModel.findOne({
+    date: runStartDate.toISODate(),
+    userId: user._id,
+  })
   let newRunDistance = null
 
   // Step 1: Update this date's DailyStats' sevenDayDistance and weeklyDistance fields.
@@ -36,9 +42,9 @@ const updateDailyStats = async (newRun, user) => {
     const recentDailyStats = await DailyStatsModel.find({
       date: {
         $lt: runStartDate.toISODate(),
-        $gte: runStartDate.minus({ days: 6 }).toISODate()
-      }
-    }).sort({date: -1})
+        $gte: runStartDate.minus({ days: 6 }).toISODate(),
+      },
+    }).sort({ date: -1 })
 
     let recentDatesMap = {}
 
@@ -46,7 +52,9 @@ const updateDailyStats = async (newRun, user) => {
       // Convert the DailyStats array into a map so we can easily look them up by ISO date string
       for (let i = 0; i < recentDailyStats.length; i++) {
         let thisDS = recentDailyStats[i]
-        recentDatesMap[DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()] = thisDS
+        recentDatesMap[
+          DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()
+        ] = thisDS
       }
 
       // For each of the prior 6 dates, update the sevenDay and weekly totals as necessary
@@ -86,9 +94,9 @@ const updateDailyStats = async (newRun, user) => {
   const upcomingDailyStats = await DailyStatsModel.find({
     date: {
       $gt: runStartDate.toISODate(),
-      $lte: runStartDate.plus({ days: 6 }).toISODate()
-    }
-  }).sort({date: 1})
+      $lte: runStartDate.plus({ days: 6 }).toISODate(),
+    },
+  }).sort({ date: 1 })
 
   let upcomingDatesMap = {}
 
@@ -96,7 +104,9 @@ const updateDailyStats = async (newRun, user) => {
     // Convert the DailyStats array into a map so we can easily look them up by ISO date string
     for (let i = 0; i < upcomingDailyStats.length; i++) {
       let thisDS = upcomingDailyStats[i]
-      upcomingDatesMap[DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()] = thisDS
+      upcomingDatesMap[
+        DateTime.fromJSDate(thisDS.date, { zone: 'utc' }).toISODate()
+      ] = thisDS
     }
 
     // For each of the next 6 dates, update the sevenDay and weekly totals as necessary
@@ -107,10 +117,12 @@ const updateDailyStats = async (newRun, user) => {
       // A DailyStats document may not exist for this date
       if (compareDailyStats) {
         // sevenDayDistance: Always add today's distance
-        compareDailyStats.sevenDayDistance += newRunDistance != null ? newRunDistance : currentDailyStats.distance
+        compareDailyStats.sevenDayDistance +=
+          newRunDistance != null ? newRunDistance : currentDailyStats.distance
 
         if (currentWeekDates.includes(compareDate.toISODate())) {
-          compareDailyStats.weeklyDistance += newRunDistance != null ? newRunDistance : currentDailyStats.distance
+          compareDailyStats.weeklyDistance +=
+            newRunDistance != null ? newRunDistance : currentDailyStats.distance
         }
 
         await compareDailyStats.save()

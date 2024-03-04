@@ -24,7 +24,9 @@ const updateRun = async (req, res) => {
   }
 
   if (req.body == null || req.body.updates == null) {
-    console.error(`Cannot update run with id "${run._id}": Must include req.body.updates.`)
+    console.error(
+      `Cannot update run with id "${run._id}": Must include req.body.updates.`
+    )
     return res.sendStatus(400)
   }
 
@@ -32,7 +34,9 @@ const updateRun = async (req, res) => {
   const validFields = Object.keys(RunModel.schema.paths)
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
-      console.error(`Cannot update run with id "${run._id}": Field "${field}" is not present in the document`)
+      console.error(
+        `Cannot update run with id "${run._id}": Field "${field}" is not present in the document`
+      )
       return res.sendStatus(400)
     }
 
@@ -46,15 +50,17 @@ const updateRun = async (req, res) => {
           {
             userId: req.user._id,
             runIds: {
-              $eq: [run._id] // Only this run ID - otherwise title is still "multiple runs"
-            }
+              $eq: [run._id], // Only this run ID - otherwise title is still "multiple runs"
+            },
           },
           {
-            title: run.title
+            title: run.title,
           }
         )
       } catch (error) {
-        console.error(`Error while attempting to update DailyStats for run with id "${run._id}"`)
+        console.error(
+          `Error while attempting to update DailyStats for run with id "${run._id}"`
+        )
         return res.sendStatus(500)
       }
     }
@@ -62,9 +68,17 @@ const updateRun = async (req, res) => {
     // Update the user's shoe distance if the shoe was added to the run for the first time.
     if (field === 'shoeId') {
       try {
-        await updateUserShoeList(req.user._id, value, currentValue, run._id, run.distance)
+        await updateUserShoeList(
+          req.user._id,
+          value,
+          currentValue,
+          run._id,
+          run.distance
+        )
       } catch (err) {
-        console.error(`Error while attempting to update user shoe list for run with id "${run._id}"`)
+        console.error(
+          `Error while attempting to update user shoe list for run with id "${run._id}"`
+        )
         console.dir(err)
         return res.sendStatus(500)
       }

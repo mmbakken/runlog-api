@@ -15,7 +15,9 @@ const addRunToday = async () => {
   await connectToMongo()
 
   if (process?.env?.APP_ENV !== 'dev') {
-    console.erorr('Do not use this script in prod! It drops all of the runs and daily stats for today\'s date. Only use in dev.')
+    console.erorr(
+      "Do not use this script in prod! It drops all of the runs and daily stats for today's date. Only use in dev."
+    )
     return -1
   }
 
@@ -28,7 +30,9 @@ const addRunToday = async () => {
       millisecond: 0,
     }) // 10am today, local time (Denver), as UTC timestamp
     const startOfNewRunUTC = startOfNewRunDT.toUTC()
-    const startOfNewRunLocal = startOfNewRunDT.setZone('utc', { keepLocalTime: true }) // 10am today, UTC. This copies how Strava tracks this field. Unsure why we want this field but here we are.
+    const startOfNewRunLocal = startOfNewRunDT.setZone('utc', {
+      keepLocalTime: true,
+    }) // 10am today, UTC. This copies how Strava tracks this field. Unsure why we want this field but here we are.
 
     console.log(`startOfNewRunUTC: ${startOfNewRunUTC}`)
     console.log(`startOfNewRunLocal: ${startOfNewRunLocal}`)
@@ -38,8 +42,10 @@ const addRunToday = async () => {
       startDate: {
         $gte: startOfNewRunUTC.startOf('day').toJSDate(),
         $lt: startOfNewRunUTC.plus({ day: 1 }).startOf('day').toJSDate(),
-      }
-    }).lean().exec()
+      },
+    })
+      .lean()
+      .exec()
 
     console.log('Deleting these runs and their daily stats:')
     console.dir(runs)
@@ -48,7 +54,7 @@ const addRunToday = async () => {
       startDate: {
         $gte: startOfNewRunUTC.startOf('day').toJSDate(),
         $lt: startOfNewRunUTC.plus({ day: 1 }).startOf('day').toJSDate(),
-      }
+      },
     })
 
     console.log(`Deleted ${resultsRuns.deletedCount} runs`)
@@ -57,7 +63,7 @@ const addRunToday = async () => {
       date: {
         $gte: startOfNewRunUTC.startOf('day').toJSDate(),
         $lt: startOfNewRunUTC.plus({ day: 1 }).startOf('day').toJSDate(),
-      }
+      },
     })
 
     console.log(`Deleted ${resultsDS.deletedCount} ds`)
@@ -72,7 +78,7 @@ const addRunToday = async () => {
     }
 
     const run = {
-      userId : user._id,
+      userId: user._id,
       type: 'Run',
       name: 'Morning Run',
       start_date: `${startOfNewRunDT.toISODate()}T${startOfNewRunDT.toISOTime()}`,

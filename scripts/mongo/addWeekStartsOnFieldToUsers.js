@@ -8,11 +8,11 @@ const addWeekStartsOnFieldToUsers = async () => {
 
   try {
     const result = await UserModel.updateMany(
-      { }, // all users
+      {}, // all users
       {
         stats: {
           weekStartsOn: 1,
-        }
+        },
       }
     )
 

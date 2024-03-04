@@ -5,9 +5,9 @@ const deleteTrainingPlan = async (req, res) => {
   let deletedPlan
 
   try {
-    deletedPlan = await TrainingModel.deleteOne({_id: req.params.id})
+    deletedPlan = await TrainingModel.deleteOne({ _id: req.params.id })
   } catch (e) {
-    return res.status(501).json({ error: 'Unable to delete training plan'})
+    return res.status(501).json({ error: 'Unable to delete training plan' })
   }
 
   return res.status(200).json(deletedPlan)

@@ -6,11 +6,15 @@ const createShoes = async (req, res) => {
   const title = req.body.title // ISO Date like yyyy-mm-dd
 
   if (title == null || typeof title !== 'string') {
-    return res.status(400).json({ error: 'Unable to create training plan: title must be a string'})
+    return res
+      .status(400)
+      .json({ error: 'Unable to create training plan: title must be a string' })
   }
 
   if (req.user == null || req.user._id == null) {
-    return res.status(500).json({ error: 'Unable to add shoes to user: user not found.' })
+    return res
+      .status(500)
+      .json({ error: 'Unable to add shoes to user: user not found.' })
   }
 
   let newShoes = {
@@ -32,7 +36,9 @@ const createShoes = async (req, res) => {
     user.gear.shoes.push(newShoes)
   } catch (e) {
     console.error(e)
-    return res.status(500).json({ message: 'Unable to add shoes to user.', error: e})
+    return res
+      .status(500)
+      .json({ message: 'Unable to add shoes to user.', error: e })
   }
 
   // Save to db
@@ -50,7 +56,12 @@ const createShoes = async (req, res) => {
     })
   } catch (err) {
     console.error(err)
-    return res.status(500).json({ message: 'Unable to create training plan to database.', error: err})
+    return res
+      .status(500)
+      .json({
+        message: 'Unable to create training plan to database.',
+        error: err,
+      })
   }
 }
 

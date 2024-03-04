@@ -16,7 +16,7 @@ const fixEveningRunTitles = async () => {
   try {
     const allRuns = await RunModel.find(
       {
-        title: 'Run'
+        title: 'Run',
       },
       '_id timezone startDate'
     )
@@ -36,7 +36,9 @@ const fixEveningRunTitles = async () => {
       }
     }
 
-    console.log(`${allRuns.length} runs found with 'Evening Run' title, ${nModified} updated to correct title.`)
+    console.log(
+      `${allRuns.length} runs found with 'Evening Run' title, ${nModified} updated to correct title.`
+    )
   } catch (err) {
     console.error(err)
   } finally {

@@ -1,5 +1,14 @@
 import mongoose from 'mongoose'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
@@ -12,7 +21,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/updatePlanDistances', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -41,12 +50,12 @@ describe('Plan distance recalculation function', () => {
     // These tests use the same initial database state
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     const notUser = await UserModel.create({
       name: 'Not the plan user',
-      email: 'not@gmail.com'
+      email: 'not@gmail.com',
     })
 
     // Only need to create the dailystats - runs aren't necessary for calculations
@@ -111,7 +120,7 @@ describe('Plan distance recalculation function', () => {
           actualDistance: 0,
           plannedDistance: 0,
           plannedDistanceMeters: 0,
-        }
+        },
       ],
       dates: [
         {
@@ -227,7 +236,7 @@ describe('Plan distance recalculation function', () => {
           workoutCategory: 0,
         },
       ],
-      journal: []
+      journal: [],
     })
 
     const plan = await TrainingModel.findOne({}).exec()

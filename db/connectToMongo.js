@@ -17,7 +17,7 @@ const log = (message, logger) => {
 // Connect to the database. This happens async behind the scenes, but Mongoose will batch
 // up any queries we make until this is successful. Also handles closing the db when the
 // app is done.
-// dbStr - String, optional. 
+// dbStr - String, optional.
 const connectToMongo = async (dbStr) => {
   // Which MongoDB database to use? Defaults to 'runlog' (prod and localhost) if not specified.
   let dbName = dbStr
@@ -25,31 +25,31 @@ const connectToMongo = async (dbStr) => {
     dbName = 'runlog'
   }
 
-  // Build the connection string 
+  // Build the connection string
   const dbURI = `mongodb://127.0.0.1/${dbName}`
 
   await mongoose.connect(dbURI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
 
   mongoose.connection.on('connected', () => {
     log('Mongoose default connection open to ' + dbURI)
-  }) 
+  })
 
   mongoose.connection.on('error', (err) => {
     log('Mongoose default connection error: ' + err, console.error)
-  }) 
+  })
 
   mongoose.connection.on('disconnected', () => {
-    log('Mongoose default connection disconnected') 
+    log('Mongoose default connection disconnected')
   })
 
   // If the Node process ends, close the Mongoose connection
   process.on('SIGINT', () => {
     mongoose.connection.close(() => {
-      log('Mongoose default connection disconnected through app termination') 
-      process.exit(0) 
+      log('Mongoose default connection disconnected through app termination')
+      process.exit(0)
     })
   })
 }

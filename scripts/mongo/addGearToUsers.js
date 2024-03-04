@@ -8,7 +8,7 @@ const addGearToUsers = async () => {
   // Get each user document and add a new object for tracking their gear (just shoes, for now)
   try {
     const allUsers = await UserModel.find(
-      { }, // all runs
+      {}, // all runs
       '_id'
     )
 

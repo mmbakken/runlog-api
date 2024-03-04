@@ -14,7 +14,7 @@ const addTitleFieldToRuns = async () => {
 
   try {
     const allRuns = await RunModel.find(
-      { }, // all runs
+      {}, // all runs
       '_id timezone startDate'
     )
 
@@ -23,7 +23,10 @@ const addTitleFieldToRuns = async () => {
     for (let i = 0; i < allRuns.length; i++) {
       let run = allRuns[i]
 
-      run.title = generateTitle(run._doc.startDate, run._doc.timezone.split(' ')[1]) // used to be a string
+      run.title = generateTitle(
+        run._doc.startDate,
+        run._doc.timezone.split(' ')[1]
+      ) // used to be a string
 
       try {
         await run.save()

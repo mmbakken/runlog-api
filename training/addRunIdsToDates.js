@@ -7,21 +7,26 @@ const addRunIdsToDates = async (dates, startDateDT, endDateDT, userId) => {
   let newDates = []
 
   // Find all of the runs on all of the plan dates
-  const runs = await RunModel.find({
-    startDateLocal: {
-      $gte: startDateDT,
-      $lt: endDateDT.plus({ 'days': 1}).startOf('day')
+  const runs = await RunModel.find(
+    {
+      startDateLocal: {
+        $gte: startDateDT,
+        $lt: endDateDT.plus({ days: 1 }).startOf('day'),
+      },
+      userId: userId.toString(),
     },
-    userId: userId.toString(),
-  }, {
-    _id: true,
-    startDate: true,
-  }).lean()
+    {
+      _id: true,
+      startDate: true,
+    }
+  ).lean()
 
   // Group the run IDs by date
   const runsByDate = {}
   runs.map((run) => {
-    const dateISO = DateTime.fromJSDate(run.startDate, { zone: run.timezone }).toISODate().split('T')[0]
+    const dateISO = DateTime.fromJSDate(run.startDate, { zone: run.timezone })
+      .toISODate()
+      .split('T')[0]
     let datesArray = runsByDate[dateISO]
 
     if (datesArray == null) {
@@ -33,11 +38,13 @@ const addRunIdsToDates = async (dates, startDateDT, endDateDT, userId) => {
 
   // For each date, add the run ids found earlier
   for (let date of dates) {
-    const dateISO = DateTime.fromJSDate(date.dateISO, { zone: 'utc' }).toISODate().split('T')[0]
+    const dateISO = DateTime.fromJSDate(date.dateISO, { zone: 'utc' })
+      .toISODate()
+      .split('T')[0]
 
     newDates.push({
       ...date,
-      runIds: runsByDate[dateISO] || []
+      runIds: runsByDate[dateISO] || [],
     })
   }
 

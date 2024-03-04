@@ -1,7 +1,16 @@
 import mongoose from 'mongoose'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import deleteShoes from './deleteShoes.js'
 
@@ -10,7 +19,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/deleteShoes', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -47,7 +56,7 @@ describe('User can add a shoes to a run', () => {
             runIds: [],
           },
         ],
-      }
+      },
     })
 
     let run = await RunModel.create({
@@ -66,7 +75,7 @@ describe('User can add a shoes to a run', () => {
         title: 'First shoe',
         distance: run.distance,
         runIds: [run._id],
-      }
+      },
     ]
 
     await user.save()
@@ -77,8 +86,8 @@ describe('User can add a shoes to a run', () => {
     const req = {
       user: user,
       params: {
-        shoeId: user.gear.shoes[0]._id.toString()
-      }
+        shoeId: user.gear.shoes[0]._id.toString(),
+      },
     }
 
     const res = {

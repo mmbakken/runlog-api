@@ -5,7 +5,9 @@ const generateTitle = (runStartTime, timezone) => {
   const dt = DateTime.fromISO(runStartTime, { zone: timezone })
 
   if (dt.invalid) {
-    console.error(`Could not generate title for run with start time "${runStartTime}" and timezone "${timezone}". Explanation: ${dt.invalidExplanation}`)
+    console.error(
+      `Could not generate title for run with start time "${runStartTime}" and timezone "${timezone}". Explanation: ${dt.invalidExplanation}`
+    )
     return 'Run'
   }
 

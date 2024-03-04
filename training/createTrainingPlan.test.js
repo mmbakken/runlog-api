@@ -3,7 +3,15 @@ import TrainingModel from '../db/TrainingModel.js'
 import RunModel from '../db/RunModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import UserModel from '../db/UserModel.js'
-import { jest, describe, expect, beforeAll, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import createTrainingPlan from './createTrainingPlan.js'
 
@@ -12,7 +20,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/training', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -45,11 +53,13 @@ describe('Training creation', () => {
       actualDistance: 0,
       plannedDistance: 0,
       plannedDistanceMeters: 0,
-      weeks: [{
-        actualDistance: 0,
-        plannedDistance: 0,
-        plannedDistanceMeters: 0,
-      }],
+      weeks: [
+        {
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+        },
+      ],
       dates: [
         {
           dateISO: '2022-10-03',
@@ -113,9 +123,9 @@ describe('Training creation', () => {
           workout: '',
           workoutCategory: 0,
           runIds: [],
-        }
+        },
       ],
-      journal: []
+      journal: [],
     })
 
     const plans = await TrainingModel.find({}).exec()
@@ -125,7 +135,7 @@ describe('Training creation', () => {
   test('Creates a Training plan via the endpoint function', async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // Now test if the creation function works, not just the db
@@ -136,15 +146,15 @@ describe('Training creation', () => {
       body: {
         startDate: '2022-10-10',
         endDate: '2022-12-04',
-        weekCount: 8, 
+        weekCount: 8,
         timezone: 'America/Denver',
         title: 'Training Plan – 8 Weeks',
         goal: 'Create training plans without bugs :)',
         isActive: false,
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }
@@ -160,7 +170,7 @@ describe('Training creation', () => {
   test('Creates a Training Plan with one week of existing runs', async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // Create some runs that exist prior to the creation of this plan
@@ -206,17 +216,19 @@ describe('Training creation', () => {
         title: 'Training Plan 1',
         goal: 'Create training plans without bugs :)',
         isActive: false,
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }
 
     // Make the plan
     await createTrainingPlan(req, res)
-    const plan1 = await TrainingModel.findOne({title: 'Training Plan 1'}).exec()
+    const plan1 = await TrainingModel.findOne({
+      title: 'Training Plan 1',
+    }).exec()
 
     expect(plan1.actualDistance).toBe(4828.03) // 3 miles (in meters)
     expect(plan1.weeks[0].actualDistance).toBe(4828.03) // 3 miles (in meters)
@@ -255,7 +267,7 @@ describe('Training creation', () => {
   test('Creates a Training Plan with multiple weeks of existing runs', async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // Create some runs that exist prior to the creation of this plan
@@ -315,17 +327,19 @@ describe('Training creation', () => {
         title: 'Training Plan 1',
         goal: 'Create training plans without bugs :)',
         isActive: false,
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }
 
     // Make the plan
     await createTrainingPlan(req, res)
-    const plan1 = await TrainingModel.findOne({title: 'Training Plan 1'}).exec()
+    const plan1 = await TrainingModel.findOne({
+      title: 'Training Plan 1',
+    }).exec()
 
     expect(plan1.actualDistance).toBe(6437.37) // 4 miles (in meters)
   })

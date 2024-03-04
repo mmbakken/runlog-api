@@ -3,46 +3,64 @@ import UserModel from '../db/UserModel.js'
 import addFloats from '../utils/addFloats.js'
 
 // When a user selects a shoe for their run, update the user's shoe list with the distance and runId
-const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, distance) => {
-  // No-op. The shoe should already be in the 
+const updateUserShoeList = async (
+  userId,
+  newShoeId,
+  currentShoeId,
+  runId,
+  distance
+) => {
+  // No-op. The shoe should already be in the
   if (newShoeId === currentShoeId) {
     return
   }
 
   if (userId == null) {
-    console.error('Invalid params for updateUserShoeList: userId must not be null. Returning without updating user shoe list.')
+    console.error(
+      'Invalid params for updateUserShoeList: userId must not be null. Returning without updating user shoe list.'
+    )
     return
   }
 
   if (runId == null) {
-    console.error('Invalid params for updateUserShoeList: runId must not be null. Returning without updating user shoe list.')
+    console.error(
+      'Invalid params for updateUserShoeList: runId must not be null. Returning without updating user shoe list.'
+    )
     return
   }
 
   if (distance == null || typeof distance !== 'number') {
-    console.error('Invalid params for updateUserShoeList: distance must be a number. Returning without updating user shoe list.')
+    console.error(
+      'Invalid params for updateUserShoeList: distance must be a number. Returning without updating user shoe list.'
+    )
     return
   }
 
   const user = await UserModel.findById(userId).lean()
 
   if (user == null) {
-    console.error(`Could not find user from userId: "${userId}". Returning without updating user shoe list.`)
+    console.error(
+      `Could not find user from userId: "${userId}". Returning without updating user shoe list.`
+    )
     return
   }
 
   if (user.gear == null || user.gear.shoes == null) {
-    console.error(`Could not find user from userId: "${userId}". Returning without updating user shoe list.`)
-    return 
+    console.error(
+      `Could not find user from userId: "${userId}". Returning without updating user shoe list.`
+    )
+    return
   }
 
   // Update the user's shoe list with correct distance and runIds.
   const newShoes = user.gear.shoes.map((shoe) => {
     let newShoe = {
-      ...shoe
+      ...shoe,
     }
 
-    const runIdsAsStrings = shoe.runIds.map((shoeRunId) => { return shoeRunId.toString() })
+    const runIdsAsStrings = shoe.runIds.map((shoeRunId) => {
+      return shoeRunId.toString()
+    })
 
     // Find the shoe the user selected
     if (shoe._id.toString() === newShoeId) {
@@ -58,10 +76,7 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
       if (!runIdsAsStrings.includes(runId.toString())) {
         // Otherwise, add the distance to the shoe and add the runId too
         newShoe.distance = addFloats(newShoe.distance, distance)
-        newShoe.runIds = [
-          ...shoe.runIds,
-          runId
-        ]
+        newShoe.runIds = [...shoe.runIds, runId]
       }
     }
 
@@ -81,13 +96,13 @@ const updateUserShoeList = async (userId, newShoeId, currentShoeId, runId, dista
 
   await UserModel.updateOne(
     {
-      _id: new mongoose.Types.ObjectId(userId)
+      _id: new mongoose.Types.ObjectId(userId),
     },
     {
       gear: {
         ...user.gear,
-        shoes: newShoes
-      }
+        shoes: newShoes,
+      },
     }
   )
 }
