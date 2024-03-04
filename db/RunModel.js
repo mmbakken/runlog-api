@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 // This collection holds run documents that represent run activities on a user's
-// third-party linked accounts like Strava, Fitbit, etc. 
+// third-party linked accounts like Strava, Fitbit, etc.
 const runSchema = new mongoose.Schema({
   userId: mongoose.ObjectId, // Runlog: 'user._id'
   name: String, // User can edit this field in Strava
@@ -28,9 +28,9 @@ const runSchema = new mongoose.Schema({
   // User editable fields
   results: { type: String, default: null },
   shoes: { type: String, default: null },
-  ice: { type: Boolean, default: false},
-  stretch: { type: Boolean, default: false},
-  strength: { type: Boolean, default: false},
+  ice: { type: Boolean, default: false },
+  stretch: { type: Boolean, default: false },
+  strength: { type: Boolean, default: false },
 
   shoeId: { type: mongoose.ObjectId, default: null },
 })

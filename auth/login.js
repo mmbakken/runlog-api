@@ -9,7 +9,9 @@ const login = async (req, res) => {
     const user = await UserModel.findOne({ email: req.body.email })
 
     if (user == null) {
-      console.error(`Cannot log in user: Unable to find user with email "${req.body.email}"`)
+      console.error(
+        `Cannot log in user: Unable to find user with email "${req.body.email}"`
+      )
       return res.sendStatus(401)
     }
 
@@ -28,7 +30,7 @@ const login = async (req, res) => {
         },
         gear: {
           shoes: user.gear.shoes,
-        }
+        },
       }
 
       // TODO: Generate JWT for public user data and send back as bearer token
@@ -40,7 +42,7 @@ const login = async (req, res) => {
 
         return res.json({
           user: payload,
-          accessToken: `Bearer ${token}`
+          accessToken: `Bearer ${token}`,
         })
       })
     } else {

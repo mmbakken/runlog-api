@@ -7,12 +7,12 @@ const makeStrengthFieldBoolean = async () => {
 
   try {
     const result = await RunModel.updateMany(
-      { }, // all runs
+      {}, // all runs
       {
         $set: {
           strength: false, // used to be a string
         },
-        $currentDate: { lastModified: true }
+        $currentDate: { lastModified: true },
       }
     )
 

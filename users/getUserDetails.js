@@ -13,7 +13,9 @@ const getUserDetails = async (req, res) => {
   // Make sure the authenticated user is the one whose details are being requested
   if (req.user._id !== req.params.id) {
     // TODO: allow admin users to skip this check
-    console.error(`User with id "${req.user._id} is forbidden from accessing user details for user id: "${req.params.id}"`)
+    console.error(
+      `User with id "${req.user._id} is forbidden from accessing user details for user id: "${req.params.id}"`
+    )
     return res.sendStatus(403)
   }
 

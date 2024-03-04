@@ -3,7 +3,7 @@ import disconnectFromMongo from '../../db/disconnectFromMongo.js'
 import TrainingModel from '../../db/TrainingModel.js'
 import updatePlanDistances from '../../training/updatePlanDistances.js'
 
-// Sets the plannedDistance values for 
+// Sets the plannedDistance values for
 const updateAllPlanDistances = async () => {
   connectToMongo()
 
@@ -12,9 +12,7 @@ const updateAllPlanDistances = async () => {
 
   let allPlans
   try {
-    allPlans = await TrainingModel.find(
-      {},
-    )
+    allPlans = await TrainingModel.find({})
   } catch (err) {
     console.error(err)
   }

@@ -76,7 +76,6 @@ app.get('/api/v1/hello', (req, res) => {
   res.send('hello, stranger 👁️👄👁️')
 })
 
-
 // RUN ROUTES
 
 // Retrieve the latest run activities from Strava for the logged in user.
@@ -94,12 +93,10 @@ app.put('/api/v1/runs/:id', authenticateToken, updateRun)
 // Delete the Runlog run object
 app.delete('/api/v1/runs/:id', authenticateToken, deleteRun)
 
-
 // DAILY STATS ROUTES
 
 // Retrieve all daily stats documents for this user.
 app.get('/api/v1/dailyStats', authenticateToken, getAllDailyStats)
-
 
 // TRAINING PLAN ROUTES
 
@@ -113,14 +110,17 @@ app.get('/api/v1/training/:id', authenticateToken, getTrainingPlan)
 app.get('/api/v1/training', authenticateToken, getAllTrainingPlans)
 
 // Update a specific date withing a training plan with any fields included in the message body
-app.put('/api/v1/training/:id/date/:dateISO', authenticateToken, updateTrainingPlanDate)
+app.put(
+  '/api/v1/training/:id/date/:dateISO',
+  authenticateToken,
+  updateTrainingPlanDate
+)
 
 // Update the training plan with any fields included in the message body
 app.put('/api/v1/training/:id', authenticateToken, updateTrainingPlan)
 
 // Delete the training plan with this specific ID
 app.delete('/api/v1/training/:id', authenticateToken, deleteTrainingPlan)
-
 
 // LOGIN ROUTES
 
@@ -133,7 +133,6 @@ app.get('/api/v1/users/:id', authenticateToken, getUserDetails)
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
 
-
 // USER ROUTES
 
 // Used for adding, removing, and updating mileage for user's gear
@@ -145,12 +144,15 @@ app.post('/api/v1/user/gear/shoes', authenticateToken, createShoes)
 // Delete shoes. This unlinks them from each run too.
 app.delete('/api/v1/user/gear/shoes/:shoeId', authenticateToken, deleteShoes)
 
-
 // STRAVA AUTH AND API HANDLERS
 
 // After user authorizes Runlog to access their Strava data, this endpoint takes the access
 // token and exchanges it for the user's access and refresh tokens for Strava API calls.
-app.post('/api/v1/users/:id/stravaCode/:stravaCode', authenticateToken, stravaCodeToTokens)
+app.post(
+  '/api/v1/users/:id/stravaCode/:stravaCode',
+  authenticateToken,
+  stravaCodeToTokens
+)
 
 // Callback URL specified in scripts/createStravaWebhook.js
 app.get('/api/v1/strava/webhook', stravaWebhookVerification)

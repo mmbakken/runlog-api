@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 // This collection holds run documents that represent run activities on a user's
-// third-party linked accounts like Strava, Fitbit, etc. 
+// third-party linked accounts like Strava, Fitbit, etc.
 const dailyStatsSchema = new mongoose.Schema({
   userId: { type: mongoose.ObjectId, default: null }, // Runlog: 'user._id'
   date: {

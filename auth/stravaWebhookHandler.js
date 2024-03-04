@@ -4,7 +4,7 @@ import { useFreshTokens } from '../auth/stravaTokens.js'
 import createRunFromStravaActivity from '../runs/createRunFromStravaActivity.js'
 
 // This route is for handling requests sent by Strava as part of their Webhook API.
-// When a new activity is added to Strava or a user deauthorizes Runlog from their OAuth 
+// When a new activity is added to Strava or a user deauthorizes Runlog from their OAuth
 // access, this endpoint will handle updating our records accordingly.
 //
 // See scripts/createStravaWebhook.js for the initial create webhook POST request. This
@@ -27,7 +27,9 @@ const stravaWebhookHandler = async (req, res) => {
     req.body.object_type == null ||
     req.body.owner_id == null
   ) {
-    console.error('Got a weirdly formatted request to stravaWebhookHandler. Aborting.')
+    console.error(
+      'Got a weirdly formatted request to stravaWebhookHandler. Aborting.'
+    )
     return
   }
 
@@ -66,12 +68,17 @@ const stravaWebhookHandler = async (req, res) => {
   //   updates: { authorized: 'false' }
   // }
 
-  if (req.body.object_type === 'activity' && req.body.aspect_type === 'create') {
+  if (
+    req.body.object_type === 'activity' &&
+    req.body.aspect_type === 'create'
+  ) {
     // Look up user by strava athlete id in mongo and get the token
     const user = await UserModel.findOne({ stravaUserId: req.body.owner_id })
 
     if (user == null) {
-      console.error(`No user found for Strava athlete id "${req.body.owner_id}"`)
+      console.error(
+        `No user found for Strava athlete id "${req.body.owner_id}"`
+      )
       return
     }
 
@@ -87,16 +94,17 @@ const stravaWebhookHandler = async (req, res) => {
         },
         headers: {
           Authorization: `Bearer ${freshAccessToken}`,
-        }
+        },
       })
 
       await createRunFromStravaActivity(user, response.data)
     } catch (err) {
       console.error(err)
     }
-
   } else {
-    console.log('Unsupported webhook callback message body. Might want to implement this?')
+    console.log(
+      'Unsupported webhook callback message body. Might want to implement this?'
+    )
   }
 }
 

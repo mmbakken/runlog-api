@@ -7,9 +7,8 @@ const addUserEditableFields = async () => {
   connectToMongo()
 
   try {
-
     const result = await RunModel.updateMany(
-      { }, // all runs
+      {}, // all runs
       {
         $set: {
           shoes: null, // string
@@ -18,7 +17,7 @@ const addUserEditableFields = async () => {
           strength: null, // string
           results: null, // string
         },
-        $currentDate: { lastModified: true }
+        $currentDate: { lastModified: true },
       }
     )
 

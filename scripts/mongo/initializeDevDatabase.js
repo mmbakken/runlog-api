@@ -16,7 +16,9 @@ const initializeDevDatabase = async () => {
   await connectToMongo()
 
   if (process?.env?.APP_ENV !== 'dev') {
-    console.erorr('Do not use this script in prod! It drops all of the plans, runs, and daily stats. Only use in dev.')
+    console.erorr(
+      'Do not use this script in prod! It drops all of the plans, runs, and daily stats. Only use in dev.'
+    )
     return -1
   }
 
@@ -38,7 +40,7 @@ const initializeDevDatabase = async () => {
 
     const runs = [
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:46:33Z`,
@@ -57,7 +59,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758085, -104.989269],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:21:03Z`,
@@ -76,7 +78,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758198, -104.98944],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index }).toISODate()}T00:59:21Z`,
@@ -95,7 +97,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758064, -104.98935],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T23:07:39Z`,
@@ -114,7 +116,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [null, null],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:44:02Z`,
@@ -133,7 +135,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758129, -104.989579],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Lunch Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T19:09:04Z`,
@@ -152,7 +154,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758377, -104.989355],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T20:47:09Z`,
@@ -171,26 +173,26 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.759744, -104.990506],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
-        name : 'Afternoon Run',
-        start_date : `${date.minus({ days: index++ }).toISODate()}T21:06:01Z`,
-        start_date_local : `${date.minus({ days: index }).toISODate()}T14:06:01Z`,
-        timezone : '(GMT-07:00) America/Denver',
-        moving_time : 2290,
-        distance : 8479,
-        average_speed : 3.703,
-        total_elevation_gain : 21.5,
-        has_heartrate : true,
-        average_heartrate : 156.5,
-        max_heartrate : 182,
-        device_name : 'Garmin Forerunner 245',
-        id : '4772578968',
-        external_id : 'garmin_push_6257468361',
+        name: 'Afternoon Run',
+        start_date: `${date.minus({ days: index++ }).toISODate()}T21:06:01Z`,
+        start_date_local: `${date.minus({ days: index }).toISODate()}T14:06:01Z`,
+        timezone: '(GMT-07:00) America/Denver',
+        moving_time: 2290,
+        distance: 8479,
+        average_speed: 3.703,
+        total_elevation_gain: 21.5,
+        has_heartrate: true,
+        average_heartrate: 156.5,
+        max_heartrate: 182,
+        device_name: 'Garmin Forerunner 245',
+        id: '4772578968',
+        external_id: 'garmin_push_6257468361',
         start_latlng: [39.758117, -104.989318],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T21:58:28Z`,
@@ -209,7 +211,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.754881, -105.008709],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:07:11Z`,
@@ -228,7 +230,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758243, -104.989547],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T20:12:29Z`,
@@ -247,7 +249,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758024, -104.989358],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T00:07:08Z`,
@@ -266,7 +268,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758209, -104.989565],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:43:49Z`,
@@ -285,7 +287,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758137, -104.989531],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Lunch Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T18:22:44Z`,
@@ -304,7 +306,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758221, -104.989561],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T20:35:00Z`,
@@ -323,7 +325,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758389, -104.98955],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Evening Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T01:07:59Z`,
@@ -342,7 +344,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758142, -104.989616],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T20:42:11Z`,
@@ -361,7 +363,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758287, -104.989347],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:10:59Z`,
@@ -380,7 +382,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758031, -104.98953],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T21:10:41Z`,
@@ -399,7 +401,7 @@ const initializeDevDatabase = async () => {
         start_latlng: [39.758248, -104.989368],
       },
       {
-        userId : user._id,
+        userId: user._id,
         type: 'Run',
         name: 'Afternoon Run',
         start_date: `${date.minus({ days: index++ }).toISODate()}T22:13:18Z`,

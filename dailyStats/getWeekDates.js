@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 
 // Given an ISO Date string and a weekday integer (Luxon DateTime.weekday), returns an array of
-// ISO Date strings that are in the current week. 
+// ISO Date strings that are in the current week.
 const getWeekDates = (date, weekStartsOn) => {
   let weekDates = []
 
@@ -15,10 +15,10 @@ const getWeekDates = (date, weekStartsOn) => {
     dayOfWeekDiff = dayOfWeekDiff + 7
   }
 
-  let startOfThisWeek = today.minus({days: dayOfWeekDiff})
+  let startOfThisWeek = today.minus({ days: dayOfWeekDiff })
 
   for (let i = 0; i <= 6; i++) {
-    weekDates.push(startOfThisWeek.plus({days: i}).toISODate())
+    weekDates.push(startOfThisWeek.plus({ days: i }).toISODate())
   }
 
   return weekDates

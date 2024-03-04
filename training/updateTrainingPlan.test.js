@@ -1,6 +1,15 @@
 import mongoose from 'mongoose'
 import { DateTime } from 'luxon'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import RunModel from '../db/RunModel.js'
 import TrainingModel from '../db/TrainingModel.js'
@@ -14,7 +23,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/updateTrainingPlan', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -28,7 +37,7 @@ beforeEach(async () => {
   // These tests use the same initial database state
   const user = await UserModel.create({
     name: 'Vlad',
-    email: 'lenin@gmail.com'
+    email: 'lenin@gmail.com',
   })
 
   const run1 = await RunModel.create({
@@ -71,28 +80,28 @@ beforeEach(async () => {
     userId: user._id,
     date: '2022-10-03',
     distance: 1000.01,
-    runIds: [run1._id.toString()]
+    runIds: [run1._id.toString()],
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-10',
     distance: 1000.02,
-    runIds: [run2._id.toString()]
+    runIds: [run2._id.toString()],
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-17',
     distance: 1000.03,
-    runIds: [run3._id.toString()]
+    runIds: [run3._id.toString()],
   })
 
   await DailyStatsModel.create({
     userId: user._id,
     date: '2022-10-24',
     distance: 1000.04,
-    runIds: [run4._id.toString()]
+    runIds: [run4._id.toString()],
   })
 
   // Create a plan that includes these runs
@@ -108,18 +117,18 @@ beforeEach(async () => {
     plannedDistance: 0,
     plannedDistanceMeters: 0,
     weeks: [
-    {
-      startDateISO: '2022-10-10',
-      actualDistance: 1000.01,
-      plannedDistance: 0,
-      plannedDistanceMeters: 0,
-    },
-    {
-      startDateISO: '2022-10-17',
-      actualDistance: 1000.02,
-      plannedDistance: 0,
-      plannedDistanceMeters: 0,
-    }
+      {
+        startDateISO: '2022-10-10',
+        actualDistance: 1000.01,
+        plannedDistance: 0,
+        plannedDistanceMeters: 0,
+      },
+      {
+        startDateISO: '2022-10-17',
+        actualDistance: 1000.02,
+        plannedDistance: 0,
+        plannedDistanceMeters: 0,
+      },
     ],
     dates: [
       {
@@ -249,7 +258,7 @@ beforeEach(async () => {
         runIds: [],
       },
     ],
-    journal: []
+    journal: [],
   })
 })
 
@@ -292,7 +301,7 @@ describe('Training Plan is updated', () => {
               startDateISO: '2022-10-10',
               plannedDistance: 0,
               plannedDistanceMeters: 0,
-            }
+            },
           ],
           dates: [
             {
@@ -395,10 +404,10 @@ describe('Training Plan is updated', () => {
             },
           ],
         },
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }
@@ -473,7 +482,7 @@ describe('Training Plan is updated', () => {
               actualDistance: 1000.02,
               plannedDistance: 0,
               plannedDistanceMeters: 0,
-            }
+            },
           ],
           dates: [
             {
@@ -590,10 +599,10 @@ describe('Training Plan is updated', () => {
             },
           ],
         },
-      }
+      },
     }
 
-    const res = { 
+    const res = {
       status: jest.fn(),
       json: jest.fn(),
     }

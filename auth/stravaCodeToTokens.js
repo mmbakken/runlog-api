@@ -15,7 +15,9 @@ const stravaCodeToTokens = async (req, res) => {
     const user = await UserModel.findById(userId)
 
     if (user == null) {
-      console.error(`Unable to complete Strava code/token exchange: Unable to find user with id "${userId}"`)
+      console.error(
+        `Unable to complete Strava code/token exchange: Unable to find user with id "${userId}"`
+      )
       return res.sendStatus(400)
     }
 
@@ -33,14 +35,14 @@ const stravaCodeToTokens = async (req, res) => {
         client_secret: clientSecret,
         code: stravaCode,
         grant_type: 'authorization_code',
-      })
+      }),
     })
 
     console.log(`Linking Strava account for user "${user.email}"`)
     console.log(`Strava Athlete ID: ${response.data.athlete.id}`)
 
     user.stravaAccessToken = response.data.access_token
-    user.stravaRefreshToken = response.data.refresh_token 
+    user.stravaRefreshToken = response.data.refresh_token
     user.stravaUserId = response.data.athlete.id
     user.hasStravaAuth = true
 

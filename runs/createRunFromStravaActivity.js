@@ -50,7 +50,9 @@ const createRunFromStravaActivity = async (user, activity) => {
         startLongitude: activity?.start_latlng[1],
       })
 
-      console.log(`New run created successfully. Runlog Id: "${newRun._id}", Strava activityId: "${activity.id}"`)
+      console.log(
+        `New run created successfully. Runlog Id: "${newRun._id}", Strava activityId: "${activity.id}"`
+      )
 
       // A new run means daily totals have changed. Update them appropriately.
       await updateDailyStats(newRun, user)
@@ -60,7 +62,9 @@ const createRunFromStravaActivity = async (user, activity) => {
 
       return
     } else {
-      console.log('Strava Activity already exists as a Run document. Will not add a duplicate.')
+      console.log(
+        'Strava Activity already exists as a Run document. Will not add a duplicate.'
+      )
       return
     }
   } catch (err) {

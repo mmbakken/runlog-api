@@ -16,7 +16,7 @@ const getStravaRuns = async (req, res) => {
       url: 'https://www.strava.com/api/v3/athlete/activities',
       headers: {
         Authorization: `Bearer ${await useFreshTokens(user)}`,
-      }
+      },
     })
 
     console.log('Retrieved Strava activities successfully')

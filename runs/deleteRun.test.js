@@ -3,7 +3,16 @@ import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import deleteRun from './deleteRun.js'
 
@@ -12,7 +21,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/deleteRun', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -41,7 +50,7 @@ describe('Run deletion', () => {
   test('Delete a single run', async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     const run = await RunModel.create({
@@ -72,12 +81,14 @@ describe('Run deletion', () => {
       actualDistance: 1609.34, // 1 mile, in meters
       plannedDistance: 1,
       plannedDistanceMeters: 1609.34, // 1 mile, in meters
-      weeks: [{
-        startDateISO: '2022-10-03',
-        actualDistance: 1609.34, // 1 mile, in meters
-        plannedDistance: 1,
-        plannedDistanceMeters: 1609.34, // 1 mile, in meters
-      }],
+      weeks: [
+        {
+          startDateISO: '2022-10-03',
+          actualDistance: 1609.34, // 1 mile, in meters
+          plannedDistance: 1,
+          plannedDistanceMeters: 1609.34, // 1 mile, in meters
+        },
+      ],
       dates: [
         {
           dateISO: '2022-10-03',
@@ -141,9 +152,9 @@ describe('Run deletion', () => {
           workout: '',
           workoutCategory: 0,
           runIds: [],
-        }
+        },
       ],
-      journal: []
+      journal: [],
     })
 
     await TrainingModel.create({
@@ -157,12 +168,14 @@ describe('Run deletion', () => {
       actualDistance: 1609.34, // 1 mile, in meters
       plannedDistance: 1,
       plannedDistanceMeters: 1609.34, // 1 mile, in meters
-      weeks: [{
-        startDateISO: '2022-10-03',
-        actualDistance: 1609.34, // 1 mile, in meters
-        plannedDistance: 1,
-        plannedDistanceMeters: 1609.34, // 1 mile, in meters
-      }],
+      weeks: [
+        {
+          startDateISO: '2022-10-03',
+          actualDistance: 1609.34, // 1 mile, in meters
+          plannedDistance: 1,
+          plannedDistanceMeters: 1609.34, // 1 mile, in meters
+        },
+      ],
       dates: [
         {
           dateISO: '2022-10-03',
@@ -226,16 +239,16 @@ describe('Run deletion', () => {
           workout: '',
           workoutCategory: 0,
           runIds: [],
-        }
+        },
       ],
-      journal: []
+      journal: [],
     })
 
     const req = {
       user: user,
       params: {
-        id: run._id.toString()
-      }
+        id: run._id.toString(),
+      },
     }
 
     const res = {

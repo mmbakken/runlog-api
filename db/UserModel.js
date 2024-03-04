@@ -22,16 +22,18 @@ const userSchema = new mongoose.Schema({
     // TODO: Make this editable from a user settings page
     // See Luxon's DateTtime.weekday()
     // 1 => Monday, 7 => Sunday
-    weekStartsOn: { type: Number, default: 1, min: 1, max: 7},
+    weekStartsOn: { type: Number, default: 1, min: 1, max: 7 },
   },
 
   gear: {
-    shoes: [{
-      id: mongoose.ObjectId,
-      title: String,
-      runIds: [mongoose.ObjectId],
-      distance: Number, // In meters, like runs area
-    }]
+    shoes: [
+      {
+        id: mongoose.ObjectId,
+        title: String,
+        runIds: [mongoose.ObjectId],
+        distance: Number, // In meters, like runs area
+      },
+    ],
   },
 })
 

@@ -22,15 +22,17 @@ const createStravaWebhook = () => {
       client_secret: clientSecret,
       callback_url: callbackURL,
       verify_token: runlogStravaToken,
-    })
-  }).then((response) => {
-    // Response will happen after callback URL echoes the Strava request
-    // sent to it. See callbackURL route for details.
-    console.log('Subscription response:')
-    console.dir(response.data)
-  }).catch((error) => {
-    console.error(error.toJSON())
+    }),
   })
+    .then((response) => {
+      // Response will happen after callback URL echoes the Strava request
+      // sent to it. See callbackURL route for details.
+      console.log('Subscription response:')
+      console.dir(response.data)
+    })
+    .catch((error) => {
+      console.error(error.toJSON())
+    })
 }
 
 createStravaWebhook()

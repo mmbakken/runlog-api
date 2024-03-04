@@ -3,7 +3,16 @@ import TrainingModel from '../db/TrainingModel.js'
 import DailyStatsModel from '../db/DailyStatsModel.js'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import createRunFromStravaActivity from './createRunFromStravaActivity.js'
 
@@ -12,7 +21,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/runs', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -41,7 +50,7 @@ describe('Run creation', () => {
   test('Creates a new Run document from Strava activity JSON', async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // See: https://developers.strava.com/docs/reference/#api-Activities-getActivityById
@@ -61,7 +70,7 @@ describe('Run creation', () => {
       max_heartrate: 160,
       device_name: 'Garmin Forerunner 945',
       external_id: 'garmin_push_12345678987654321',
-      start_latlng: [ 37.83, -122.26 ],
+      start_latlng: [37.83, -122.26],
     }
 
     await createRunFromStravaActivity(user, stravaActivity)
@@ -70,10 +79,10 @@ describe('Run creation', () => {
     expect(runs.length).toBe(1)
   })
 
-  test('Updates the existing training plan\'s actualDistance fields correctly when a new run is created from Strava', async () => {
+  test("Updates the existing training plan's actualDistance fields correctly when a new run is created from Strava", async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // Create some runs that exist prior to the creation of the next run
@@ -123,18 +132,18 @@ describe('Run creation', () => {
       plannedDistance: 0,
       plannedDistanceMeters: 0,
       weeks: [
-      {
-        startDateISO: '2022-10-10',
-        actualDistance: 3218.68, // 2 miles, in meters
-        plannedDistance: 0,
-        plannedDistanceMeters: 0,
-      },
-      {
-        startDateISO: '2022-10-17',
-        actualDistance: 0,
-        plannedDistance: 0,
-        plannedDistanceMeters: 0,
-      }
+        {
+          startDateISO: '2022-10-10',
+          actualDistance: 3218.68, // 2 miles, in meters
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+        },
+        {
+          startDateISO: '2022-10-17',
+          actualDistance: 0,
+          plannedDistance: 0,
+          plannedDistanceMeters: 0,
+        },
       ],
       dates: [
         {
@@ -250,7 +259,7 @@ describe('Run creation', () => {
           workoutCategory: 0,
         },
       ],
-      journal: []
+      journal: [],
     })
 
     // Add a new run via the Strava webhook whose distance SHOULD be added to this plan
@@ -271,12 +280,12 @@ describe('Run creation', () => {
       max_heartrate: 160,
       device_name: 'Garmin Forerunner 945',
       external_id: 'garmin_push_12345678987654321',
-      start_latlng: [ 37.83, -122.26 ],
+      start_latlng: [37.83, -122.26],
     }
 
     await createRunFromStravaActivity(user, stravaActivity)
     const plans = await TrainingModel.find({}).exec()
-    expect (plans.length).toBe(1)
+    expect(plans.length).toBe(1)
 
     plan = plans[0]
     expect(plan.actualDistance).toBe(4828.02) // 3 miles, in meters
@@ -290,10 +299,10 @@ describe('Run creation', () => {
     expect(plan.dates[8].actualDistance).toBe(0) // (10/18)
   })
 
-  test('Updates the existing training plan\'s date.runIds array correctly when a new run is created from Strava', async () => {
+  test("Updates the existing training plan's date.runIds array correctly when a new run is created from Strava", async () => {
     const user = await UserModel.create({
       name: 'Vlad',
-      email: 'lenin@gmail.com'
+      email: 'lenin@gmail.com',
     })
 
     // Create some runs that exist prior to the creation of the next run
@@ -399,7 +408,7 @@ describe('Run creation', () => {
           runIds: [],
         },
       ],
-      journal: []
+      journal: [],
     })
 
     // Add a new run via the Strava webhook whose distance SHOULD be added to this plan
@@ -420,13 +429,13 @@ describe('Run creation', () => {
       max_heartrate: 160,
       device_name: 'Garmin Forerunner 945',
       external_id: 'garmin_push_12345678987654321',
-      start_latlng: [ 37.83, -122.26 ],
+      start_latlng: [37.83, -122.26],
     }
 
     await createRunFromStravaActivity(user, stravaActivity)
     const plans = await TrainingModel.find({}).exec()
     const runs = await RunModel.find({
-      startDateLocal: new Date('2022-10-16T17:07:39Z')
+      startDateLocal: new Date('2022-10-16T17:07:39Z'),
     }).exec()
 
     expect(plans.length).toBe(1)

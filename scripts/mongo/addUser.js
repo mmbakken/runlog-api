@@ -18,7 +18,9 @@ const addUser = async (userData) => {
     console.log(await UserModel.find({}, 'email'))
 
     if (await UserModel.exists({ email: userData.email })) {
-      console.error(`Cannot add new user with email "${userData.email}": user already exists.`)
+      console.error(
+        `Cannot add new user with email "${userData.email}": user already exists.`
+      )
       return
     }
 

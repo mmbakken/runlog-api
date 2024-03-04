@@ -1,4 +1,4 @@
-// This route is for handling the first verification request sent by Strava as part of 
+// This route is for handling the first verification request sent by Strava as part of
 // their Webhook API.
 //
 // See scripts/createStravaWebhook.js for the initial create webhook POST request. This
@@ -19,7 +19,7 @@ const stravaWebhookVerification = (req, res) => {
   ) {
     // This is the first callback from Strava to verify this callback URL.
     return res.json({
-      'hub.challenge': req.query['hub.challenge']
+      'hub.challenge': req.query['hub.challenge'],
     })
   }
 

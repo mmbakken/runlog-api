@@ -14,7 +14,7 @@ const getAllRuns = async (req, res) => {
   const runMap = {}
   for (let run of runsArray) {
     runMap[run._id] = {
-      ...run
+      ...run,
     }
   }
 

@@ -41,7 +41,7 @@ describe('Date helper functions', () => {
     expect(weekDates).toContainEqual('2022-03-23')
     expect(weekDates).toContainEqual('2022-03-24')
     expect(weekDates).toContainEqual('2022-03-25')
-    expect(weekDates).toContainEqual('2022-03-26')  
+    expect(weekDates).toContainEqual('2022-03-26')
   })
 
   test('getWeekDates Monday date + Tuesday start of week', () => {
@@ -49,12 +49,11 @@ describe('Date helper functions', () => {
     const startOfWeek = 2 // Tuesday
     const weekDates = getWeekDates(date, startOfWeek)
 
-    
     expect(weekDates).toContainEqual('2022-03-15')
     expect(weekDates).toContainEqual('2022-03-16')
     expect(weekDates).toContainEqual('2022-03-17')
     expect(weekDates).toContainEqual('2022-03-18')
-    expect(weekDates).toContainEqual('2022-03-19')  
+    expect(weekDates).toContainEqual('2022-03-19')
     expect(weekDates).toContainEqual('2022-03-20')
     expect(weekDates).toContainEqual('2022-03-21')
   })

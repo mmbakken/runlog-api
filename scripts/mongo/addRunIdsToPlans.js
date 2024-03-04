@@ -22,17 +22,19 @@ const addRunIdsToPlans = async () => {
       console.log(`User: "${user.name}"`)
 
       const plans = await TrainingModel.find({
-        userId: user._id
+        userId: user._id,
       })
       const runs = await RunModel.find({
-        userId: user._id
+        userId: user._id,
       }).lean()
 
       // Index the runs by date
       const runIdsByDate = {}
       let runISODate
       runs.map((run) => {
-        runISODate = DateTime.fromJSDate(run.startDate, { zone: run.timezone.split(' ')[1] }).toISODate()
+        runISODate = DateTime.fromJSDate(run.startDate, {
+          zone: run.timezone.split(' ')[1],
+        }).toISODate()
 
         if (runIdsByDate[runISODate] != null) {
           runIdsByDate[runISODate].push(run._id.toString())
@@ -51,7 +53,9 @@ const addRunIdsToPlans = async () => {
         for (let planDate of plan.dates) {
           nPlanDatesModified++
           planDate.runIds = []
-          isoDate = DateTime.fromJSDate(planDate.dateISO, { zone: 'utc' }).toISODate()
+          isoDate = DateTime.fromJSDate(planDate.dateISO, {
+            zone: 'utc',
+          }).toISODate()
           console.log(isoDate)
 
           // Add the runIds for this date to the plan's date object
@@ -71,7 +75,9 @@ const addRunIdsToPlans = async () => {
       }
 
       console.log(`${plans.length} plans found and ${nModified} plans updated.`)
-      console.log(`${nPlanDatesModified} plan dates updated to include runIds array.`)
+      console.log(
+        `${nPlanDatesModified} plan dates updated to include runIds array.`
+      )
       console.log('~~~~~~~~~~~~~~~~~~~~~~~~')
     }
   } catch (err) {

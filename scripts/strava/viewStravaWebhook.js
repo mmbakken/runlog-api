@@ -15,7 +15,7 @@ const viewStravaWebhook = async () => {
       params: {
         client_id: clientId,
         client_secret: clientSecret,
-      }
+      },
     })
 
     // Response will happen after callback URL echoes the Strava request

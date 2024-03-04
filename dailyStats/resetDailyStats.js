@@ -13,9 +13,7 @@ const resetDailyStats = async (user, isVerboseLogging) => {
     console.dir(user)
   }
 
-  await DailyStatsModel.deleteMany(
-    { userId: userId }
-  )
+  await DailyStatsModel.deleteMany({ userId: userId })
 
   let allRuns
   try {
@@ -44,7 +42,9 @@ const resetDailyStats = async (user, isVerboseLogging) => {
     const tz = run.timezone.split(' ')[1]
 
     // Convert the run's full timestamp into a simpler yyyy-mm-dd date string
-    const startDate = DateTime.fromJSDate(run.startDate, { zone: tz }).toISODate()
+    const startDate = DateTime.fromJSDate(run.startDate, {
+      zone: tz,
+    }).toISODate()
 
     // Is there is a DailyStats object with this run's startDate already?
     if (Object.keys(dailyStats).includes(startDate)) {
@@ -53,10 +53,7 @@ const resetDailyStats = async (user, isVerboseLogging) => {
         ...dailyStats[startDate],
         distance: addFloats(dailyStats[startDate].distance, run.distance),
         title: 'Multiple runs',
-        runIds: [
-          ...dailyStats[startDate].runIds,
-          run._id
-        ]
+        runIds: [...dailyStats[startDate].runIds, run._id],
       }
     } else {
       // Make a new entry for this date and set the distance field appropriately
@@ -77,7 +74,7 @@ const resetDailyStats = async (user, isVerboseLogging) => {
   // Determine 7day distance
   //   - Today's distance + all of the previous day's distances until 6 days ago (inclusive)
   // Determine weekly distance
-  //   - Today's distance + all of the previous day's distances until the first day of the week (inclusive) as 
+  //   - Today's distance + all of the previous day's distances until the first day of the week (inclusive) as
   //     determined by the user.stats.weekStartsOn field
 
   if (isVerboseLogging) {
@@ -98,7 +95,6 @@ const resetDailyStats = async (user, isVerboseLogging) => {
       console.log(`weekday: ${currentDate.weekday}`)
       console.log('~~~~~~~~~~~~~~~~~~~~~')
     }
-    
 
     // Values we're trying to calculate
     currentDailyStats.sevenDayDistance = currentDailyStats.distance
@@ -159,7 +155,7 @@ const resetDailyStats = async (user, isVerboseLogging) => {
         console.error(err)
       }
       throw err
-    } 
+    }
   }
 }
 

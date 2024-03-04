@@ -1,7 +1,16 @@
 import mongoose from 'mongoose'
 import RunModel from '../db/RunModel.js'
 import UserModel from '../db/UserModel.js'
-import { jest, describe, expect, beforeAll, beforeEach, afterEach, afterAll, test } from '@jest/globals'
+import {
+  jest,
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  test,
+} from '@jest/globals'
 
 import updateUserShoeList from './updateUserShoeList.js'
 
@@ -10,7 +19,7 @@ beforeAll(async () => {
   try {
     await mongoose.connect('mongodb://localhost/updateUserShoeList', {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
   } catch (err) {
     console.error('Failed to connect to Mongoose')
@@ -39,13 +48,15 @@ describe('User can add a shoes to a run', () => {
       name: 'Vlad',
       email: 'lenin@gmail.com',
       gear: {
-        shoes: [{
-          _id: new mongoose.Types.ObjectId(),
-          title: 'First shoe',
-          distance: 0,
-          runIds: [],
-        }],
-      }
+        shoes: [
+          {
+            _id: new mongoose.Types.ObjectId(),
+            title: 'First shoe',
+            distance: 0,
+            runIds: [],
+          },
+        ],
+      },
     })
 
     let run = await RunModel.create({
@@ -58,7 +69,13 @@ describe('User can add a shoes to a run', () => {
       shoeId: null,
     })
 
-    await updateUserShoeList(user._id, user.gear.shoes[0]._id.toString(), run.shoeId, run._id, run.distance)
+    await updateUserShoeList(
+      user._id,
+      user.gear.shoes[0]._id.toString(),
+      run.shoeId,
+      run._id,
+      run.distance
+    )
     user = await UserModel.findOne({}).exec()
 
     expect(user.gear.shoes[0].distance).toBe(1609.34) // 1 mile, in meters
@@ -70,12 +87,14 @@ describe('User can add a shoes to a run', () => {
       name: 'Vlad',
       email: 'lenin@gmail.com',
       gear: {
-        shoes: [{
-          title: 'First shoe',
-          distance: 0,
-          runIds: [],
-        }],
-      }
+        shoes: [
+          {
+            title: 'First shoe',
+            distance: 0,
+            runIds: [],
+          },
+        ],
+      },
     })
 
     let run1 = await RunModel.create({
@@ -98,8 +117,20 @@ describe('User can add a shoes to a run', () => {
       shoeId: null,
     })
 
-    await updateUserShoeList(user._id, user.gear.shoes[0]._id.toString(), run1.shoeId, run1._id, run1.distance)
-    await updateUserShoeList(user._id, user.gear.shoes[0]._id.toString(), run2.shoeId, run2._id, run2.distance)
+    await updateUserShoeList(
+      user._id,
+      user.gear.shoes[0]._id.toString(),
+      run1.shoeId,
+      run1._id,
+      run1.distance
+    )
+    await updateUserShoeList(
+      user._id,
+      user.gear.shoes[0]._id.toString(),
+      run2.shoeId,
+      run2._id,
+      run2.distance
+    )
     user = await UserModel.findOne({}).exec()
 
     expect(user.gear.shoes[0].distance).toBe(3218.68) // 2 miles, in meters
@@ -123,7 +154,7 @@ describe('User can add a shoes to a run', () => {
             runIds: [],
           },
         ],
-      }
+      },
     })
 
     let run1 = await RunModel.create({
@@ -139,7 +170,7 @@ describe('User can add a shoes to a run', () => {
     // Set the runId and distance correctly
     UserModel.updateOne(
       {
-        _id: user._id
+        _id: user._id,
       },
       {
         gear: {
@@ -156,12 +187,18 @@ describe('User can add a shoes to a run', () => {
               distance: 0,
               runIds: [],
             },
-          ]
-        }
+          ],
+        },
       }
     )
 
-    await updateUserShoeList(user._id, user.gear.shoes[1]._id.toString(), run1.shoeId, run1._id, run1.distance)
+    await updateUserShoeList(
+      user._id,
+      user.gear.shoes[1]._id.toString(),
+      run1.shoeId,
+      run1._id,
+      run1.distance
+    )
     user = await UserModel.findOne({}).exec()
 
     expect(user.gear.shoes[0].distance).toBe(0)
@@ -182,7 +219,7 @@ describe('User can add a shoes to a run', () => {
             runIds: [],
           },
         ],
-      }
+      },
     })
 
     let run1 = await RunModel.create({
@@ -198,7 +235,7 @@ describe('User can add a shoes to a run', () => {
     // Set the runId and distance correctly
     UserModel.updateOne(
       {
-        _id: user._id
+        _id: user._id,
       },
       {
         gear: {
@@ -209,12 +246,18 @@ describe('User can add a shoes to a run', () => {
               distance: run1.distance,
               runIds: [run1._id],
             },
-          ]
-        }
+          ],
+        },
       }
     )
 
-    await updateUserShoeList(user._id, null, run1.shoeId, run1._id, run1.distance)
+    await updateUserShoeList(
+      user._id,
+      null,
+      run1.shoeId,
+      run1._id,
+      run1.distance
+    )
     user = await UserModel.findOne({}).exec()
 
     expect(user.gear.shoes[0].distance).toBe(0)
