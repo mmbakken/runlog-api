@@ -36,8 +36,11 @@ import deleteTrainingPlan from './training/deleteTrainingPlan.js'
 
 // Users
 import getUserDetails from './users/getUserDetails.js'
-import createShoes from './users/createShoes.js'
-import deleteShoes from './users/deleteShoes.js'
+
+// Shoes
+import getShoes from './shoes/getShoes.js'
+import createShoes from './shoes/createShoes.js'
+import deleteShoes from './shoes/deleteShoes.js'
 
 const app = express()
 const port = 4000
@@ -50,7 +53,7 @@ if (process.env.USE_CORS === 'true') {
   app.use(cors())
 }
 
-connectToMongo()
+await connectToMongo()
 
 // Able to receive JSON payloads
 app.use(express.json())
@@ -76,7 +79,9 @@ app.get('/api/v1/hello', (req, res) => {
   res.send('hello, stranger 👁️👄👁️')
 })
 
+///////////////////////////////////////
 // RUN ROUTES
+///////////////////////////////////////
 
 // Retrieve the latest run activities from Strava for the logged in user.
 app.get('/api/v1/strava/runs', authenticateToken, getStravaRuns)
@@ -93,12 +98,16 @@ app.put('/api/v1/runs/:id', authenticateToken, updateRun)
 // Delete the Runlog run object
 app.delete('/api/v1/runs/:id', authenticateToken, deleteRun)
 
+///////////////////////////////////////
 // DAILY STATS ROUTES
+///////////////////////////////////////
 
 // Retrieve all daily stats documents for this user.
 app.get('/api/v1/dailyStats', authenticateToken, getAllDailyStats)
 
+///////////////////////////////////////
 // TRAINING PLAN ROUTES
+///////////////////////////////////////
 
 // Create a new training plan for this user
 app.post('/api/v1/training', authenticateToken, createTrainingPlan)
@@ -109,7 +118,8 @@ app.get('/api/v1/training/:id', authenticateToken, getTrainingPlan)
 // Get all training plans for this user
 app.get('/api/v1/training', authenticateToken, getAllTrainingPlans)
 
-// Update a specific date withing a training plan with any fields included in the message body
+// Update a specific date withing a training plan with any fields included in
+// the message body
 app.put(
   '/api/v1/training/:id/date/:dateISO',
   authenticateToken,
@@ -122,32 +132,42 @@ app.put('/api/v1/training/:id', authenticateToken, updateTrainingPlan)
 // Delete the training plan with this specific ID
 app.delete('/api/v1/training/:id', authenticateToken, deleteTrainingPlan)
 
+///////////////////////////////////////
 // LOGIN ROUTES
+///////////////////////////////////////
 
 // For now, there is no way to create a user account except via the database.
 // See scripts/addUser.js
 
-// This route is for providing user information to the client if they already have a JWT.
+// This route is for providing user information to the client if they already
+// have a JWT.
 app.get('/api/v1/users/:id', authenticateToken, getUserDetails)
 
 // When a user logs in, we check their password against what was saved to the db.
 app.post('/api/v1/users/login', login)
 
-// USER ROUTES
+///////////////////////////////////////
+// SHOE ROUTES
+// NB: Shoe mileage can only be updated when runs add a shoe to their list. See
+// PUT /run/:id
+///////////////////////////////////////
 
-// Used for adding, removing, and updating mileage for user's gear
+// Get the current user's shoes.
+app.get('/api/v1/shoes', authenticateToken, getShoes)
 
 // Create a new shoe for this user.
-// NB: Shoe mileage can only be updated when runs add a shoe to their list. See PUT /run/:id
-app.post('/api/v1/user/gear/shoes', authenticateToken, createShoes)
+app.post('/api/v1/shoes', authenticateToken, createShoes)
 
 // Delete shoes. This unlinks them from each run too.
-app.delete('/api/v1/user/gear/shoes/:shoeId', authenticateToken, deleteShoes)
+app.delete('/api/v1/shoes/:id', authenticateToken, deleteShoes)
 
+///////////////////////////////////////
 // STRAVA AUTH AND API HANDLERS
+///////////////////////////////////////
 
-// After user authorizes Runlog to access their Strava data, this endpoint takes the access
-// token and exchanges it for the user's access and refresh tokens for Strava API calls.
+// After user authorizes Runlog to access their Strava data, this endpoint takes
+// the access token and exchanges it for the user's access and refresh tokens
+// for Strava API calls.
 app.post(
   '/api/v1/users/:id/stravaCode/:stravaCode',
   authenticateToken,

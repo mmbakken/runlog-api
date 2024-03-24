@@ -3,11 +3,11 @@ import DailyStatsModel from '../db/DailyStatsModel.js'
 
 import updateUserShoeList from './updateUserShoeList.js'
 
-// Given a run id and a map of {field: value} pairs of updates, the run document will have the
-// changes applied.
+// Given a run id and a map of {field: value} pairs of updates, the run document
+// will have the changes applied.
 //
-// Will return a 400 status if the field does not exist for this run document. This is a strictly
-// update-only action, not upsert.
+// Will return a 400 status if the field does not exist for this run document.
+// This is a strictly update-only action, not upsert.
 const updateRun = async (req, res) => {
   let run
 
@@ -30,7 +30,8 @@ const updateRun = async (req, res) => {
     return res.sendStatus(400)
   }
 
-  // Update the fields specified by the user's request. See req.body.updates for syntax.
+  // Update the fields specified by the user's request.
+  // See req.body.updates for syntax.
   const validFields = Object.keys(RunModel.schema.paths)
   for (let [field, value] of Object.entries(req.body.updates)) {
     if (!validFields.includes(field)) {
@@ -65,13 +66,18 @@ const updateRun = async (req, res) => {
       }
     }
 
-    // Update the user's shoe distance if the shoe was added to the run for the first time.
-    if (field === 'shoeId') {
+    // Update the user's shoe distance if the shoe id has changed.
+    if (
+      field === 'shoeId' &&
+      (currentValue == null || value !== currentValue.toString())
+    ) {
+      let currentShoeId = currentValue == null ? null : currentValue.toString()
+
       try {
         await updateUserShoeList(
-          req.user._id,
           value,
-          currentValue,
+          currentShoeId,
+          req.user._id,
           run._id,
           run.distance
         )

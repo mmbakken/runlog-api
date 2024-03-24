@@ -1,11 +1,13 @@
 import mongoose from 'mongoose'
 
-// Allows scripts to close to the Mongo connection and end.
+// Wrapper to close the Mongo connection.
 const disconnectFromMongo = async () => {
-  await mongoose.connection.close(() => {
-    console.log('Mongoose default connection disconnected intentionally.')
-    process.exit(0)
-  })
+  try {
+    await mongoose.connection.close()
+  } catch (err) {
+    console.error('Something went wrong while disconnecting from Mongo:')
+    console.dir(err)
+  }
 }
 
 export default disconnectFromMongo
