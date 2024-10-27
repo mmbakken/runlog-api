@@ -1,110 +1,104 @@
 import mongoose from 'mongoose'
-import UserModel from '../db/UserModel.js'
+import ShoeModel from '../db/ShoeModel.js'
 import addFloats from '../utils/addFloats.js'
 
-// When a user selects a shoe for their run, update the user's shoe list with the distance and runId
+// Given a shoeId and an optional currentShoeId, this function updates the shoes
+// matching each id to reflect that a run has been assigned a new shoe.
+// TODO: Do we need the userId?
 const updateUserShoeList = async (
-  userId,
-  newShoeId,
+  shoeId,
   currentShoeId,
+  userId,
   runId,
   distance
 ) => {
-  // No-op. The shoe should already be in the
-  if (newShoeId === currentShoeId) {
-    return
-  }
-
-  if (userId == null) {
-    console.error(
-      'Invalid params for updateUserShoeList: userId must not be null. Returning without updating user shoe list.'
+  // NB: There is no way to "unset" a shoe for a run, once a shoe is set.
+  if (shoeId == null) {
+    throw new Error(
+      'Invalid params for updateUserShoeList: shoeId must not be null. Returning without updating user shoe list.'
     )
-    return
   }
 
   if (runId == null) {
-    console.error(
+    throw new Error(
       'Invalid params for updateUserShoeList: runId must not be null. Returning without updating user shoe list.'
     )
-    return
   }
 
   if (distance == null || typeof distance !== 'number') {
-    console.error(
+    throw new Error(
       'Invalid params for updateUserShoeList: distance must be a number. Returning without updating user shoe list.'
     )
-    return
   }
 
-  const user = await UserModel.findById(userId).lean()
+  // Add the runId and distance to the new shoe
+  let newShoe
+  try {
+    // Find the new shoes assigned to this run.
+    newShoe = await ShoeModel.findById(shoeId).lean()
 
-  if (user == null) {
-    console.error(
-      `Could not find user from userId: "${userId}". Returning without updating user shoe list.`
+    if (newShoe == null) {
+      throw new Error(
+        `Unable to find shoe document with id: "${shoeId}". Returning without updating shoe run ids or distance.`
+      )
+    }
+  } catch (err) {
+    console.error(err)
+    throw new Error(
+      `Something went wrong while trying to find the new shoe with id "${shoeId}". Returning without updating shoe run ids or distance.`
     )
-    return
   }
 
-  if (user.gear == null || user.gear.shoes == null) {
-    console.error(
-      `Could not find user from userId: "${userId}". Returning without updating user shoe list.`
-    )
-    return
-  }
-
-  // Update the user's shoe list with correct distance and runIds.
-  const newShoes = user.gear.shoes.map((shoe) => {
-    let newShoe = {
-      ...shoe,
-    }
-
-    const runIdsAsStrings = shoe.runIds.map((shoeRunId) => {
-      return shoeRunId.toString()
-    })
-
-    // Find the shoe the user selected
-    if (shoe._id.toString() === newShoeId) {
-      // if the shoeId is null, that means the shoe was removed from the run
-      if (newShoeId == null) {
-        newShoe.distance = addFloats(newShoe.distance, -1 * distance)
-        newShoe.runIds = shoe.runIds.filter((id) => {
-          return id.toString() !== runId.toString()
-        })
-      }
-
-      // The shoeId is not null, but if the run is already tied to this shoe, then do not add distance to the shoe
-      if (!runIdsAsStrings.includes(runId.toString())) {
-        // Otherwise, add the distance to the shoe and add the runId too
-        newShoe.distance = addFloats(newShoe.distance, distance)
-        newShoe.runIds = [...shoe.runIds, runId]
-      }
-    }
-
-    // This is not the shoe the user selected. But if it was the former shoe, then we should remove
-    // mileage from that shoe
-    if (shoe._id.toString() === currentShoeId?.toString()) {
-      if (runIdsAsStrings.includes(runId.toString())) {
-        newShoe.distance = addFloats(newShoe.distance, -1 * distance)
-        newShoe.runIds = shoe.runIds.filter((id) => {
-          return id.toString() !== runId.toString()
-        })
-      }
-    }
-
-    return newShoe
-  })
-
-  await UserModel.updateOne(
-    {
-      _id: new mongoose.Types.ObjectId(userId),
-    },
-    {
-      gear: {
-        ...user.gear,
-        shoes: newShoes,
+  try {
+    await ShoeModel.updateOne(
+      {
+        _id: new mongoose.Types.ObjectId(shoeId),
       },
+      {
+        runIds: [...newShoe.runIds, runId],
+        distance: addFloats(newShoe.distance, distance),
+      }
+    )
+  } catch (err) {
+    console.error(err)
+    throw new Error(
+      `Something went wrong while updating the new shoe with id "${shoeId}". Returning without updating shoe run ids or distance.`
+    )
+  }
+
+  // Update the current run's shoe to no longer include the runId or distance
+  // from the run.
+  /// NB: The currentShoe might not have been assigned yet.
+  if (currentShoeId != null) {
+    const currentShoe = await ShoeModel.findById(currentShoeId).lean()
+
+    if (currentShoe != null) {
+      // Remove the runId from the current run's shoe
+      const updatedRunIds = currentShoe.runIds.filter(id => {
+        return id.toString() !== runId.toString()
+      })
+
+      // Remove the distance of that run from the current run's shoe
+      const updatedDistance = addFloats(currentShoe.distance, -1 * distance)
+
+      try {
+        await ShoeModel.updateOne(
+          {
+            _id: new mongoose.Types.ObjectId(currentShoeId),
+          },
+          {
+            runIds: updatedRunIds,
+            distance: updatedDistance,
+          }
+        )
+      } catch (err) {
+        console.error(err)
+        throw new Error(
+          `Something went wrong while updating the current shoe with id "${currentShoeId}". Returning without updating shoe run ids or distance.`
+        )
+      }
     }
-  )
+  }
 }
 
 export default updateUserShoeList

@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     weekStartsOn: { type: Number, default: 1, min: 1, max: 7 },
   },
 
+  // TODO: Remove this once the ShoeModel is populated.
   gear: {
     shoes: [
       {
