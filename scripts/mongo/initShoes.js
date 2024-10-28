@@ -22,7 +22,7 @@ const initShoes = async () => {
   try {
     const allUsers = await UserModel.find(
       {}, // all users
-      '_id gear'
+      '_id gear name'
     )
 
     let usersModified = 0
@@ -33,9 +33,19 @@ const initShoes = async () => {
     let shoeIdMap = {}
     for (const user of allUsers) {
       console.log('User:')
-      console.log(user.inspect())
+      console.log`user._id: ${user._id.toString()}`
+      console.log`user.name: ${user.name}`
+      console.log`user.gear.shoes:`
 
       for (const shoe of user.gear.shoes) {
+        console.log(`    old shoe:`)
+        console.log(`        title: ${shoe.title}`)
+        console.log(`        distance: ${shoe.distance}`)
+        console.log(`        runIds:`)
+        for (const runId of shoe.runIds) {
+          console.log(`            ${runId.toString()}`)
+        }
+
         const newShoe = new ShoeModel({
           userId: user._id,
           title: shoe.title,
@@ -43,8 +53,9 @@ const initShoes = async () => {
           distance: shoe.distance,
         })
 
-        console.log('New shoe:')
+        console.log('    Creating new shoe:')
         console.log(newShoe.inspect())
+        console.log('~~~~~~~~~~~~~~~~`')
 
         const newShoeDoc = await newShoe.save()
         shoeIdMap[shoe._id.toString()] = newShoeDoc._id.toString()
@@ -52,7 +63,7 @@ const initShoes = async () => {
         newShoeCount++
       }
 
-      console.log('~~~~~~~~~~~~~~~~`')
+      console.log('~~~~~~~~~~~~~~~~\n\n\n\n`')
     }
 
     console.log(
@@ -60,10 +71,10 @@ const initShoes = async () => {
     )
     console.log(`${newShoeCount} shoes created.`)
     console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
+    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n\n`)
 
     console.log(`Updating run.shoeId to match new ShoeModel documents.`)
-    console.log('Old user.shoe.id => new shoe id:')
+    console.log('Old shoe id => new shoe id:')
     console.dir(shoeIdMap)
 
     let runsModified = 0
@@ -75,27 +86,26 @@ const initShoes = async () => {
 
     // Update each run with new shoeId value
     for (const run of allRuns) {
-      console.log('Updating run:')
-      console.dir(run.inspect())
+      console.log(`Checking run ${run._id.toString()}`)
 
       if (run.shoeId == null) {
-        console.log(
-          `There is no shoeId for this run. Skipping setting the shoeId.`
-        )
+        console.log(`    There is no shoeId for this run.`)
         continue
       }
+
+      console.log(`    Found a shoeId - will update`)
 
       const newShoeIdStr = shoeIdMap[run.shoeId.toString()]
       run.shoeId = new mongoose.Types.ObjectId(newShoeIdStr)
 
-      console.log(`DRY RUN: Setting new run.shoeId to: ${newShoeIdStr}`)
-      // await run.save()
-      // runsModified++
+      console.log(`    Updating run.shoeId to: ${newShoeIdStr}`)
+      await run.save()
+      runsModified++
     }
 
     console.log(`${allRuns.length} runs found, ${runsModified} updated.`)
     console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
+    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n\n`)
 
     console.log(`Removing user.gear.shoes from all User docs`)
 
@@ -106,10 +116,10 @@ const initShoes = async () => {
       console.log('User:')
       console.log(user.inspect())
 
-      console.log(`DRY RUN: Deleting user.gear: ${user.gear}`)
-      // delete user.gear
-      // await user.save()
-      // usersModified2++
+      console.log(`Deleting user.gear: ${user.gear}`)
+      delete user.gear
+      await user.save()
+      usersModified2++
 
       console.log(`${allUsers.length} users found, ${usersModified2} updated.`)
       console.log('~~~~~~~~~~~~~~~~`')
