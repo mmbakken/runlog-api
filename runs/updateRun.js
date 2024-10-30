@@ -47,7 +47,7 @@ const updateRun = async (req, res) => {
     // Do we need to update the DailyStats for this date too?
     if (field === 'title') {
       try {
-        await DailyStatsModel.update(
+        await DailyStatsModel.updateOne(
           {
             userId: req.user._id,
             runIds: {
@@ -62,6 +62,7 @@ const updateRun = async (req, res) => {
         console.error(
           `Error while attempting to update DailyStats for run with id "${run._id}"`
         )
+        console.dir(error)
         return res.sendStatus(500)
       }
     }
