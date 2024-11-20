@@ -28,9 +28,6 @@ const login = async (req, res) => {
         stats: {
           weekStartsOn: user.weekStartsOn,
         },
-        gear: {
-          shoes: user.gear.shoes,
-        },
       }
 
       // TODO: Generate JWT for public user data and send back as bearer token
