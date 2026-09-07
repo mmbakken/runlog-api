@@ -41,6 +41,7 @@ import getUserDetails from './users/getUserDetails.js'
 import getShoes from './shoes/getShoes.js'
 import createShoes from './shoes/createShoes.js'
 import deleteShoes from './shoes/deleteShoes.js'
+import mongoose from 'mongoose'
 
 const app = express()
 const port = 4000
@@ -70,6 +71,17 @@ if (process.env.APP_ENV === 'dev') {
     next()
   })
 }
+
+// Ensure MongoDB is connected before any route is handled.
+const validateDbConnection = (req, res, next) => {
+  if (mongoose.connection.readyState === 1) {
+    return next()
+  }
+
+  return res.sendStatus(503).json({error: 'Database is not connected yet. Try again later.' })
+}
+
+app.use(validateDbConnection)
 
 app.get('/api/v1', (req, res) => {
   res.send('Runlog API v1 ✌️')
